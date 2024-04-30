@@ -24,11 +24,11 @@ final supabaseAuthRepositoryProvider =
 
 typedef SupabaseAuthRepositoryRef = ProviderRef<SupabaseAuthRepository>;
 String _$sessionStateStreamHash() =>
-    r'd104c3b81ecd968a8aaf437032dab468084f8269';
+    r'd7513e96c8dbabac12782c8a9b11935291a47c7c';
 
 /// See also [sessionStateStream].
 @ProviderFor(sessionStateStream)
-final sessionStateStreamProvider = StreamProvider<Session?>.internal(
+final sessionStateStreamProvider = AutoDisposeStreamProvider<Session?>.internal(
   sessionStateStream,
   name: r'sessionStateStreamProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -38,12 +38,12 @@ final sessionStateStreamProvider = StreamProvider<Session?>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef SessionStateStreamRef = StreamProviderRef<Session?>;
-String _$sessionStateHash() => r'c907b006ce0217e9c0ae3bfb99e7fbb3bf8b66d4';
+typedef SessionStateStreamRef = AutoDisposeStreamProviderRef<Session?>;
+String _$sessionStateHash() => r'a889f4efd9220b7f3bf8f6f12453acce2470c3a6';
 
 /// See also [sessionState].
 @ProviderFor(sessionState)
-final sessionStateProvider = Provider<Session?>.internal(
+final sessionStateProvider = AutoDisposeProvider<Session?>.internal(
   sessionState,
   name: r'sessionStateProvider',
   debugGetCreateSourceHash:
@@ -52,6 +52,20 @@ final sessionStateProvider = Provider<Session?>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef SessionStateRef = ProviderRef<Session?>;
+typedef SessionStateRef = AutoDisposeProviderRef<Session?>;
+String _$userStateHash() => r'af4cc4e4d9a50be490c8cde413efb263b0bcf9c8';
+
+/// See also [userState].
+@ProviderFor(userState)
+final userStateProvider = AutoDisposeProvider<User?>.internal(
+  userState,
+  name: r'userStateProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$userStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef UserStateRef = AutoDisposeProviderRef<User?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
