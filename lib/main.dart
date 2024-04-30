@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:membo/gen/fonts.gen.dart';
 import 'package:membo/repositories/shared_preferences/shared_preferences_repository.dart';
-import 'package:membo/routes/route.dart';
+import 'package:membo/routes/router.dart';
 import 'package:membo/settings/color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,24 +22,26 @@ void main() async {
   ).wait;
   const app = MyApp();
   final scope = ProviderScope(overrides: [
-    sharedPreferencesRepositoryProvider.overrideWithValue(SharedPreferencesRepository(sharedPreferences)),
+    sharedPreferencesRepositoryProvider
+        .overrideWithValue(SharedPreferencesRepository(sharedPreferences)),
   ], child: app);
   runApp(scope);
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
     return MaterialApp.router(
       theme: ThemeData(
-        fontFamily: 'InterTight',
+        fontFamily: FontFamily.mPlusRounded1c,
         colorScheme: myColorTheme,
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      routerConfig: myRouter(),
+      routerConfig: router,
     );
   }
 }
