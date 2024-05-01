@@ -37,7 +37,9 @@ class CustomButton extends HookWidget {
     return GestureDetector(
       onTap: () {
         controller.reset();
-        onTap();
+        Future.delayed(const Duration(milliseconds: 200), () {
+          onTap();
+        });
         controller.forward();
       },
       child: SizedBox(
