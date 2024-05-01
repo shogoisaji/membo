@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:membo/pages/board_setting_page.dart';
-import 'package:membo/pages/connect_page.dart';
-import 'package:membo/pages/edit_list_page.dart';
-import 'package:membo/pages/edit_page.dart';
-import 'package:membo/pages/view_page.dart';
+import 'package:membo/view/board_setting_page.dart';
+import 'package:membo/view/connect_page.dart';
+import 'package:membo/view/edit_list_page.dart';
+import 'package:membo/view/edit_page.dart';
+import 'package:membo/view/view_page.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/widgets/custom_bottom_nav.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:membo/pages/sign_in_page.dart';
-import 'package:membo/pages/home_page.dart';
-import 'package:membo/pages/settings_page.dart';
+import 'package:membo/view/sign_in_page.dart';
+import 'package:membo/view/home_page.dart';
+import 'package:membo/view/settings_page.dart';
 
 part 'router.g.dart';
 
