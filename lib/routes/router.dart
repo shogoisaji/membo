@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:membo/pages/board_setting_page.dart';
+import 'package:membo/pages/connect_page.dart';
+import 'package:membo/pages/edit_list_page.dart';
+import 'package:membo/pages/edit_page.dart';
+import 'package:membo/pages/view_page.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/widgets/custom_bottom_nav.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:membo/pages/sign_in_page.dart';
 import 'package:membo/pages/home_page.dart';
@@ -12,6 +18,11 @@ part 'router.g.dart';
 class PagePath {
   static const home = '/';
   static const signIn = '/sign-in';
+  static const boardEdit = '/edit';
+  static const boardEditList = '/edit-list';
+  static const boardView = '/view';
+  static const boardSetting = '/board-setting';
+  static const connect = '/connect';
   static const settings = '/settings';
 }
 
@@ -22,13 +33,48 @@ GoRouter router(RouterRef ref) {
       path: PagePath.signIn,
       builder: (_, __) => const SignInPage(),
     ),
-    GoRoute(
-      path: PagePath.home,
-      builder: (_, __) => const HomePage(),
-    ),
-    GoRoute(
-      path: PagePath.settings,
-      builder: (_, __) => const SettingsPage(),
+    ShellRoute(
+      builder: (_, __, child) => Scaffold(
+          body: Stack(
+        fit: StackFit.expand,
+        children: [
+          child,
+          const Align(
+            alignment: Alignment(0, 0.95),
+            child: CustomBottomNav(),
+          )
+        ],
+      )),
+      routes: [
+        GoRoute(
+          path: PagePath.home,
+          builder: (_, __) => const HomePage(),
+        ),
+        GoRoute(
+          path: PagePath.boardEditList,
+          builder: (_, __) => const EditListPage(),
+        ),
+        GoRoute(
+          path: PagePath.boardEdit,
+          builder: (_, __) => const EditPage(),
+        ),
+        GoRoute(
+          path: PagePath.boardView,
+          builder: (_, __) => const ViewPage(),
+        ),
+        GoRoute(
+          path: PagePath.boardSetting,
+          builder: (_, __) => const BoardSettingPage(),
+        ),
+        GoRoute(
+          path: PagePath.connect,
+          builder: (_, __) => const ConnectPage(),
+        ),
+        GoRoute(
+          path: PagePath.settings,
+          builder: (_, __) => const SettingsPage(),
+        ),
+      ],
     ),
   ];
 
