@@ -26,6 +26,8 @@ dependencies:
   sign_in_with_apple:
   crypto:
   uuid:
+  flutter_joystick:
+  cached_network_image:
 
   cupertino_icons: ^1.0.6
 
@@ -44,6 +46,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/images/
     - assets/images/icons/
     - assets/lotties/
     # - assets/images/icons/google_official.png

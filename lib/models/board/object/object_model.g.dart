@@ -18,7 +18,7 @@ _$ObjectModelImpl _$$ObjectModelImplFromJson(Map<String, dynamic> json) =>
       imageUrl: json['imageUrl'] as String?,
       text: json['text'] as String?,
       stampId: json['stampId'] as int?,
-      createrId: json['createrId'] as String,
+      creatorId: json['creatorId'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
@@ -34,12 +34,13 @@ Map<String, dynamic> _$$ObjectModelImplToJson(_$ObjectModelImpl instance) =>
       'imageUrl': instance.imageUrl,
       'text': instance.text,
       'stampId': instance.stampId,
-      'createrId': instance.createrId,
+      'creatorId': instance.creatorId,
       'createdAt': instance.createdAt.toIso8601String(),
     };
 
 const _$ObjectTypeEnumMap = {
-  ObjectType.image: 'image',
+  ObjectType.networkImage: 'networkImage',
+  ObjectType.localImage: 'localImage',
   ObjectType.text: 'text',
   ObjectType.stamp: 'stamp',
 };

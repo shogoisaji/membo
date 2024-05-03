@@ -11,7 +11,7 @@ class BoardSettingsModel with _$BoardSettingsModel {
   const factory BoardSettingsModel({
     @Default(defaultHeight) double height,
     @Default(defaultWidth) double width,
-    @Default('#ffffff') String bgColor,
+    @Default('0xffffffff') String bgColor,
     @Default(false) bool isPublished,
   }) = _BoardSettingsModel;
 

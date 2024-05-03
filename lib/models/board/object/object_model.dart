@@ -4,7 +4,8 @@ part 'object_model.freezed.dart';
 part 'object_model.g.dart';
 
 enum ObjectType {
-  image,
+  networkImage,
+  localImage,
   text,
   stamp,
 }
@@ -22,7 +23,7 @@ class ObjectModel with _$ObjectModel {
     String? imageUrl,
     String? text,
     int? stampId,
-    required String createrId,
+    required String creatorId,
     required DateTime createdAt,
   }) = _ObjectModel;
 

@@ -78,7 +78,23 @@ class CustomBottomNav extends HookConsumerWidget {
                   .toList(),
             ),
           )
-        : const SizedBox.shrink();
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              GestureDetector(
+                  onTap: () {
+                    ref.read(bottomNavigationStateProvider.notifier).show();
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color: Colors.blue,
+                      shape: BoxShape.circle,
+                    ),
+                  )),
+            ],
+          );
   }
 }
 

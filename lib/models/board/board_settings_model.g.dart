@@ -11,7 +11,7 @@ _$BoardSettingsModelImpl _$$BoardSettingsModelImplFromJson(
     _$BoardSettingsModelImpl(
       height: (json['height'] as num?)?.toDouble() ?? defaultHeight,
       width: (json['width'] as num?)?.toDouble() ?? defaultWidth,
-      bgColor: json['bgColor'] as String? ?? '#ffffff',
+      bgColor: json['bgColor'] as String? ?? '0xffffffff',
       isPublished: json['isPublished'] as bool? ?? false,
     );
 

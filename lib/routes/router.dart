@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:membo/state/navigation_state.dart';
 import 'package:membo/view/board_setting_page.dart';
 import 'package:membo/view/connect_page.dart';
 import 'package:membo/view/edit_list_page.dart';
@@ -85,11 +86,10 @@ GoRouter router(RouterRef ref) {
     if (signedIn && page == PagePath.signIn) {
       return PagePath.home;
     } else if (!signedIn) {
-      // return PagePath.signIn;
+      return PagePath.signIn;
     } else {
       return null;
     }
-    return null;
   }
 
   final listenable = ValueNotifier<Object?>(null);

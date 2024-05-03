@@ -7,7 +7,7 @@ part of 'navigation_state.dart';
 // **************************************************************************
 
 String _$bottomNavigationStateHash() =>
-    r'a6347b53bbaee6408151b343ea6fa61e372ce32e';
+    r'9c585f4a2159969ffff83cd1d933444a72ab766c';
 
 /// See also [BottomNavigationState].
 @ProviderFor(BottomNavigationState)
