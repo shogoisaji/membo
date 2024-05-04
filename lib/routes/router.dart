@@ -84,6 +84,12 @@ GoRouter router(RouterRef ref) {
     final signedIn = ref.watch(userStateProvider) != null ? true : false;
 
     if (signedIn && page == PagePath.signIn) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // ref.read(bottomNavigationStateProvider.notifier).show();
+        ref
+            .read(bottomNavigationStateProvider.notifier)
+            .setRoute(PagePath.home);
+      });
       return PagePath.home;
     } else if (!signedIn) {
       return PagePath.signIn;

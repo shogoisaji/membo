@@ -6,7 +6,36 @@ part of 'edit_page_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$editPageViewModelHash() => r'3e65045ca97a585a67cbe75119c8ad80cc2395e8';
+String _$boardStreamHash() => r'4b24cf4fb6d57d470ce631f323145d6c4daa1f5c';
+
+/// See also [boardStream].
+@ProviderFor(boardStream)
+final boardStreamProvider = StreamProvider<BoardModel?>.internal(
+  boardStream,
+  name: r'boardStreamProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$boardStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef BoardStreamRef = StreamProviderRef<BoardModel?>;
+String _$boardModelStateHash() => r'cf66a311a7cddc2d70a7199a89da2bd008f33068';
+
+/// See also [boardModelState].
+@ProviderFor(boardModelState)
+final boardModelStateProvider = Provider<BoardModel?>.internal(
+  boardModelState,
+  name: r'boardModelStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$boardModelStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef BoardModelStateRef = ProviderRef<BoardModel?>;
+String _$editPageViewModelHash() => r'359a6875126416d845d42ac1d92bcedc2037fbea';
 
 /// See also [EditPageViewModel].
 @ProviderFor(EditPageViewModel)

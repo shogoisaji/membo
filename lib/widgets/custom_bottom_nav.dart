@@ -47,13 +47,15 @@ class CustomBottomNav extends HookConsumerWidget {
             height: navSize.height,
             margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color.fromARGB(255, 254, 239, 255),
+              border: Border.all(
+                  width: 3, color: const Color.fromARGB(255, 139, 25, 112)),
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.3),
                   blurRadius: 3,
-                  offset: const Offset(0, -2),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -74,27 +76,12 @@ class CustomBottomNav extends HookConsumerWidget {
                         color: currentRoute == item['route']
                             ? Colors.blue
                             : Colors.grey,
+                        size: 36,
                       )))
                   .toList(),
             ),
           )
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              GestureDetector(
-                  onTap: () {
-                    ref.read(bottomNavigationStateProvider.notifier).show();
-                  },
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: const BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.circle,
-                    ),
-                  )),
-            ],
-          );
+        : const SizedBox.shrink();
   }
 }
 

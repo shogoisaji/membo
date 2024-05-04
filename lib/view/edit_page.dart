@@ -21,17 +21,17 @@ class EditPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TransformationController transformController =
-        useTransformationController();
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
+
+    /// interactive viewerのコントローラー
+    final TransformationController transformController =
+        useTransformationController();
+
+    final board = ref.watch(boardModelStateProvider);
     final editPageState = ref.watch(editPageViewModelProvider);
     final isLoaded = useState(false);
-    // final viewScale = useState(1.0);
-    final lastScale = useState(1.0);
-    final viewScalePoint = useState(Offset.zero);
-    final viewTranslateX = useState(0.0);
-    final viewTranslateY = useState(0.0);
+    final isCalcComplete = useState(false);
 
     /// 初期のスケールと位置を計算
     void calcInitialTransform() {
@@ -59,6 +59,7 @@ class EditPage extends HookConsumerWidget {
           ..translate(translateX, translateY, 0.0)
           ..scale(scale, scale, 1.0);
       }
+      isCalcComplete.value = true;
     }
 
     void selectObject() {
@@ -76,28 +77,46 @@ class EditPage extends HookConsumerWidget {
       ref.read(editPageViewModelProvider.notifier).selectObject(object);
     }
 
-    void moveSelectedObject(Offset offset) {
-      ref.read(editPageViewModelProvider.notifier).moveSelectedObject(offset);
-    }
-
     void initialize() async {
       await ref.read(editPageViewModelProvider.notifier).initializeLoad();
-      if (editPageState.boardModel == null) return;
-      calcInitialTransform();
 
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //   if (board == null) return;
+      //   ref.read(editPageViewModelProvider.notifier).setBoardModel(board);
+      // });
+      // editPageState.boardModel
+      while (!isCalcComplete.value) {
+        await Future.delayed(const Duration(milliseconds: 100), () {
+          if (editPageState.boardModel != null) {
+            calcInitialTransform();
+          }
+        });
+      }
+
+      /// interactive viewerのcontrollerの監視とscaleの更新
       transformController.addListener(() {
         final matrix = transformController.value;
         final scale = matrix.getMaxScaleOnAxis();
         ref.read(editPageViewModelProvider.notifier).updateViewScale(scale);
       });
 
-      isLoaded.value = true;
+      if (isCalcComplete.value) {
+        isLoaded.value = true;
+      }
     }
 
     useEffect(() {
       initialize();
       return null;
     }, []);
+
+    useEffect(() {
+      if (board == null) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(editPageViewModelProvider.notifier).setBoardModel(board);
+      });
+      return null;
+    }, [board]);
 
     return Scaffold(
         appBar: AppBar(
@@ -118,15 +137,6 @@ class EditPage extends HookConsumerWidget {
                     children: [
                       InteractiveViewer(
                           transformationController: transformController,
-                          // onInteractionUpdate: (details) {
-                          //   print(
-                          //       'Current scale: ${transformController.value.getMaxScaleOnAxis()}');
-                          //   print(
-                          //       'Current Position: ${transformController.value.getTranslation()}');
-                          // },
-                          // onInteractionEnd: (details) {
-                          //   // 現在の変形行列を取得
-                          // },
                           boundaryMargin: const EdgeInsets.all(double.infinity),
                           minScale: 0.1,
                           maxScale: 10.0,
@@ -159,6 +169,14 @@ class EditPage extends HookConsumerWidget {
                               alignment: const Alignment(0.0, 0.9),
                               child: EditToolBar(width: w * 0.9))
                           : const SizedBox.shrink(),
+                      Align(
+                          alignment: const Alignment(-0.93, 1.0),
+                          child: Text(
+                              editPageState.boardModel!.boardId.toString())),
+                      Align(
+                          alignment: const Alignment(-0.93, 0.92),
+                          child: Text(
+                              'objects : ${editPageState.boardModel!.objects.length}')),
                     ],
                   ),
                 ),
@@ -476,7 +494,11 @@ class CustomFloatingButton extends HookConsumerWidget {
                           onPressed: () async {
                             final picker = ImagePicker();
                             final XFile? image = await picker.pickImage(
-                                source: ImageSource.gallery);
+                              source: ImageSource.gallery,
+                              maxWidth: 1000,
+                              maxHeight: 1000,
+                              imageQuality: 85,
+                            );
                             if (image == null) {
                               isShowMenu.value = false;
                               return;
