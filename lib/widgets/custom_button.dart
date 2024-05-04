@@ -55,7 +55,7 @@ class CustomButton extends HookWidget {
                     width: width,
                     height: height - elevation * (1 - controller.value * 0.5),
                     decoration: BoxDecoration(
-                      color: ColorConvertor.moreDark(color),
+                      color: ColorUtils.moreDark(color),
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),

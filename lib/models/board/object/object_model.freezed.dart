@@ -28,6 +28,8 @@ mixin _$ObjectModel {
   double get scale => throw _privateConstructorUsedError;
   String get bgColor => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
+  double? get imageWidth => throw _privateConstructorUsedError;
+  double? get imageHeight => throw _privateConstructorUsedError;
   String? get text => throw _privateConstructorUsedError;
   int? get stampId => throw _privateConstructorUsedError;
   String get creatorId => throw _privateConstructorUsedError;
@@ -54,6 +56,8 @@ abstract class $ObjectModelCopyWith<$Res> {
       double scale,
       String bgColor,
       String? imageUrl,
+      double? imageWidth,
+      double? imageHeight,
       String? text,
       int? stampId,
       String creatorId,
@@ -81,6 +85,8 @@ class _$ObjectModelCopyWithImpl<$Res, $Val extends ObjectModel>
     Object? scale = null,
     Object? bgColor = null,
     Object? imageUrl = freezed,
+    Object? imageWidth = freezed,
+    Object? imageHeight = freezed,
     Object? text = freezed,
     Object? stampId = freezed,
     Object? creatorId = null,
@@ -119,6 +125,14 @@ class _$ObjectModelCopyWithImpl<$Res, $Val extends ObjectModel>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageWidth: freezed == imageWidth
+          ? _value.imageWidth
+          : imageWidth // ignore: cast_nullable_to_non_nullable
+              as double?,
+      imageHeight: freezed == imageHeight
+          ? _value.imageHeight
+          : imageHeight // ignore: cast_nullable_to_non_nullable
+              as double?,
       text: freezed == text
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
@@ -156,6 +170,8 @@ abstract class _$$ObjectModelImplCopyWith<$Res>
       double scale,
       String bgColor,
       String? imageUrl,
+      double? imageWidth,
+      double? imageHeight,
       String? text,
       int? stampId,
       String creatorId,
@@ -181,6 +197,8 @@ class __$$ObjectModelImplCopyWithImpl<$Res>
     Object? scale = null,
     Object? bgColor = null,
     Object? imageUrl = freezed,
+    Object? imageWidth = freezed,
+    Object? imageHeight = freezed,
     Object? text = freezed,
     Object? stampId = freezed,
     Object? creatorId = null,
@@ -219,6 +237,14 @@ class __$$ObjectModelImplCopyWithImpl<$Res>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageWidth: freezed == imageWidth
+          ? _value.imageWidth
+          : imageWidth // ignore: cast_nullable_to_non_nullable
+              as double?,
+      imageHeight: freezed == imageHeight
+          ? _value.imageHeight
+          : imageHeight // ignore: cast_nullable_to_non_nullable
+              as double?,
       text: freezed == text
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
@@ -251,6 +277,8 @@ class _$ObjectModelImpl implements _ObjectModel {
       required this.scale,
       required this.bgColor,
       this.imageUrl,
+      this.imageWidth,
+      this.imageHeight,
       this.text,
       this.stampId,
       required this.creatorId,
@@ -276,6 +304,10 @@ class _$ObjectModelImpl implements _ObjectModel {
   @override
   final String? imageUrl;
   @override
+  final double? imageWidth;
+  @override
+  final double? imageHeight;
+  @override
   final String? text;
   @override
   final int? stampId;
@@ -286,7 +318,7 @@ class _$ObjectModelImpl implements _ObjectModel {
 
   @override
   String toString() {
-    return 'ObjectModel(objectId: $objectId, type: $type, positionX: $positionX, positionY: $positionY, angle: $angle, scale: $scale, bgColor: $bgColor, imageUrl: $imageUrl, text: $text, stampId: $stampId, creatorId: $creatorId, createdAt: $createdAt)';
+    return 'ObjectModel(objectId: $objectId, type: $type, positionX: $positionX, positionY: $positionY, angle: $angle, scale: $scale, bgColor: $bgColor, imageUrl: $imageUrl, imageWidth: $imageWidth, imageHeight: $imageHeight, text: $text, stampId: $stampId, creatorId: $creatorId, createdAt: $createdAt)';
   }
 
   @override
@@ -306,6 +338,10 @@ class _$ObjectModelImpl implements _ObjectModel {
             (identical(other.bgColor, bgColor) || other.bgColor == bgColor) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
+            (identical(other.imageWidth, imageWidth) ||
+                other.imageWidth == imageWidth) &&
+            (identical(other.imageHeight, imageHeight) ||
+                other.imageHeight == imageHeight) &&
             (identical(other.text, text) || other.text == text) &&
             (identical(other.stampId, stampId) || other.stampId == stampId) &&
             (identical(other.creatorId, creatorId) ||
@@ -326,6 +362,8 @@ class _$ObjectModelImpl implements _ObjectModel {
       scale,
       bgColor,
       imageUrl,
+      imageWidth,
+      imageHeight,
       text,
       stampId,
       creatorId,
@@ -355,6 +393,8 @@ abstract class _ObjectModel implements ObjectModel {
       required final double scale,
       required final String bgColor,
       final String? imageUrl,
+      final double? imageWidth,
+      final double? imageHeight,
       final String? text,
       final int? stampId,
       required final String creatorId,
@@ -379,6 +419,10 @@ abstract class _ObjectModel implements ObjectModel {
   String get bgColor;
   @override
   String? get imageUrl;
+  @override
+  double? get imageWidth;
+  @override
+  double? get imageHeight;
   @override
   String? get text;
   @override

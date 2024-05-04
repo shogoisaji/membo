@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/board_settings_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
@@ -41,20 +42,69 @@ class EditPageViewModel extends _$EditPageViewModel {
     );
   }
 
-  Future<void> initializeLoad() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (state.selectedBoardId == null) {
-        await createNewBoard();
-      } else {
-        final board = await ref
-            .read(supabaseRepositoryProvider)
-            .getBoardById(state.selectedBoardId!);
-        state = EditPageState(
-          selectedObject: null,
-          boardModel: board,
-        );
-      }
-    });
+  Map<String, double> calcInitialTransform(
+      BoardModel board, double w, double h) {
+    final scaleW = w / board.settings.width;
+    final scaleH = (h - kToolbarHeight) / board.settings.height;
+    final scale = scaleW < scaleH ? scaleW : scaleH;
+
+    /// 横長の画面の場合
+    if (scaleW > scaleH) {
+      final addX = (w - board.settings.width * scale) / 2;
+      final translateX = (board.settings.width - w) / 2 * scale + addX;
+      final translateY = (board.settings.height - h) / 2 * scale;
+      // state = EditPageState(
+      //   selectedObject: state.selectedObject,
+      //   boardModel: state.boardModel,
+      //   viewScale: scale,
+      //   viewTranslateX: translateX,
+      //   viewTranslateY: translateY,
+      // );
+      return {
+        'scale': scale,
+        'translateX': translateX,
+        'translateY': translateY,
+      };
+
+      /// 縦長の画面の場合
+    } else {
+      final addY = (h - board.settings.height * scale) / 2;
+      final translateX = (board.settings.width - w) / 2 * scale;
+      final translateY = (board.settings.height - h) / 2 * scale + addY;
+      // state = EditPageState(
+      //   selectedObject: state.selectedObject,
+      //   boardModel: state.boardModel,
+      //   viewScale: scale,
+      //   viewTranslateX: translateX,
+      //   viewTranslateY: translateY,
+      // );
+      return {
+        'scale': scale,
+        'translateX': translateX,
+        'translateY': translateY,
+      };
+    }
+  }
+
+  Future<void> initializeLoad(double w, double h) async {
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    if (state.selectedBoardId == null) {
+      await createNewBoard();
+    } else {
+      final board = await ref
+          .read(supabaseRepositoryProvider)
+          .getBoardById(state.selectedBoardId!);
+      final transformMap = calcInitialTransform(board!, w, h);
+      state = EditPageState(
+        selectedObject: null,
+        boardModel: board,
+        viewScale: transformMap['scale'] as double,
+        viewTranslateX: transformMap['translateX'] as double,
+        viewTranslateY: transformMap['translateY'] as double,
+      );
+    }
+
+    // });
     await Future.delayed(const Duration(seconds: 1), () {});
   }
 

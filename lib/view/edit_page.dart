@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/utils/color_convertor.dart';
 import 'package:membo/utils/image_utils.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
 import 'package:membo/settings/text_theme.dart';
@@ -30,7 +33,7 @@ class EditPage extends HookConsumerWidget {
 
     final board = ref.watch(boardModelStateProvider);
     final editPageState = ref.watch(editPageViewModelProvider);
-    final isLoaded = useState(false);
+    final isLoading = useState(false);
     final isCalcComplete = useState(false);
 
     /// 初期のスケールと位置を計算
@@ -59,7 +62,6 @@ class EditPage extends HookConsumerWidget {
           ..translate(translateX, translateY, 0.0)
           ..scale(scale, scale, 1.0);
       }
-      isCalcComplete.value = true;
     }
 
     void selectObject() {
@@ -77,21 +79,15 @@ class EditPage extends HookConsumerWidget {
       ref.read(editPageViewModelProvider.notifier).selectObject(object);
     }
 
-    void initialize() async {
-      await ref.read(editPageViewModelProvider.notifier).initializeLoad();
+    void setInitialTransform() {
+      final state = ref.read(editPageViewModelProvider);
+      transformController.value = Matrix4.identity()
+        ..translate(state.viewTranslateX, state.viewTranslateY, 0.0)
+        ..scale(state.viewScale, state.viewScale, 1.0);
+    }
 
-      // WidgetsBinding.instance.addPostFrameCallback((_) {
-      //   if (board == null) return;
-      //   ref.read(editPageViewModelProvider.notifier).setBoardModel(board);
-      // });
-      // editPageState.boardModel
-      while (!isCalcComplete.value) {
-        await Future.delayed(const Duration(milliseconds: 100), () {
-          if (editPageState.boardModel != null) {
-            calcInitialTransform();
-          }
-        });
-      }
+    void initialize() async {
+      await ref.read(editPageViewModelProvider.notifier).initializeLoad(w, h);
 
       /// interactive viewerのcontrollerの監視とscaleの更新
       transformController.addListener(() {
@@ -100,16 +96,18 @@ class EditPage extends HookConsumerWidget {
         ref.read(editPageViewModelProvider.notifier).updateViewScale(scale);
       });
 
-      if (isCalcComplete.value) {
-        isLoaded.value = true;
-      }
+      setInitialTransform();
+
+      isLoading.value = false;
     }
 
     useEffect(() {
+      isLoading.value = true;
       initialize();
       return null;
     }, []);
 
+    /// BoardModelが更新されたら再描画
     useEffect(() {
       if (board == null) return;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -127,7 +125,7 @@ class EditPage extends HookConsumerWidget {
           ),
         ),
         body: SafeArea(
-          child: !isLoaded.value
+          child: isLoading.value
               ? const Center(child: CircularProgressIndicator())
               : Container(
                   color: Colors.grey,
@@ -156,7 +154,7 @@ class EditPage extends HookConsumerWidget {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                // selectObject();
+                                setInitialTransform();
                               },
                               child: const Text('object'),
                             ),
@@ -169,6 +167,9 @@ class EditPage extends HookConsumerWidget {
                               alignment: const Alignment(0.0, 0.9),
                               child: EditToolBar(width: w * 0.9))
                           : const SizedBox.shrink(),
+                      Align(
+                          alignment: const Alignment(-0.93, 0.85),
+                          child: Text(editPageState.viewScale.toString())),
                       Align(
                           alignment: const Alignment(-0.93, 1.0),
                           child: Text(
@@ -389,31 +390,65 @@ class ObjectWidget extends StatelessWidget {
   }
 
   Widget _networkImageWidget() {
-    const nullImage = 'assets/images/title.png';
     if (object.imageUrl == null) {
-      return Image.asset(nullImage);
+      return _errorImageWidget();
     }
     return CachedNetworkImage(
-      imageUrl: object.imageUrl!,
-      imageBuilder: (context, imageProvider) => Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: imageProvider,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      placeholder: (context, url) => const CircularProgressIndicator(),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
-    );
+        imageUrl: object.imageUrl!,
+        width: object.imageWidth != null
+            ? object.imageWidth! * object.scale
+            : null,
+        height: object.imageHeight != null
+            ? object.imageHeight! * object.scale
+            : null,
+        imageBuilder: (context, imageProvider) => Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+        placeholder: (context, url) => const CircularProgressIndicator(),
+        errorWidget: (context, url, error) => _errorImageWidget());
   }
 
   Widget _localImageWidget() {
-    const nullImage = 'assets/images/title.png';
     if (object.imageUrl == null) {
-      return Image.asset(nullImage);
+      return _errorImageWidget();
     }
-    return Image.file(File(object.imageUrl!));
+    return Image.file(
+      width:
+          object.imageWidth != null ? object.imageWidth! * object.scale : null,
+      height: object.imageHeight != null
+          ? object.imageHeight! * object.scale
+          : null,
+      File(object.imageUrl!),
+      errorBuilder: (context, error, stackTrace) {
+        return _errorImageWidget();
+      },
+    );
+  }
+
+  Widget _errorImageWidget() {
+    final color = ColorUtils.randomColor();
+    final bgColor = ColorUtils.moreDark(color);
+    return Container(
+      width:
+          object.imageWidth != null ? object.imageWidth! * object.scale : null,
+      height: object.imageHeight != null
+          ? object.imageHeight! * object.scale
+          : null,
+      color: bgColor,
+      child: Center(
+          child: Icon(
+        Icons.error,
+        size: object.imageWidth != null
+            ? object.imageWidth! * object.scale * 0.5
+            : 100,
+        color: color,
+      )),
+    );
   }
 
   Widget _textWidget() {
@@ -520,6 +555,8 @@ class CustomFloatingButton extends HookConsumerWidget {
                                     angle: 0.0,
                                     scale: 1.0,
                                     imageUrl: image.path,
+                                    imageWidth: imageSize.width,
+                                    imageHeight: imageSize.height,
                                     creatorId: ref.read(userStateProvider)!.id,
                                     createdAt: DateTime.now(),
                                     bgColor: '0xFF000000'));

@@ -21,6 +21,8 @@ class ObjectModel with _$ObjectModel {
     required double scale,
     required String bgColor,
     String? imageUrl,
+    double? imageWidth,
+    double? imageHeight,
     String? text,
     int? stampId,
     required String creatorId,
