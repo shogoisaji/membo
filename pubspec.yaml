@@ -28,6 +28,7 @@ dependencies:
   uuid:
   flutter_joystick:
   cached_network_image:
+  flutter_colorpicker:
 
   cupertino_icons: ^1.0.6
 

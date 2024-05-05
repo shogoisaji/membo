@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:go_router/go_router.dart';
@@ -222,7 +223,7 @@ class EditToolBar extends HookConsumerWidget {
                     Expanded(
                       child: GestureDetector(
                         onPanUpdate: (details) {
-                          scaleSelectedObject(-details.delta.dy * 0.001);
+                          scaleSelectedObject(-details.delta.dy * 0.003);
                         },
                         child: Container(
                           height: double.infinity,
@@ -289,12 +290,6 @@ class BoardWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AnimationController animationController = useAnimationController(
-      duration: const Duration(milliseconds: 600),
-    )..repeat(reverse: true);
-    final animation = Tween<double>(begin: 0.5, end: 1.0).animate(
-        CurvedAnimation(parent: animationController, curve: Curves.easeOut));
-
     return Container(
         width: board.settings.width,
         height: board.settings.height,
@@ -311,12 +306,7 @@ class BoardWidget extends HookWidget {
             ...board.objects
                 .map((object) => ObjectWidget(object: object, opacity: 1.0)),
             if (selectedObject != null)
-              AnimatedBuilder(
-                  animation: animation,
-                  builder: (context, child) {
-                    return ObjectWidget(
-                        object: selectedObject!, opacity: animation.value);
-                  })
+              SelectedObject(object: selectedObject!)
             else
               const SizedBox.shrink(),
           ],
@@ -428,7 +418,56 @@ class ObjectWidget extends StatelessWidget {
 
   Widget _textWidget() {
     final text = object.text ?? '???';
-    return Text(text);
+    return Text(text,
+        style: TextStyle(
+          color: Color(int.parse(object.bgColor)),
+          fontSize: 100,
+        ));
+  }
+}
+
+class SelectedObject extends HookConsumerWidget {
+  final ObjectModel object;
+  const SelectedObject({super.key, required this.object});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final initialAnimationController = useAnimationController(
+      duration: const Duration(milliseconds: 600),
+    )..forward();
+    final initialAnimation = Tween<double>(begin: 5.0, end: 1.0).animate(
+        CurvedAnimation(
+            parent: initialAnimationController,
+            curve: const Cubic(0.175, 0.885, 0.32, 1.03)));
+    final opacityAnimationController = useAnimationController(
+      duration: const Duration(milliseconds: 600),
+    )..repeat(reverse: true);
+
+    final opacityAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+        CurvedAnimation(
+            parent: opacityAnimationController, curve: Curves.easeOut));
+
+    useEffect(() {
+      initialAnimationController.addListener(() {
+        ref
+            .read(editPageViewModelProvider.notifier)
+            .scaleSelectedObject(initialAnimation.value);
+      });
+      return null;
+    }, []);
+
+    return AnimatedBuilder(
+      animation: initialAnimation,
+      builder: (context, child) {
+        return AnimatedBuilder(
+          animation: opacityAnimation,
+          builder: (context, child) {
+            return ObjectWidget(
+                object: object, opacity: opacityAnimation.value);
+          },
+        );
+      },
+    );
   }
 }
 
@@ -500,7 +539,10 @@ class CustomFloatingButton extends HookConsumerWidget {
                                 .read(editPageViewModelProvider.notifier)
                                 .showTextInput();
                           },
-                          icon: const Icon(Icons.text_format),
+                          icon: const Icon(
+                            Icons.text_format,
+                            size: 42,
+                          ),
                         ),
                         IconButton(
                           onPressed: () async {
@@ -544,7 +586,10 @@ class CustomFloatingButton extends HookConsumerWidget {
                                 .read(editPageViewModelProvider.notifier)
                                 .hideInputMenu();
                           },
-                          icon: const Icon(Icons.image),
+                          icon: const Icon(
+                            Icons.image,
+                            size: 42,
+                          ),
                         ),
                       ],
                     )),
@@ -572,6 +617,8 @@ class TextInputModal extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController textController = useTextEditingController();
     final editPageState = ref.watch(editPageViewModelProvider);
+    final selectedTextColor = useState<Color>(Colors.black);
+    final selectedBgColor = useState<Color>(Colors.black);
 
     Offset initialPosition() {
       if (editPageState.boardModel == null) return const Offset(0, 0);
@@ -579,6 +626,14 @@ class TextInputModal extends HookConsumerWidget {
       final initialPositionX = boardSettings.width / 2;
       final initialPositionY = boardSettings.height / 2;
       return Offset(initialPositionX, initialPositionY);
+    }
+
+    void handleChangeTextColor(Color color) {
+      selectedTextColor.value = color;
+    }
+
+    void handleChangeBgColor(Color color) {
+      selectedBgColor.value = color;
     }
 
     return editPageState.showTextInput
@@ -609,44 +664,58 @@ class TextInputModal extends HookConsumerWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Column(
-                          children: [
-                            TextField(
-                              controller: textController,
-                              decoration: const InputDecoration(
-                                hintText: 'Input Text',
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 10.0),
+                          child: Column(
+                            children: [
+                              TextField(
+                                  controller: textController,
+                                  decoration: const InputDecoration(
+                                      border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(12))))),
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (textController.text.isEmpty) return;
+                                  ref
+                                      .read(editPageViewModelProvider.notifier)
+                                      .selectObject(
+                                          ObjectModel(
+                                              objectId: const Uuid().v4(),
+                                              type: ObjectType.text,
+                                              positionX: initialPosition().dx,
+                                              positionY: initialPosition().dy,
+                                              angle: 0.0,
+                                              scale: 1.0,
+                                              text: textController.text,
+                                              creatorId: ref
+                                                  .read(userStateProvider)!
+                                                  .id,
+                                              createdAt: DateTime.now(),
+                                              bgColor:
+                                                  '0xff${selectedTextColor.value.value.toRadixString(16)}'),
+                                          null);
+                                  ref
+                                      .read(editPageViewModelProvider.notifier)
+                                      .hideTextInput();
+                                  ref
+                                      .read(editPageViewModelProvider.notifier)
+                                      .hideInputMenu();
+                                  textController.clear();
+                                },
+                                child: const Text('OK'),
                               ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (textController.text.isEmpty) return;
-                                ref
-                                    .read(editPageViewModelProvider.notifier)
-                                    .selectObject(
-                                        ObjectModel(
-                                            objectId: const Uuid().v4(),
-                                            type: ObjectType.text,
-                                            positionX: initialPosition().dx,
-                                            positionY: initialPosition().dy,
-                                            angle: 0.0,
-                                            scale: 10.0,
-                                            text: textController.text,
-                                            creatorId:
-                                                ref.read(userStateProvider)!.id,
-                                            createdAt: DateTime.now(),
-                                            bgColor: '0xFF000000'),
-                                        null);
-                                ref
-                                    .read(editPageViewModelProvider.notifier)
-                                    .hideTextInput();
-                                ref
-                                    .read(editPageViewModelProvider.notifier)
-                                    .hideInputMenu();
-                                textController.clear();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
+                              const Text('Text Color'),
+                              _colorPicker(selectedTextColor.value,
+                                  handleChangeTextColor),
+                              const Text('Background Color'),
+                              _colorPicker(
+                                selectedBgColor.value,
+                                handleChangeBgColor,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -656,5 +725,61 @@ class TextInputModal extends HookConsumerWidget {
             ),
           )
         : const SizedBox.shrink();
+  }
+
+  Widget _colorPicker(Color selectedColor, Function(Color) onColorChanged) {
+    return SizedBox(
+      height: 158,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.black),
+        ),
+        child: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: SizedBox(
+            height: 150,
+            child: BlockPicker(
+              pickerColor: selectedColor, //default color
+              onColorChanged: (Color color) {
+                onColorChanged(color);
+              },
+              itemBuilder: _customItemBuilder, // customize builder
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _customItemBuilder(
+      Color color, bool isCurrentColor, void Function() changeColor) {
+    return Container(
+      margin: const EdgeInsets.all(7),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              offset: const Offset(1, 2),
+              blurRadius: 2)
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: changeColor,
+          borderRadius: BorderRadius.circular(50),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 210),
+            opacity: isCurrentColor ? 1 : 0,
+            child: Icon(Icons.done,
+                color: useWhiteForeground(color) ? Colors.white : Colors.black),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -137,6 +137,8 @@ class EditPageViewModel extends _$EditPageViewModel {
         viewScale: transformMap['scale'] as double,
         viewTranslateX: transformMap['translateX'] as double,
         viewTranslateY: transformMap['translateY'] as double,
+        showInputMenu: false,
+        showTextInput: false,
       );
     }
   }
@@ -194,37 +196,6 @@ class EditPageViewModel extends _$EditPageViewModel {
   void setBoardModel(BoardModel board) {
     state = state.copyWith(boardModel: board);
   }
-
-  // void insertObject(ObjectModel object, XFile? file) {
-  //   final board = state.boardModel;
-  //   if (board == null) {
-  //     throw Exception('Board is not set');
-  //   }
-  //   final objects = List<ObjectModel>.from(board.objects);
-  //   objects.add(object);
-  //   final newBoard = board.copyWith(objects: objects);
-
-  //   /// repository update
-  //   try {
-  //     switch (object.type) {
-  //       case ObjectType.localImage:
-  //         if (file == null) {
-  //           throw Exception('addObject():selectedImageFile is null');
-  //         }
-  //         ref
-  //             .read(supabaseRepositoryProvider)
-  //             .addImageObject(newBoard, object, file);
-  //         break;
-  //       case ObjectType.text:
-  //         ref.read(supabaseRepositoryProvider).addTextObject(newBoard, object);
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   } catch (e) {
-  //     print('Error updating board: $e');
-  //   }
-  // }
 
   void insertSelectedObject() {
     if (state.selectedObject == null) {
