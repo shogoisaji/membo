@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/board_settings_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/models/view_model_state/edit_page_state.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/supabase/db/supabase_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,23 +12,53 @@ import 'package:uuid/uuid.dart';
 
 part 'edit_page_view_model.g.dart';
 
-class EditPageState {
-  ObjectModel? selectedObject;
-  BoardModel? boardModel;
-  String? selectedBoardId;
-  double viewScale;
-  double viewTranslateX;
-  double viewTranslateY;
+// class EditPageState {
+//   ObjectModel? selectedObject;
+//   BoardModel? boardModel;
+//   String? selectedBoardId;
+//   double viewScale;
+//   double viewTranslateX;
+//   double viewTranslateY;
+//   XFile? selectedImageFile;
+//   bool showTextInput;
+//   bool showInputMenu;
 
-  EditPageState({
-    this.selectedObject,
-    this.boardModel,
-    this.selectedBoardId,
-    this.viewScale = 1.0,
-    this.viewTranslateX = 0.0,
-    this.viewTranslateY = 0.0,
-  });
-}
+//   EditPageState({
+//     this.selectedObject,
+//     this.boardModel,
+//     this.selectedBoardId,
+//     this.viewScale = 1.0,
+//     this.viewTranslateX = 0.0,
+//     this.viewTranslateY = 0.0,
+//     this.selectedImageFile,
+//     this.showTextInput = false,
+//     this.showInputMenu = false,
+//   });
+
+//   EditPageState copyWith({
+//     ObjectModel? selectedObject,
+//     BoardModel? boardModel,
+//     String? selectedBoardId,
+//     double? viewScale,
+//     double? viewTranslateX,
+//     double? viewTranslateY,
+//     XFile? selectedImageFile,
+//     bool? showTextInput,
+//     bool? showInputMenu,
+//   }) {
+//     return EditPageState(
+//       selectedObject: selectedObject ?? this.selectedObject,
+//       boardModel: boardModel ?? this.boardModel,
+//       selectedBoardId: selectedBoardId ?? this.selectedBoardId,
+//       viewScale: viewScale ?? this.viewScale,
+//       viewTranslateX: viewTranslateX ?? this.viewTranslateX,
+//       viewTranslateY: viewTranslateY ?? this.viewTranslateY,
+//       selectedImageFile: selectedImageFile ?? this.selectedImageFile,
+//       showTextInput: showTextInput ?? this.showTextInput,
+//       showInputMenu: showInputMenu ?? this.showInputMenu,
+//     );
+//   }
+// }
 
 @Riverpod(keepAlive: true)
 class EditPageViewModel extends _$EditPageViewModel {
@@ -35,11 +66,7 @@ class EditPageViewModel extends _$EditPageViewModel {
   EditPageState build() => EditPageState();
 
   void setSelectedBoardId(String boardId) {
-    state = EditPageState(
-      selectedObject: state.selectedObject,
-      boardModel: state.boardModel,
-      selectedBoardId: boardId,
-    );
+    state = state.copyWith(selectedBoardId: boardId);
   }
 
   Map<String, double> calcInitialTransform(
@@ -53,13 +80,6 @@ class EditPageViewModel extends _$EditPageViewModel {
       final addX = (w - board.settings.width * scale) / 2;
       final translateX = (board.settings.width - w) / 2 * scale + addX;
       final translateY = (board.settings.height - h) / 2 * scale;
-      // state = EditPageState(
-      //   selectedObject: state.selectedObject,
-      //   boardModel: state.boardModel,
-      //   viewScale: scale,
-      //   viewTranslateX: translateX,
-      //   viewTranslateY: translateY,
-      // );
       return {
         'scale': scale,
         'translateX': translateX,
@@ -71,41 +91,12 @@ class EditPageViewModel extends _$EditPageViewModel {
       final addY = (h - board.settings.height * scale) / 2;
       final translateX = (board.settings.width - w) / 2 * scale;
       final translateY = (board.settings.height - h) / 2 * scale + addY;
-      // state = EditPageState(
-      //   selectedObject: state.selectedObject,
-      //   boardModel: state.boardModel,
-      //   viewScale: scale,
-      //   viewTranslateX: translateX,
-      //   viewTranslateY: translateY,
-      // );
       return {
         'scale': scale,
         'translateX': translateX,
         'translateY': translateY,
       };
     }
-  }
-
-  Future<void> initializeLoad(double w, double h) async {
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    if (state.selectedBoardId == null) {
-      await createNewBoard();
-    } else {
-      final board = await ref
-          .read(supabaseRepositoryProvider)
-          .getBoardById(state.selectedBoardId!);
-      final transformMap = calcInitialTransform(board!, w, h);
-      state = EditPageState(
-        selectedObject: null,
-        boardModel: board,
-        viewScale: transformMap['scale'] as double,
-        viewTranslateX: transformMap['translateX'] as double,
-        viewTranslateY: transformMap['translateY'] as double,
-      );
-    }
-
-    // });
-    await Future.delayed(const Duration(seconds: 1), () {});
   }
 
   Future<void> createNewBoard() async {
@@ -126,27 +117,53 @@ class EditPageViewModel extends _$EditPageViewModel {
 
     await ref.read(supabaseRepositoryProvider).insertBoard(newBoard);
 
-    state = EditPageState(
-      selectedObject: null,
-      boardModel: newBoard,
-    );
+    state = state.copyWith(boardModel: newBoard);
+  }
+
+  Future<void> initializeLoad(double w, double h) async {
+    if (state.selectedBoardId == null) {
+      await createNewBoard();
+    } else {
+      final board = await ref
+          .read(supabaseRepositoryProvider)
+          .getBoardById(state.selectedBoardId!);
+      if (board == null) {
+        throw Exception('Board not found');
+      }
+      final transformMap = calcInitialTransform(board, w, h);
+      state = state.copyWith(
+        selectedObject: null,
+        boardModel: board,
+        viewScale: transformMap['scale'] as double,
+        viewTranslateX: transformMap['translateX'] as double,
+        viewTranslateY: transformMap['translateY'] as double,
+      );
+    }
   }
 
   void updateViewScale(double scale) {
-    state = EditPageState(
-      selectedObject: state.selectedObject,
-      boardModel: state.boardModel,
-      viewScale: scale,
-      viewTranslateX: state.viewTranslateX,
-      viewTranslateY: state.viewTranslateY,
-    );
+    state = state.copyWith(viewScale: scale);
   }
 
-  void selectObject(ObjectModel? object) {
-    state = EditPageState(
-      selectedObject: object,
-      boardModel: state.boardModel,
-    );
+  void selectObject(ObjectModel? object, XFile? file) {
+    /// select object reset
+    if (object == null) {
+      state = state.copyWith(selectedObject: null);
+
+      /// select image object
+    } else if (object.type == ObjectType.localImage) {
+      if (file == null) {
+        throw Exception('selectObject() : selectedImageFile is null');
+      }
+      state = state.copyWith(
+        selectedImageFile: file,
+        selectedObject: object,
+      );
+
+      /// select text object
+    } else if (object.type == ObjectType.text) {
+      state = state.copyWith(selectedObject: object);
+    }
   }
 
   void moveSelectedObject(Offset offset) {
@@ -155,98 +172,142 @@ class EditPageViewModel extends _$EditPageViewModel {
       positionX: state.selectedObject!.positionX + offset.dx,
       positionY: state.selectedObject!.positionY + offset.dy,
     );
-    state = EditPageState(
-      selectedObject: movedObject,
-      boardModel: state.boardModel,
-      viewScale: state.viewScale,
-      viewTranslateX: state.viewTranslateX,
-      viewTranslateY: state.viewTranslateY,
-    );
+    state = state.copyWith(selectedObject: movedObject);
   }
 
   void scaleSelectedObject(double scale) {
     if (state.selectedObject == null) return;
     final scaledObject = state.selectedObject!.copyWith(scale: scale);
-    state = EditPageState(
-      selectedObject: scaledObject,
-      boardModel: state.boardModel,
-      viewScale: state.viewScale,
-      viewTranslateX: state.viewTranslateX,
-      viewTranslateY: state.viewTranslateY,
-    );
+    state = state.copyWith(selectedObject: scaledObject);
   }
 
   void rotateSelectedObject(double angle) {
     if (state.selectedObject == null) return;
     final rotatedObject = state.selectedObject!.copyWith(angle: angle);
-    state = EditPageState(
-      selectedObject: rotatedObject,
-      boardModel: state.boardModel,
-      viewScale: state.viewScale,
-      viewTranslateX: state.viewTranslateX,
-      viewTranslateY: state.viewTranslateY,
-    );
+    state = state.copyWith(selectedObject: rotatedObject);
   }
 
   void clearSelectedObject() {
-    state = EditPageState(
-      selectedObject: null,
-      boardModel: state.boardModel,
-      viewScale: state.viewScale,
-      viewTranslateX: state.viewTranslateX,
-      viewTranslateY: state.viewTranslateY,
-    );
+    state = state.copyWith(selectedObject: null);
   }
 
   void setBoardModel(BoardModel board) {
-    state = EditPageState(
-      selectedObject: state.selectedObject,
-      boardModel: board,
-      viewScale: state.viewScale,
-      viewTranslateX: state.viewTranslateX,
-      viewTranslateY: state.viewTranslateY,
-    );
+    state = state.copyWith(boardModel: board);
   }
 
-  void addObject(ObjectModel object) {
+  // void insertObject(ObjectModel object, XFile? file) {
+  //   final board = state.boardModel;
+  //   if (board == null) {
+  //     throw Exception('Board is not set');
+  //   }
+  //   final objects = List<ObjectModel>.from(board.objects);
+  //   objects.add(object);
+  //   final newBoard = board.copyWith(objects: objects);
+
+  //   /// repository update
+  //   try {
+  //     switch (object.type) {
+  //       case ObjectType.localImage:
+  //         if (file == null) {
+  //           throw Exception('addObject():selectedImageFile is null');
+  //         }
+  //         ref
+  //             .read(supabaseRepositoryProvider)
+  //             .addImageObject(newBoard, object, file);
+  //         break;
+  //       case ObjectType.text:
+  //         ref.read(supabaseRepositoryProvider).addTextObject(newBoard, object);
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   } catch (e) {
+  //     print('Error updating board: $e');
+  //   }
+  // }
+
+  void insertSelectedObject() {
+    if (state.selectedObject == null) {
+      print('insertObject(): Object is null');
+      return;
+    }
+
     final board = state.boardModel;
     if (board == null) {
       throw Exception('Board is not set');
     }
+
     final objects = List<ObjectModel>.from(board.objects);
-    objects.add(object);
+    objects.add(state.selectedObject!);
     final newBoard = board.copyWith(objects: objects);
 
-    /// repository update
+    /// typeに合わせてrepositoryのメソッドを呼び出し、insert
     try {
-      ref.read(supabaseRepositoryProvider).updateBoard(board.boardId, newBoard);
+      switch (state.selectedObject!.type) {
+        case ObjectType.localImage:
+          if (state.selectedImageFile == null) {
+            throw Exception('addObject():selectedImageFile is null');
+          }
+          ref.read(supabaseRepositoryProvider).addImageObject(
+              newBoard, state.selectedObject!, state.selectedImageFile!);
+          break;
+        case ObjectType.text:
+          ref
+              .read(supabaseRepositoryProvider)
+              .addTextObject(newBoard, state.selectedObject!);
+          break;
+        default:
+          break;
+      }
     } catch (e) {
       print('Error updating board: $e');
     }
 
-    // state = EditPageState(
-    //   selectedObject: state.selectedObject,
-    //   boardModel: newBoard,
-    //   viewScale: state.viewScale,
-    //   viewTranslateX: state.viewTranslateX,
-    //   viewTranslateY: state.viewTranslateY,
-    // );
-  }
-
-  void addSelectedObject() {
-    if (state.selectedObject == null) return;
-    addObject(state.selectedObject!);
     clearSelectedObject();
   }
 
+  // void insertSelectedObject() {
+  //   if (state.selectedObject == null) {
+  //     print('insertSelectedImageObject():selectedObject is null');
+  //     return;
+  //   }
+  //   switch (state.selectedObject!.type) {
+  //     case ObjectType.localImage:
+  //       insertObject(state.selectedObject!, state.selectedImageFile);
+  //       break;
+  //     case ObjectType.text:
+  //       insertObject(state.selectedObject!, null);
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  //   clearSelectedObject();
+  // }
+
+  // void addSelectedObject() {
+  //   if (state.selectedObject == null) return;
+  //   insertObject(state.selectedObject!, null);
+  //   clearSelectedObject();
+  // }
+
   void clearBoardModel() {
-    state = EditPageState(
-      selectedObject: state.selectedObject,
-      boardModel: null,
-      viewScale: state.viewScale,
-      viewTranslateX: state.viewTranslateX,
-      viewTranslateY: state.viewTranslateY,
-    );
+    state = state.copyWith(boardModel: null);
+  }
+
+  void showInputMenu() {
+    state = state.copyWith(showInputMenu: true);
+  }
+
+  void hideInputMenu() {
+    state = state.copyWith(showInputMenu: false);
+  }
+
+  void showTextInput() {
+    state = state.copyWith(showTextInput: true);
+  }
+
+  void hideTextInput() {
+    state = state.copyWith(showTextInput: false);
   }
 }
 
@@ -271,7 +332,6 @@ BoardModel? boardModelState(BoardModelStateRef ref) {
       return null;
     },
     data: (d) {
-      print('----------boardModelState: $d');
       return d;
     },
   );

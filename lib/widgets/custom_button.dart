@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:membo/utils/color_convertor.dart';
+import 'package:membo/utils/color_utils.dart';
 
 class CustomButton extends HookWidget {
   final double width;

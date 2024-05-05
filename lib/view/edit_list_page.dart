@@ -142,37 +142,6 @@ class EditListPage extends ConsumerWidget {
               ),
             ),
             Align(
-              alignment: const Alignment(0, -0.3),
-              child: CustomButton(
-                width: 200,
-                height: 50,
-                color: Colors.red,
-                child:
-                    Center(child: Text('add', style: lightTextTheme.bodyLarge)),
-                onTap: () {
-                  try {
-                    final newObject = ObjectModel(
-                      objectId: const Uuid().v4(),
-                      type: ObjectType.text,
-                      positionX: Random().nextInt(1000).toDouble(),
-                      positionY: Random().nextInt(1000).toDouble(),
-                      angle: Random().nextDouble(),
-                      scale: Random().nextDouble() * 100,
-                      text: '123Hello',
-                      creatorId: '1',
-                      createdAt: DateTime.now(),
-                      bgColor: '0xFF000000',
-                    );
-                    ref
-                        .read(editPageViewModelProvider.notifier)
-                        .addObject(newObject);
-                  } catch (e) {
-                    ErrorDialog.show(context, e.toString());
-                  }
-                },
-              ),
-            ),
-            Align(
                 alignment: const Alignment(-0.53, -0.8),
                 child: Text(ref
                     .watch(editPageViewModelProvider)

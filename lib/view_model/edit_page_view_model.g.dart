@@ -20,7 +20,7 @@ final boardStreamProvider = StreamProvider<BoardModel?>.internal(
 );
 
 typedef BoardStreamRef = StreamProviderRef<BoardModel?>;
-String _$boardModelStateHash() => r'cf66a311a7cddc2d70a7199a89da2bd008f33068';
+String _$boardModelStateHash() => r'e072f9b5b6526531b8b05cd9cde3673b6b66f3f3';
 
 /// See also [boardModelState].
 @ProviderFor(boardModelState)
@@ -35,7 +35,7 @@ final boardModelStateProvider = Provider<BoardModel?>.internal(
 );
 
 typedef BoardModelStateRef = ProviderRef<BoardModel?>;
-String _$editPageViewModelHash() => r'af9a0055ec730eb6096a0df334e2c79455408ee7';
+String _$editPageViewModelHash() => r'6b4d9c7940bd6ece75789fc8b2c53246c464b726';
 
 /// See also [EditPageViewModel].
 @ProviderFor(EditPageViewModel)

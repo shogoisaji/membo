@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/supabase/storage/supabase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -21,7 +23,6 @@ class SupabaseRepository {
   Future<String?> insertBoard(BoardModel board) async {
     try {
       final object = board.toJson();
-      print('object: $object');
       final response = await _client.from('boards').insert(object);
       if (response != null) {
         throw Exception('Insert error: ${response.error.message}');
@@ -35,14 +36,41 @@ class SupabaseRepository {
     return null;
   }
 
-  Future<String?> updateBoard(String boardId, BoardModel updatedBoard) async {
+  Future<void> addImageObject(
+      BoardModel board, ObjectModel object, XFile file) async {
+    SupabaseStorage storage = SupabaseStorage(_client);
+    final fileType =
+        file.path.split('.').last == 'jpg' ? 'jpeg' : file.path.split('.').last;
+    try {
+      final publicPath = await storage.uploadXFileImage(
+          file, '${board.boardId}/${object.objectId}.$fileType');
+      final newObject = object.copyWith(
+        type: ObjectType.networkImage,
+        imageUrl: publicPath,
+      );
+      final newBoard = board.copyWith(objects: [...board.objects, newObject]);
+      updateBoard(newBoard);
+    } catch (err) {
+      throw Exception('Error uploading image: $err');
+    }
+  }
+
+  Future<void> addTextObject(
+    BoardModel board,
+    ObjectModel object,
+  ) async {
+    final newBoard = board.copyWith(objects: [...board.objects, object]);
+    updateBoard(newBoard);
+  }
+
+  Future<String?> updateBoard(BoardModel updatedBoard) async {
     try {
       final object = updatedBoard.toJson();
       print('Updating object: $object');
       final response = await _client
           .from('boards')
           .update(object)
-          .eq('boardId', boardId)
+          .eq('boardId', updatedBoard.boardId)
           .single();
 
       print('Success update board : $response');
@@ -65,7 +93,6 @@ class SupabaseRepository {
         .listen((data) {
           if (data.isNotEmpty) {
             final board = BoardModel.fromJson(data[0]);
-            print('fetch stream board---: $board');
             controller.add(board);
           }
         })
@@ -81,7 +108,6 @@ class SupabaseRepository {
       final response =
           await _client.from('boards').select().eq('boardId', id).single();
       final board = BoardModel.fromJson(response);
-      print('fetch success board: $board');
       return board;
     } catch (err) {
       // final errorString = ErrorHandler.handleError(err);
