@@ -223,7 +223,8 @@ class EditToolBar extends HookConsumerWidget {
                     Expanded(
                       child: GestureDetector(
                         onPanUpdate: (details) {
-                          scaleSelectedObject(-details.delta.dy * 0.003);
+                          final scaleDelta = -details.delta.dy * 0.003;
+                          scaleSelectedObject(scaleDelta);
                         },
                         child: Container(
                           height: double.infinity,
@@ -334,14 +335,23 @@ class ObjectWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = objectCheck();
+    final centerX =
+        object.positionX - (object.imageWidth ?? 0.0) * object.scale / 2;
+    final centerY =
+        object.positionY - (object.imageHeight ?? 0.0) * object.scale / 2;
+
     return Positioned(
-      top: object.positionY,
-      left: object.positionX,
+      top: centerY,
+      left: centerX,
       child: Transform.scale(
-        alignment: Alignment.topLeft,
+        alignment: object.type == ObjectType.text
+            ? Alignment.topLeft
+            : Alignment.center,
         scale: object.scale,
         child: Transform.rotate(
-          alignment: Alignment.center,
+          alignment: object.type == ObjectType.text
+              ? Alignment.topLeft
+              : Alignment.center,
           angle: object.angle, // angle: object.angle,
           child: Opacity(
             opacity: opacity,
@@ -418,11 +428,75 @@ class ObjectWidget extends StatelessWidget {
 
   Widget _textWidget() {
     final text = object.text ?? '???';
-    return Text(text,
-        style: TextStyle(
-          color: Color(int.parse(object.bgColor)),
-          fontSize: 100,
-        ));
+    final textStyle = TextStyle(
+      color: Color(int.parse(object.bgColor)),
+      fontSize: 100,
+    );
+
+    Size textSize({
+      required String text,
+      required TextStyle textStyle,
+      required double maxWidth,
+    }) {
+      final TextPainter textPainter = TextPainter(
+        text: TextSpan(
+          text: text,
+          style: textStyle,
+        ),
+        textAlign: TextAlign.start,
+        textDirection: TextDirection.ltr,
+      )..layout(
+          minWidth: 0,
+          maxWidth: maxWidth,
+        );
+      return textPainter.size;
+    }
+
+    final size = textSize(text: text, textStyle: textStyle, maxWidth: 1000);
+
+    return CustomPaint(
+      painter: TextObjectPainter(
+          text: text,
+          textStyle: TextStyle(
+            fontSize: 100,
+            color: Color(int.parse(object.bgColor)),
+          )),
+      size: Size(size.width, size.height),
+    );
+  }
+}
+
+class TextObjectPainter extends CustomPainter {
+  final String text;
+  final TextStyle textStyle;
+
+  TextObjectPainter({required this.text, required this.textStyle});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final textSpan = TextSpan(
+      text: text,
+      style: textStyle,
+    );
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout(
+      minWidth: 0,
+      maxWidth: size.width,
+    );
+
+    final xCenter = -textPainter.width / 2;
+    final yCenter = -textPainter.height / 2;
+    final offset = Offset(xCenter, yCenter);
+    textPainter.paint(canvas, offset);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }
 
@@ -568,10 +642,8 @@ class CustomFloatingButton extends HookConsumerWidget {
                                     ObjectModel(
                                         objectId: const Uuid().v4(),
                                         type: ObjectType.localImage,
-                                        positionX: initialPosition().dx -
-                                            imageSize.width / 2,
-                                        positionY: initialPosition().dy -
-                                            imageSize.height / 2,
+                                        positionX: initialPosition().dx,
+                                        positionY: initialPosition().dy,
                                         angle: 0.0,
                                         scale: 1.0,
                                         imageUrl: image.path,
