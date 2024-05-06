@@ -1,0 +1,352 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'edit_page_state.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+
+/// @nodoc
+mixin _$EditPageState {
+  ObjectModel? get selectedObject => throw _privateConstructorUsedError;
+  BoardModel? get boardModel => throw _privateConstructorUsedError;
+  String? get selectedBoardId => throw _privateConstructorUsedError;
+  double get viewScale => throw _privateConstructorUsedError;
+  double get viewTranslateX => throw _privateConstructorUsedError;
+  double get viewTranslateY => throw _privateConstructorUsedError;
+  XFile? get selectedImageFile => throw _privateConstructorUsedError;
+  bool get showTextInput => throw _privateConstructorUsedError;
+  bool get showInputMenu => throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $EditPageStateCopyWith<EditPageState> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EditPageStateCopyWith<$Res> {
+  factory $EditPageStateCopyWith(
+          EditPageState value, $Res Function(EditPageState) then) =
+      _$EditPageStateCopyWithImpl<$Res, EditPageState>;
+  @useResult
+  $Res call(
+      {ObjectModel? selectedObject,
+      BoardModel? boardModel,
+      String? selectedBoardId,
+      double viewScale,
+      double viewTranslateX,
+      double viewTranslateY,
+      XFile? selectedImageFile,
+      bool showTextInput,
+      bool showInputMenu});
+
+  $ObjectModelCopyWith<$Res>? get selectedObject;
+  $BoardModelCopyWith<$Res>? get boardModel;
+}
+
+/// @nodoc
+class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
+    implements $EditPageStateCopyWith<$Res> {
+  _$EditPageStateCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? selectedObject = freezed,
+    Object? boardModel = freezed,
+    Object? selectedBoardId = freezed,
+    Object? viewScale = null,
+    Object? viewTranslateX = null,
+    Object? viewTranslateY = null,
+    Object? selectedImageFile = freezed,
+    Object? showTextInput = null,
+    Object? showInputMenu = null,
+  }) {
+    return _then(_value.copyWith(
+      selectedObject: freezed == selectedObject
+          ? _value.selectedObject
+          : selectedObject // ignore: cast_nullable_to_non_nullable
+              as ObjectModel?,
+      boardModel: freezed == boardModel
+          ? _value.boardModel
+          : boardModel // ignore: cast_nullable_to_non_nullable
+              as BoardModel?,
+      selectedBoardId: freezed == selectedBoardId
+          ? _value.selectedBoardId
+          : selectedBoardId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      viewScale: null == viewScale
+          ? _value.viewScale
+          : viewScale // ignore: cast_nullable_to_non_nullable
+              as double,
+      viewTranslateX: null == viewTranslateX
+          ? _value.viewTranslateX
+          : viewTranslateX // ignore: cast_nullable_to_non_nullable
+              as double,
+      viewTranslateY: null == viewTranslateY
+          ? _value.viewTranslateY
+          : viewTranslateY // ignore: cast_nullable_to_non_nullable
+              as double,
+      selectedImageFile: freezed == selectedImageFile
+          ? _value.selectedImageFile
+          : selectedImageFile // ignore: cast_nullable_to_non_nullable
+              as XFile?,
+      showTextInput: null == showTextInput
+          ? _value.showTextInput
+          : showTextInput // ignore: cast_nullable_to_non_nullable
+              as bool,
+      showInputMenu: null == showInputMenu
+          ? _value.showInputMenu
+          : showInputMenu // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ObjectModelCopyWith<$Res>? get selectedObject {
+    if (_value.selectedObject == null) {
+      return null;
+    }
+
+    return $ObjectModelCopyWith<$Res>(_value.selectedObject!, (value) {
+      return _then(_value.copyWith(selectedObject: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $BoardModelCopyWith<$Res>? get boardModel {
+    if (_value.boardModel == null) {
+      return null;
+    }
+
+    return $BoardModelCopyWith<$Res>(_value.boardModel!, (value) {
+      return _then(_value.copyWith(boardModel: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$EditPageStateImplCopyWith<$Res>
+    implements $EditPageStateCopyWith<$Res> {
+  factory _$$EditPageStateImplCopyWith(
+          _$EditPageStateImpl value, $Res Function(_$EditPageStateImpl) then) =
+      __$$EditPageStateImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {ObjectModel? selectedObject,
+      BoardModel? boardModel,
+      String? selectedBoardId,
+      double viewScale,
+      double viewTranslateX,
+      double viewTranslateY,
+      XFile? selectedImageFile,
+      bool showTextInput,
+      bool showInputMenu});
+
+  @override
+  $ObjectModelCopyWith<$Res>? get selectedObject;
+  @override
+  $BoardModelCopyWith<$Res>? get boardModel;
+}
+
+/// @nodoc
+class __$$EditPageStateImplCopyWithImpl<$Res>
+    extends _$EditPageStateCopyWithImpl<$Res, _$EditPageStateImpl>
+    implements _$$EditPageStateImplCopyWith<$Res> {
+  __$$EditPageStateImplCopyWithImpl(
+      _$EditPageStateImpl _value, $Res Function(_$EditPageStateImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? selectedObject = freezed,
+    Object? boardModel = freezed,
+    Object? selectedBoardId = freezed,
+    Object? viewScale = null,
+    Object? viewTranslateX = null,
+    Object? viewTranslateY = null,
+    Object? selectedImageFile = freezed,
+    Object? showTextInput = null,
+    Object? showInputMenu = null,
+  }) {
+    return _then(_$EditPageStateImpl(
+      selectedObject: freezed == selectedObject
+          ? _value.selectedObject
+          : selectedObject // ignore: cast_nullable_to_non_nullable
+              as ObjectModel?,
+      boardModel: freezed == boardModel
+          ? _value.boardModel
+          : boardModel // ignore: cast_nullable_to_non_nullable
+              as BoardModel?,
+      selectedBoardId: freezed == selectedBoardId
+          ? _value.selectedBoardId
+          : selectedBoardId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      viewScale: null == viewScale
+          ? _value.viewScale
+          : viewScale // ignore: cast_nullable_to_non_nullable
+              as double,
+      viewTranslateX: null == viewTranslateX
+          ? _value.viewTranslateX
+          : viewTranslateX // ignore: cast_nullable_to_non_nullable
+              as double,
+      viewTranslateY: null == viewTranslateY
+          ? _value.viewTranslateY
+          : viewTranslateY // ignore: cast_nullable_to_non_nullable
+              as double,
+      selectedImageFile: freezed == selectedImageFile
+          ? _value.selectedImageFile
+          : selectedImageFile // ignore: cast_nullable_to_non_nullable
+              as XFile?,
+      showTextInput: null == showTextInput
+          ? _value.showTextInput
+          : showTextInput // ignore: cast_nullable_to_non_nullable
+              as bool,
+      showInputMenu: null == showInputMenu
+          ? _value.showInputMenu
+          : showInputMenu // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$EditPageStateImpl implements _EditPageState {
+  _$EditPageStateImpl(
+      {this.selectedObject,
+      this.boardModel,
+      this.selectedBoardId,
+      this.viewScale = 1.0,
+      this.viewTranslateX = 0.0,
+      this.viewTranslateY = 0.0,
+      this.selectedImageFile,
+      this.showTextInput = false,
+      this.showInputMenu = false});
+
+  @override
+  final ObjectModel? selectedObject;
+  @override
+  final BoardModel? boardModel;
+  @override
+  final String? selectedBoardId;
+  @override
+  @JsonKey()
+  final double viewScale;
+  @override
+  @JsonKey()
+  final double viewTranslateX;
+  @override
+  @JsonKey()
+  final double viewTranslateY;
+  @override
+  final XFile? selectedImageFile;
+  @override
+  @JsonKey()
+  final bool showTextInput;
+  @override
+  @JsonKey()
+  final bool showInputMenu;
+
+  @override
+  String toString() {
+    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, selectedBoardId: $selectedBoardId, viewScale: $viewScale, viewTranslateX: $viewTranslateX, viewTranslateY: $viewTranslateY, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EditPageStateImpl &&
+            (identical(other.selectedObject, selectedObject) ||
+                other.selectedObject == selectedObject) &&
+            (identical(other.boardModel, boardModel) ||
+                other.boardModel == boardModel) &&
+            (identical(other.selectedBoardId, selectedBoardId) ||
+                other.selectedBoardId == selectedBoardId) &&
+            (identical(other.viewScale, viewScale) ||
+                other.viewScale == viewScale) &&
+            (identical(other.viewTranslateX, viewTranslateX) ||
+                other.viewTranslateX == viewTranslateX) &&
+            (identical(other.viewTranslateY, viewTranslateY) ||
+                other.viewTranslateY == viewTranslateY) &&
+            (identical(other.selectedImageFile, selectedImageFile) ||
+                other.selectedImageFile == selectedImageFile) &&
+            (identical(other.showTextInput, showTextInput) ||
+                other.showTextInput == showTextInput) &&
+            (identical(other.showInputMenu, showInputMenu) ||
+                other.showInputMenu == showInputMenu));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      selectedObject,
+      boardModel,
+      selectedBoardId,
+      viewScale,
+      viewTranslateX,
+      viewTranslateY,
+      selectedImageFile,
+      showTextInput,
+      showInputMenu);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EditPageStateImplCopyWith<_$EditPageStateImpl> get copyWith =>
+      __$$EditPageStateImplCopyWithImpl<_$EditPageStateImpl>(this, _$identity);
+}
+
+abstract class _EditPageState implements EditPageState {
+  factory _EditPageState(
+      {final ObjectModel? selectedObject,
+      final BoardModel? boardModel,
+      final String? selectedBoardId,
+      final double viewScale,
+      final double viewTranslateX,
+      final double viewTranslateY,
+      final XFile? selectedImageFile,
+      final bool showTextInput,
+      final bool showInputMenu}) = _$EditPageStateImpl;
+
+  @override
+  ObjectModel? get selectedObject;
+  @override
+  BoardModel? get boardModel;
+  @override
+  String? get selectedBoardId;
+  @override
+  double get viewScale;
+  @override
+  double get viewTranslateX;
+  @override
+  double get viewTranslateY;
+  @override
+  XFile? get selectedImageFile;
+  @override
+  bool get showTextInput;
+  @override
+  bool get showInputMenu;
+  @override
+  @JsonKey(ignore: true)
+  _$$EditPageStateImplCopyWith<_$EditPageStateImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:image_picker/image_picker.dart';
+import 'package:membo/models/board/board_model.dart';
+import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/supabase/storage/supabase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,123 +20,99 @@ class SupabaseRepository {
 
   final SupabaseClient _client;
 
-//   Future<String?> insertReservation(Reservation reservation) async {
-//     if (reservation.userId == null && reservation.userName == null && reservation.email == null) {
-//       throw Exception('not login user & userName, email is null');
-//     }
-//     try {
-//       final response = await _client.from('reservation').insert([
-//         reservation.userId != null
-//             ? {
-//                 'reservation_date': reservation.reservationDate.toIso8601String(),
-//                 'user_id': reservation.userId,
-//               }
-//             : {
-//                 'reservation_date': reservation.reservationDate.toIso8601String(),
-//                 'user_name': reservation.userName,
-//                 'phone_number': reservation.phoneNumber,
-//                 'email': reservation.email,
-//               }
-//       ]);
-//       if (response != null) {
-//         throw Exception('Insert error: ${response.error.message}');
-//       }
-//       print('success insert reservation');
-//       return null;
-//     } catch (err) {
-//       // return ErrorHandler.handleError(err);
-//     }
-//     return null;
-//   }
+  Future<String?> insertBoard(BoardModel board) async {
+    try {
+      final object = board.toJson();
+      final response = await _client.from('boards').insert(object);
+      if (response != null) {
+        throw Exception('Insert error: ${response.error.message}');
+      }
+      print('success insert board');
+      return null;
+    } catch (err) {
+      // return ErrorHandler.handleError(err);
+      print('error insert board: $err');
+    }
+    return null;
+  }
 
-//   Future<Reservation?> getReservationById(int id) async {
-//     try {
-//       final response = await _client.from('reservation').select().eq('id', id).single();
-//       print('get reservation by id: $response');
-//       return Reservation.fromJson(response);
-//     } catch (err) {
-//       // final errorString = ErrorHandler.handleError(err);
-//       return null;
-//     }
-//   }
+  Future<void> addImageObject(
+      BoardModel board, ObjectModel object, XFile file) async {
+    SupabaseStorage storage = SupabaseStorage(_client);
+    final fileType =
+        file.path.split('.').last == 'jpg' ? 'jpeg' : file.path.split('.').last;
+    try {
+      final publicPath = await storage.uploadXFileImage(
+          file, '${board.boardId}/${object.objectId}.$fileType');
+      final newObject = object.copyWith(
+        type: ObjectType.networkImage,
+        imageUrl: publicPath,
+      );
+      final newBoard = board.copyWith(objects: [...board.objects, newObject]);
+      updateBoard(newBoard);
+    } catch (err) {
+      throw Exception('Error uploading image: $err');
+    }
+  }
 
-//   Future<int> fetchNextReservationId() async {
-//     try {
-//       final response = await _client.from('reservation').select('id').order('id', ascending: false).limit(1);
-//       return response[0]['id'] + 1;
-//     } catch (err) {
-//       // final errorString = ErrorHandler.handleError(err);
-//       // if (err.toString().contains("XMLHttpRequest error.")) {
-//       //   throw errorString;
-//       // }
-//       // throw errorString;
-//     }
-//   }
+  Future<void> addTextObject(
+    BoardModel board,
+    ObjectModel object,
+  ) async {
+    final newBoard = board.copyWith(objects: [...board.objects, object]);
+    updateBoard(newBoard);
+  }
 
-//   // Stream<List<Reservation>?> reservationListStream() {
-//   //   return _client
-//   //       .from('reservation')
-//   //       .stream(primaryKey: ['id'])
-//   //       .map((maps) => maps.map((map) => Reservation.fromJson(map)).toList())
-//   //       .handleError((_) => []);
-//   // }
-//   Stream<List<Reservation>?> reservationListStream() {
-//     final StreamController<List<Reservation>?> controller = StreamController();
-//     _client.from('reservation').stream(primaryKey: ['id']).listen((maps) {
-//       final reservations = maps.map((map) => Reservation.fromJson(map)).toList();
-//       controller.add(reservations);
-//     }).onError((error) {
-//       controller.addError(error);
-//     });
+  Future<String?> updateBoard(BoardModel updatedBoard) async {
+    try {
+      final object = updatedBoard.toJson();
+      print('Updating object: $object');
+      final response = await _client
+          .from('boards')
+          .update(object)
+          .eq('boardId', updatedBoard.boardId)
+          .single();
 
-//     return controller.stream;
-//   }
+      print('Success update board : $response');
+      return null;
+    } catch (err) {
+      print('Error updating board: $err');
+      // return ErrorHandler.handleError(err);
+    }
+    return null;
+  }
 
-//   Future<List<Reservation>> getReservationListAll() async {
-//     try {
-//       final response = await _client.from('reservation').select();
-//       final List<Reservation> reservationList = [];
-//       for (final reservation in response) {
-//         reservationList.add(Reservation.fromJson(reservation));
-//       }
-//       return reservationList;
-//     } catch (err) {
-//       // final errorString = ErrorHandler.handleError(err);
-//       // if (err.toString().contains("XMLHttpRequest error.")) {
-//       //   throw errorString;
-//       // }
-//       // throw errorString;
-//     }
-//   }
+  Stream<BoardModel?> boardStream(String boardId) {
+    final StreamController<BoardModel?> controller =
+        StreamController<BoardModel?>();
 
-// // dateの予約を取得
-//   // Future<List<Reservation>?> getReservationList(DateTime date) async {
-//   //   try {
-//   //     DateTime dateOnly = DateTime(date.year, date.month, date.day);
-//   //     final List<Reservation> reservationList = [];
-//   //     final response = await _client.from('reservation').select();
-//   //     for (final reservation in response) {
-//   //       final DateTime dbDate = DateTime.parse(reservation['reservation_date']);
-//   //       final DateTime convertDate = DateTime(dbDate.year, dbDate.month, dbDate.day);
-//   //       if (convertDate == dateOnly) {
-//   //         reservationList.add(Reservation.fromJson(reservation));
-//   //       }
-//   //     }
-//   //     return reservationList;
-//   //   } catch (err) {
-//   //     throw err.toString();
-//   //   }
-//   // }
+    _client
+        .from('boards')
+        .stream(primaryKey: ['boardId'])
+        .eq('boardId', boardId)
+        .listen((data) {
+          if (data.isNotEmpty) {
+            final board = BoardModel.fromJson(data[0]);
+            controller.add(board);
+          }
+        })
+        .onError((error) {
+          controller.addError(error);
+        });
 
-//   Future<String?> deleteReservationDate(int id) async {
-//     try {
-//       final response = await _client.from('reservation').upsert({'reservation_date': ''});
+    return controller.stream;
+  }
 
-//       print('success delete reservation date : $response');
-//       return null;
-//     } catch (err) {
-//       // return ErrorHandler.handleError(err);
-//     }
-//     return null;
-//   }
+  Future<BoardModel?> getBoardById(String id) async {
+    try {
+      final response =
+          await _client.from('boards').select().eq('boardId', id).single();
+      final board = BoardModel.fromJson(response);
+      return board;
+    } catch (err) {
+      // final errorString = ErrorHandler.handleError(err);
+      print('error get board by id: $err');
+      return null;
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:membo/settings/text_theme.dart';
 
 class ConnectPage extends StatelessWidget {
   const ConnectPage({super.key});
@@ -6,11 +7,12 @@ class ConnectPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Connect Page'),
+        backgroundColor: Colors.transparent,
       ),
-      body: const Center(
-        child: Text('Connect Page'),
+      body: Center(
+        child: Text('Connect Page', style: lightTextTheme.titleLarge),
       ),
     );
   }

@@ -133,7 +133,7 @@ class _$BoardSettingsModelImpl implements _BoardSettingsModel {
   const _$BoardSettingsModelImpl(
       {this.height = defaultHeight,
       this.width = defaultWidth,
-      this.bgColor = '#ffffff',
+      this.bgColor = '0xffffffff',
       this.isPublished = false});
 
   factory _$BoardSettingsModelImpl.fromJson(Map<String, dynamic> json) =>

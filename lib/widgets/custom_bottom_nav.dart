@@ -3,11 +3,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:membo/gen/assets.gen.dart';
+import 'package:membo/settings/color.dart';
+import 'package:membo/state/navigation_state.dart';
 
+/// TODO:refactoring
 const navItems = [
   {"icon": Icons.home, "route": "/"},
-  {"icon": Icons.edit, "route": "/edit"},
+  {"icon": Icons.edit, "route": "/edit-list"},
   {"icon": Icons.commute, "route": "/connect"},
   {"icon": Icons.settings, "route": "/settings"},
 ];
@@ -17,54 +19,94 @@ class CustomBottomNav extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentRoute = useState<String>('/');
+    final navState = ref.watch(bottomNavigationStateProvider);
+    final currentRoute = navState.currentRoute;
     final w = MediaQuery.sizeOf(context).width;
+    final navSize = Size(w, 60);
 
-    void updateCurrentRoute() {
-      final goRouter = GoRouter.of(context);
-      final RouteMatchList matchList =
-          goRouter.routerDelegate.currentConfiguration;
-      currentRoute.value = matchList.uri.toString();
-      print('currentRoute: ${matchList.uri}');
+    /// Listen to route & change the current route
+    void routeListener() {
+      final currentRoute =
+          GoRouter.of(context).routerDelegate.currentConfiguration;
+      print('Current route: ${currentRoute.uri}');
+      ref
+          .read(bottomNavigationStateProvider.notifier)
+          .setRoute(currentRoute.uri.toString());
     }
 
-    return Container(
-      width: w,
-      height: 60,
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 3,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: navItems
-            .map((item) => GestureDetector(
-                onTap: () {
-                  context.go(item['route'] as String);
-                  updateCurrentRoute();
-                },
-                child:
-                    // ItemIcon(
-                    //   asset: Assets.lotties.hello,
-                    //   isMove: currentRoute.value == item['route'] as String,
-                    // )
-                    Icon(
-                  item['icon'] as IconData,
-                  color: currentRoute.value == item['route']
-                      ? Colors.blue
-                      : Colors.grey,
-                )))
-            .toList(),
-      ),
-    );
+    useEffect(() {
+      GoRouter.of(context).routerDelegate.addListener(routeListener);
+      return () {
+        GoRouter.of(context).routerDelegate.removeListener(routeListener);
+      };
+    }, []);
+
+    return navState.visible
+        ? Container(
+            width: navSize.width,
+            height: navSize.height,
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: MyColor.greenLight,
+              border: Border.all(width: 3, color: MyColor.greenDark),
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 4,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: navItems
+                  .map((item) => GestureDetector(
+                      onTap: () {
+                        context.go(item['route'] as String);
+                      },
+                      child:
+                          // ItemIcon(
+                          //   asset: Assets.lotties.hello,
+                          //   isMove: currentRoute.value == item['route'] as String,
+                          // )
+                          Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          // color: currentRoute == item['route']
+                          //     ? Colors.black.withOpacity(0.01)
+                          //     : Colors.transparent,
+                          shape: BoxShape.circle,
+                          // border: Border.all(
+                          //   width: 1,
+                          //   color: currentRoute == item['route']
+                          //       ? Colors.grey.withOpacity(0.3)
+                          //       : Colors.transparent,
+                          // ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: currentRoute == item['route']
+                                  ? Colors.black.withOpacity(0.05)
+                                  : Colors.transparent,
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                              // offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          item['icon'] as IconData,
+                          color: currentRoute == item['route']
+                              ? MyColor.pink
+                              : MyColor.greenSuperLight,
+                          size: 36,
+                        ),
+                      )))
+                  .toList(),
+            ),
+          )
+        : const SizedBox.shrink();
   }
 }
 

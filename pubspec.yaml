@@ -25,6 +25,10 @@ dependencies:
   lottie:
   sign_in_with_apple:
   crypto:
+  uuid:
+  flutter_joystick:
+  cached_network_image:
+  flutter_colorpicker:
 
   cupertino_icons: ^1.0.6
 
@@ -43,6 +47,8 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/images/
+    - assets/svg/
     - assets/images/icons/
     - assets/lotties/
     # - assets/images/icons/google_official.png

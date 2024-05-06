@@ -28,9 +28,11 @@ mixin _$ObjectModel {
   double get scale => throw _privateConstructorUsedError;
   String get bgColor => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
+  double? get imageWidth => throw _privateConstructorUsedError;
+  double? get imageHeight => throw _privateConstructorUsedError;
   String? get text => throw _privateConstructorUsedError;
   int? get stampId => throw _privateConstructorUsedError;
-  String get createrId => throw _privateConstructorUsedError;
+  String get creatorId => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,9 +56,11 @@ abstract class $ObjectModelCopyWith<$Res> {
       double scale,
       String bgColor,
       String? imageUrl,
+      double? imageWidth,
+      double? imageHeight,
       String? text,
       int? stampId,
-      String createrId,
+      String creatorId,
       DateTime createdAt});
 }
 
@@ -81,9 +85,11 @@ class _$ObjectModelCopyWithImpl<$Res, $Val extends ObjectModel>
     Object? scale = null,
     Object? bgColor = null,
     Object? imageUrl = freezed,
+    Object? imageWidth = freezed,
+    Object? imageHeight = freezed,
     Object? text = freezed,
     Object? stampId = freezed,
-    Object? createrId = null,
+    Object? creatorId = null,
     Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
@@ -119,6 +125,14 @@ class _$ObjectModelCopyWithImpl<$Res, $Val extends ObjectModel>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageWidth: freezed == imageWidth
+          ? _value.imageWidth
+          : imageWidth // ignore: cast_nullable_to_non_nullable
+              as double?,
+      imageHeight: freezed == imageHeight
+          ? _value.imageHeight
+          : imageHeight // ignore: cast_nullable_to_non_nullable
+              as double?,
       text: freezed == text
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
@@ -127,9 +141,9 @@ class _$ObjectModelCopyWithImpl<$Res, $Val extends ObjectModel>
           ? _value.stampId
           : stampId // ignore: cast_nullable_to_non_nullable
               as int?,
-      createrId: null == createrId
-          ? _value.createrId
-          : createrId // ignore: cast_nullable_to_non_nullable
+      creatorId: null == creatorId
+          ? _value.creatorId
+          : creatorId // ignore: cast_nullable_to_non_nullable
               as String,
       createdAt: null == createdAt
           ? _value.createdAt
@@ -156,9 +170,11 @@ abstract class _$$ObjectModelImplCopyWith<$Res>
       double scale,
       String bgColor,
       String? imageUrl,
+      double? imageWidth,
+      double? imageHeight,
       String? text,
       int? stampId,
-      String createrId,
+      String creatorId,
       DateTime createdAt});
 }
 
@@ -181,9 +197,11 @@ class __$$ObjectModelImplCopyWithImpl<$Res>
     Object? scale = null,
     Object? bgColor = null,
     Object? imageUrl = freezed,
+    Object? imageWidth = freezed,
+    Object? imageHeight = freezed,
     Object? text = freezed,
     Object? stampId = freezed,
-    Object? createrId = null,
+    Object? creatorId = null,
     Object? createdAt = null,
   }) {
     return _then(_$ObjectModelImpl(
@@ -219,6 +237,14 @@ class __$$ObjectModelImplCopyWithImpl<$Res>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageWidth: freezed == imageWidth
+          ? _value.imageWidth
+          : imageWidth // ignore: cast_nullable_to_non_nullable
+              as double?,
+      imageHeight: freezed == imageHeight
+          ? _value.imageHeight
+          : imageHeight // ignore: cast_nullable_to_non_nullable
+              as double?,
       text: freezed == text
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
@@ -227,9 +253,9 @@ class __$$ObjectModelImplCopyWithImpl<$Res>
           ? _value.stampId
           : stampId // ignore: cast_nullable_to_non_nullable
               as int?,
-      createrId: null == createrId
-          ? _value.createrId
-          : createrId // ignore: cast_nullable_to_non_nullable
+      creatorId: null == creatorId
+          ? _value.creatorId
+          : creatorId // ignore: cast_nullable_to_non_nullable
               as String,
       createdAt: null == createdAt
           ? _value.createdAt
@@ -251,9 +277,11 @@ class _$ObjectModelImpl implements _ObjectModel {
       required this.scale,
       required this.bgColor,
       this.imageUrl,
+      this.imageWidth,
+      this.imageHeight,
       this.text,
       this.stampId,
-      required this.createrId,
+      required this.creatorId,
       required this.createdAt});
 
   factory _$ObjectModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -276,17 +304,21 @@ class _$ObjectModelImpl implements _ObjectModel {
   @override
   final String? imageUrl;
   @override
+  final double? imageWidth;
+  @override
+  final double? imageHeight;
+  @override
   final String? text;
   @override
   final int? stampId;
   @override
-  final String createrId;
+  final String creatorId;
   @override
   final DateTime createdAt;
 
   @override
   String toString() {
-    return 'ObjectModel(objectId: $objectId, type: $type, positionX: $positionX, positionY: $positionY, angle: $angle, scale: $scale, bgColor: $bgColor, imageUrl: $imageUrl, text: $text, stampId: $stampId, createrId: $createrId, createdAt: $createdAt)';
+    return 'ObjectModel(objectId: $objectId, type: $type, positionX: $positionX, positionY: $positionY, angle: $angle, scale: $scale, bgColor: $bgColor, imageUrl: $imageUrl, imageWidth: $imageWidth, imageHeight: $imageHeight, text: $text, stampId: $stampId, creatorId: $creatorId, createdAt: $createdAt)';
   }
 
   @override
@@ -306,10 +338,14 @@ class _$ObjectModelImpl implements _ObjectModel {
             (identical(other.bgColor, bgColor) || other.bgColor == bgColor) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
+            (identical(other.imageWidth, imageWidth) ||
+                other.imageWidth == imageWidth) &&
+            (identical(other.imageHeight, imageHeight) ||
+                other.imageHeight == imageHeight) &&
             (identical(other.text, text) || other.text == text) &&
             (identical(other.stampId, stampId) || other.stampId == stampId) &&
-            (identical(other.createrId, createrId) ||
-                other.createrId == createrId) &&
+            (identical(other.creatorId, creatorId) ||
+                other.creatorId == creatorId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -326,9 +362,11 @@ class _$ObjectModelImpl implements _ObjectModel {
       scale,
       bgColor,
       imageUrl,
+      imageWidth,
+      imageHeight,
       text,
       stampId,
-      createrId,
+      creatorId,
       createdAt);
 
   @JsonKey(ignore: true)
@@ -355,9 +393,11 @@ abstract class _ObjectModel implements ObjectModel {
       required final double scale,
       required final String bgColor,
       final String? imageUrl,
+      final double? imageWidth,
+      final double? imageHeight,
       final String? text,
       final int? stampId,
-      required final String createrId,
+      required final String creatorId,
       required final DateTime createdAt}) = _$ObjectModelImpl;
 
   factory _ObjectModel.fromJson(Map<String, dynamic> json) =
@@ -380,11 +420,15 @@ abstract class _ObjectModel implements ObjectModel {
   @override
   String? get imageUrl;
   @override
+  double? get imageWidth;
+  @override
+  double? get imageHeight;
+  @override
   String? get text;
   @override
   int? get stampId;
   @override
-  String get createrId;
+  String get creatorId;
   @override
   DateTime get createdAt;
   @override

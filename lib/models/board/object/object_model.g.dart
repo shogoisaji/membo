@@ -16,9 +16,11 @@ _$ObjectModelImpl _$$ObjectModelImplFromJson(Map<String, dynamic> json) =>
       scale: (json['scale'] as num).toDouble(),
       bgColor: json['bgColor'] as String,
       imageUrl: json['imageUrl'] as String?,
+      imageWidth: (json['imageWidth'] as num?)?.toDouble(),
+      imageHeight: (json['imageHeight'] as num?)?.toDouble(),
       text: json['text'] as String?,
       stampId: json['stampId'] as int?,
-      createrId: json['createrId'] as String,
+      creatorId: json['creatorId'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
@@ -32,14 +34,17 @@ Map<String, dynamic> _$$ObjectModelImplToJson(_$ObjectModelImpl instance) =>
       'scale': instance.scale,
       'bgColor': instance.bgColor,
       'imageUrl': instance.imageUrl,
+      'imageWidth': instance.imageWidth,
+      'imageHeight': instance.imageHeight,
       'text': instance.text,
       'stampId': instance.stampId,
-      'createrId': instance.createrId,
+      'creatorId': instance.creatorId,
       'createdAt': instance.createdAt.toIso8601String(),
     };
 
 const _$ObjectTypeEnumMap = {
-  ObjectType.image: 'image',
+  ObjectType.networkImage: 'networkImage',
+  ObjectType.localImage: 'localImage',
   ObjectType.text: 'text',
   ObjectType.stamp: 'stamp',
 };
