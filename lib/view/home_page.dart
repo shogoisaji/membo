@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/state/board_view_state.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
-import 'package:membo/widgets/bg_paint.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});

@@ -1,17 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:membo/models/board/board_model.dart';
-import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/text_theme.dart';
-import 'package:membo/supabase/db/supabase_repository.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/error_dialog.dart';
-import 'package:uuid/uuid.dart';
 
 class EditListPage extends ConsumerWidget {
   const EditListPage({super.key});

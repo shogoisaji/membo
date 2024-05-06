@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -11,14 +9,12 @@ import 'package:membo/settings/text_theme.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/error_dialog.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignInPage extends HookConsumerWidget {
   const SignInPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const double maxWidth = 500;
     const Color googleColor = Color.fromARGB(255, 127, 210, 227);
     const Color appleColor = Color.fromARGB(255, 247, 189, 144);
     final shutterColor = useState<Color>(googleColor);
@@ -51,11 +47,6 @@ class SignInPage extends HookConsumerWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(user != null ? 'Loged in' : '',
-                    style: lightTextTheme.titleLarge!.copyWith(
-                      fontSize: 48,
-                    )),
-                const SizedBox(height: 30),
                 SizedBox(
                   height: 120,
                   child: Stack(

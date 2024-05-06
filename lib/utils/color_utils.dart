@@ -20,4 +20,16 @@ class ColorUtils {
             .toColor();
     return color;
   }
+
+  static String colorToString(Color color) {
+    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+  }
+
+  static String colorToHexString(Color color) {
+    return '0xff${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+  }
+
+  static Color stringColorToHex(String colorString) {
+    return Color(int.parse(colorString.replaceFirst('#', '0xff')));
+  }
 }
