@@ -21,85 +21,14 @@ class EditListPage extends ConsumerWidget {
     final h = MediaQuery.sizeOf(context).height;
     final w = MediaQuery.sizeOf(context).width;
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 254, 171, 255),
-        title: const Text('Edit List'),
+        backgroundColor: Colors.transparent,
       ),
       // backgroundColor: const Color(0xFFEE9AD2),
       body: Center(
         child: Stack(
           children: [
-            SizedBox(
-              height: h,
-              width: double.infinity,
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                ),
-                itemBuilder: (context, index) {
-                  return SvgPicture.asset(
-                    'assets/svg/texture.svg',
-                    // width: w / 2,
-                    // fit: BoxFit.fill,
-                  );
-                },
-              ),
-              // Row(
-              //   children: [
-              //     Column(
-              //       children: [
-              //         Expanded(
-              //           child: SvgPicture.asset(
-              //             'assets/svg/texture.svg',
-              //             width: w / 2,
-              //             fit: BoxFit.fill,
-              //           ),
-              //         ),
-              //         Expanded(
-              //           child: SvgPicture.asset(
-              //             'assets/svg/texture.svg',
-              //             width: w / 2,
-              //             fit: BoxFit.fill,
-              //           ),
-              //         ),
-              //         Expanded(
-              //           child: SvgPicture.asset(
-              //             'assets/svg/texture.svg',
-              //             width: w / 2,
-              //             fit: BoxFit.fill,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //     Column(
-              //       children: [
-              //         Expanded(
-              //           child: SvgPicture.asset(
-              //             'assets/svg/texture.svg',
-              //             width: w / 2,
-              //             fit: BoxFit.fill,
-              //           ),
-              //         ),
-              //         Expanded(
-              //           child: SvgPicture.asset(
-              //             'assets/svg/texture.svg',
-              //             width: w / 2,
-              //             fit: BoxFit.fill,
-              //           ),
-              //         ),
-              //         Expanded(
-              //           child: SvgPicture.asset(
-              //             'assets/svg/texture.svg',
-              //             width: w / 2,
-              //             fit: BoxFit.fill,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ],
-              // ),
-            ),
             Align(
               alignment: Alignment.center,
               child: CustomButton(
@@ -107,7 +36,7 @@ class EditListPage extends ConsumerWidget {
                 height: 50,
                 color: Colors.blue,
                 child: Center(
-                    child: Text('New Edit', style: lightTextTheme.bodyLarge)),
+                    child: Text('New Board', style: lightTextTheme.bodyLarge)),
                 onTap: () {
                   try {
                     // ref
@@ -121,13 +50,13 @@ class EditListPage extends ConsumerWidget {
               ),
             ),
             Align(
-              alignment: const Alignment(0, 0.5),
+              alignment: const Alignment(0, 0.3),
               child: CustomButton(
                 width: 200,
                 height: 50,
                 color: Colors.orange,
                 child: Center(
-                    child: Text('setId', style: lightTextTheme.bodyLarge)),
+                    child: Text('My Board', style: lightTextTheme.bodyLarge)),
                 onTap: () async {
                   try {
                     ref
@@ -141,12 +70,6 @@ class EditListPage extends ConsumerWidget {
                 },
               ),
             ),
-            Align(
-                alignment: const Alignment(-0.53, -0.8),
-                child: Text(ref
-                    .watch(editPageViewModelProvider)
-                    .selectedBoardId
-                    .toString())),
           ],
         ),
       ),
