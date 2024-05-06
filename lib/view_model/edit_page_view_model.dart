@@ -6,59 +6,11 @@ import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/models/view_model_state/edit_page_state.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/supabase/db/supabase_repository.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'edit_page_view_model.g.dart';
-
-// class EditPageState {
-//   ObjectModel? selectedObject;
-//   BoardModel? boardModel;
-//   String? selectedBoardId;
-//   double viewScale;
-//   double viewTranslateX;
-//   double viewTranslateY;
-//   XFile? selectedImageFile;
-//   bool showTextInput;
-//   bool showInputMenu;
-
-//   EditPageState({
-//     this.selectedObject,
-//     this.boardModel,
-//     this.selectedBoardId,
-//     this.viewScale = 1.0,
-//     this.viewTranslateX = 0.0,
-//     this.viewTranslateY = 0.0,
-//     this.selectedImageFile,
-//     this.showTextInput = false,
-//     this.showInputMenu = false,
-//   });
-
-//   EditPageState copyWith({
-//     ObjectModel? selectedObject,
-//     BoardModel? boardModel,
-//     String? selectedBoardId,
-//     double? viewScale,
-//     double? viewTranslateX,
-//     double? viewTranslateY,
-//     XFile? selectedImageFile,
-//     bool? showTextInput,
-//     bool? showInputMenu,
-//   }) {
-//     return EditPageState(
-//       selectedObject: selectedObject ?? this.selectedObject,
-//       boardModel: boardModel ?? this.boardModel,
-//       selectedBoardId: selectedBoardId ?? this.selectedBoardId,
-//       viewScale: viewScale ?? this.viewScale,
-//       viewTranslateX: viewTranslateX ?? this.viewTranslateX,
-//       viewTranslateY: viewTranslateY ?? this.viewTranslateY,
-//       selectedImageFile: selectedImageFile ?? this.selectedImageFile,
-//       showTextInput: showTextInput ?? this.showTextInput,
-//       showInputMenu: showInputMenu ?? this.showInputMenu,
-//     );
-//   }
-// }
 
 @Riverpod(keepAlive: true)
 class EditPageViewModel extends _$EditPageViewModel {
