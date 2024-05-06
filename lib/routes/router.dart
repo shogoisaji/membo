@@ -7,7 +7,7 @@ import 'package:membo/view/board_setting_page.dart';
 import 'package:membo/view/connect_page.dart';
 import 'package:membo/view/edit_list_page.dart';
 import 'package:membo/view/edit_page.dart';
-import 'package:membo/view/view_page.dart';
+import 'package:membo/view/board_view_page.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_bottom_nav.dart';
@@ -86,7 +86,7 @@ GoRouter router(RouterRef ref) {
         ),
         GoRoute(
           path: PagePath.boardView,
-          builder: (_, __) => const ViewPage(),
+          builder: (_, __) => const BoardViewPage(),
         ),
         GoRoute(
           path: PagePath.boardSetting,

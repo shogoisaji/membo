@@ -13,7 +13,7 @@ class NavigationState {
   });
 }
 
-const invisibleList = ['/edit'];
+const invisibleList = ['/edit', '/view'];
 
 @Riverpod(keepAlive: true)
 class BottomNavigationState extends _$BottomNavigationState {
