@@ -1,23 +1,16 @@
-import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
-import 'package:membo/utils/color_utils.dart';
 import 'package:membo/utils/image_utils.dart';
+import 'package:membo/view_model/board_settings_view_model.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
-import 'package:membo/settings/text_theme.dart';
 import 'package:membo/widgets/board_widget.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:uuid/uuid.dart';
@@ -122,16 +115,16 @@ class EditPage extends HookConsumerWidget {
                                               editPageState.selectedObject),
                                     ))),
                       Align(
-                        alignment: const Alignment(0.85, -0.95),
-                        child: Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                setInitialTransform();
-                              },
-                              child: const Text('object'),
-                            ),
-                          ],
+                        alignment: const Alignment(0.9, -0.95),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (board == null) return;
+                            ref
+                                .read(editPageViewModelProvider.notifier)
+                                .clearSelectedObject();
+                            context.push('/board-setting');
+                          },
+                          child: const Icon(Icons.settings),
                         ),
                       ),
                       const CustomFloatingButton(),

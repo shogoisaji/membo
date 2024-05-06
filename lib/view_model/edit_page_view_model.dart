@@ -189,30 +189,6 @@ class EditPageViewModel extends _$EditPageViewModel {
     clearSelectedObject();
   }
 
-  // void insertSelectedObject() {
-  //   if (state.selectedObject == null) {
-  //     print('insertSelectedImageObject():selectedObject is null');
-  //     return;
-  //   }
-  //   switch (state.selectedObject!.type) {
-  //     case ObjectType.localImage:
-  //       insertObject(state.selectedObject!, state.selectedImageFile);
-  //       break;
-  //     case ObjectType.text:
-  //       insertObject(state.selectedObject!, null);
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  //   clearSelectedObject();
-  // }
-
-  // void addSelectedObject() {
-  //   if (state.selectedObject == null) return;
-  //   insertObject(state.selectedObject!, null);
-  //   clearSelectedObject();
-  // }
-
   void clearBoardModel() {
     state = state.copyWith(boardModel: null);
   }
@@ -231,6 +207,15 @@ class EditPageViewModel extends _$EditPageViewModel {
 
   void hideTextInput() {
     state = state.copyWith(showTextInput: false);
+  }
+
+  void updateBoardSettings(BoardSettingsModel settings) {
+    if (state.boardModel == null) {
+      throw Exception('Board is not set');
+    }
+    state = state.copyWith(
+        boardModel: state.boardModel!.copyWith(settings: settings));
+    ref.read(supabaseRepositoryProvider).updateBoard(state.boardModel!);
   }
 }
 

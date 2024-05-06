@@ -21,7 +21,6 @@ class BoardViewPage extends HookConsumerWidget {
         useTransformationController();
 
     final board = ref.watch(boardModelStateProvider);
-    final viewPageState = ref.watch(boardViewPageViewModelProvider);
     final isLoading = useState(false);
 
     void setInitialTransform() {

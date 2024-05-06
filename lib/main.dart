@@ -38,6 +38,7 @@ class MyApp extends ConsumerWidget {
       theme: ThemeData(
         fontFamily: FontFamily.mPlusRounded1c,
         colorScheme: myColorTheme,
+        iconTheme: const IconThemeData(color: MyColor.greenText),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
