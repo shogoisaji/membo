@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/models/user/user_model.dart';
 import 'package:membo/supabase/storage/supabase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +21,9 @@ class SupabaseRepository {
 
   final SupabaseClient _client;
 
+  ///----------------------------------------
+  /// Board
+  ///----------------------------------------
   Future<String?> insertBoard(BoardModel board) async {
     try {
       final object = board.toJson();
@@ -59,27 +63,22 @@ class SupabaseRepository {
     BoardModel board,
     ObjectModel object,
   ) async {
-    final newBoard = board.copyWith(objects: [...board.objects, object]);
-    updateBoard(newBoard);
+    // final newBoard = board.copyWith(objects: [...board.objects, object]);
+    updateBoard(board);
   }
 
-  Future<String?> updateBoard(BoardModel updatedBoard) async {
+  Future<void> updateBoard(BoardModel updatedBoard) async {
+    final object = updatedBoard.toJson();
     try {
-      final object = updatedBoard.toJson();
-      print('Updating object: $object');
-      final response = await _client
+      await _client
           .from('boards')
           .update(object)
           .eq('boardId', updatedBoard.boardId)
           .single();
-
-      print('Success update board : $response');
-      return null;
     } catch (err) {
+      /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
       print('Error updating board: $err');
-      // return ErrorHandler.handleError(err);
     }
-    return null;
   }
 
   Stream<BoardModel?> boardStream(String boardId) {
@@ -110,9 +109,21 @@ class SupabaseRepository {
       final board = BoardModel.fromJson(response);
       return board;
     } catch (err) {
-      // final errorString = ErrorHandler.handleError(err);
-      print('error get board by id: $err');
-      return null;
+      throw Exception('Error getting board: $err');
+    }
+  }
+
+  ///----------------------------------------
+  /// User
+  ///----------------------------------------
+  Future<UserModel?> fetchUserData(String id) async {
+    try {
+      final response =
+          await _client.from('profiles').select().eq('user_id', id).single();
+      final userData = UserModel.fromJson(response);
+      return userData;
+    } catch (err) {
+      throw Exception('Error getting user data: $err');
     }
   }
 }

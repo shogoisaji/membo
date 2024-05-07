@@ -18,7 +18,7 @@ class MyColor {
   static const Color green = Color(0xFF678A74);
   static const Color greenLight = Color(0xFF81A58E);
   static const Color greenSuperLight = Color(0xFFDBEEE2);
-  static const Color greenDark = Color(0xFF577E66);
+  static const Color greenDark = Color(0xFF4D705B);
   static const Color greenText = Color(0xFF20412C);
   static const Color pink = Color(0xFFFFA0A0);
 }

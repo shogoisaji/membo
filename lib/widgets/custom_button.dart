@@ -8,6 +8,7 @@ class CustomButton extends HookWidget {
   final double height;
   final Color color;
   final Widget child;
+  final double elevation;
   final Function() onTap;
   const CustomButton(
       {super.key,
@@ -15,11 +16,12 @@ class CustomButton extends HookWidget {
       required this.height,
       required this.color,
       required this.child,
-      required this.onTap});
+      required this.onTap,
+      this.elevation = 6.0});
 
   @override
   Widget build(BuildContext context) {
-    const double elevation = 8.0;
+    // const double elevation = 8.0;
 
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 200),

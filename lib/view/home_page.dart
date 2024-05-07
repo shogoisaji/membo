@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/state/board_view_state.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/widgets/bg_paint.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -14,9 +15,8 @@ class HomePage extends HookConsumerWidget {
     final h = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: MyColor.pink,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -30,6 +30,7 @@ class HomePage extends HookConsumerWidget {
       ),
       body: Stack(
         children: [
+          BgPaint(width: w, height: h),
           Align(
               alignment: const Alignment(0, -0.2),
               child: GestureDetector(

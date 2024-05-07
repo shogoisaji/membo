@@ -118,6 +118,7 @@ class EditPageViewModel extends _$EditPageViewModel {
     } else if (object.type == ObjectType.text) {
       state = state.copyWith(selectedObject: object);
     }
+    hideInputMenu();
   }
 
   void moveSelectedObject(Offset offset) {
@@ -142,7 +143,12 @@ class EditPageViewModel extends _$EditPageViewModel {
   }
 
   void clearSelectedObject() {
-    state = state.copyWith(selectedObject: null);
+    state = state.copyWith(
+        selectedObject: null,
+        viewScale: 1.0,
+        viewTranslateX: 0.0,
+        viewTranslateY: 0.0,
+        selectedImageFile: null);
   }
 
   void setBoardModel(BoardModel board) {
@@ -160,27 +166,26 @@ class EditPageViewModel extends _$EditPageViewModel {
       throw Exception('Board is not set');
     }
 
-    final objects = List<ObjectModel>.from(board.objects);
-    objects.add(state.selectedObject!);
-    final newBoard = board.copyWith(objects: objects);
-
     /// typeに合わせてrepositoryのメソッドを呼び出し、insert
     try {
       switch (state.selectedObject!.type) {
+        /// 画像の場合
         case ObjectType.localImage:
           if (state.selectedImageFile == null) {
             throw Exception('addObject():selectedImageFile is null');
           }
           ref.read(supabaseRepositoryProvider).addImageObject(
-              newBoard, state.selectedObject!, state.selectedImageFile!);
-          break;
+              board, state.selectedObject!, state.selectedImageFile!);
+
+        /// テキストの場合
         case ObjectType.text:
+          final currentObjects = List<ObjectModel>.from(board.objects);
+          currentObjects.add(state.selectedObject!);
+          final newBoard = board.copyWith(objects: currentObjects);
           ref
               .read(supabaseRepositoryProvider)
               .addTextObject(newBoard, state.selectedObject!);
-          break;
         default:
-          break;
       }
     } catch (e) {
       print('Error updating board: $e');

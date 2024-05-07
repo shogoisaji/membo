@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/state/navigation_state.dart';
-import 'package:membo/view/board_setting_page.dart';
+import 'package:membo/view/account_page.dart';
+import 'package:membo/view/board_settings_page.dart';
 import 'package:membo/view/connect_page.dart';
 import 'package:membo/view/edit_list_page.dart';
 import 'package:membo/view/edit_page.dart';
 import 'package:membo/view/board_view_page.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
-import 'package:membo/widgets/bg_paint.dart';
+import 'package:membo/view/policy_page.dart';
 import 'package:membo/widgets/custom_bottom_nav.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:membo/view/sign_in_page.dart';
@@ -24,9 +24,38 @@ class PagePath {
   static const boardEdit = '/edit';
   static const boardEditList = '/edit-list';
   static const boardView = '/view';
-  static const boardSetting = '/board-setting';
+  static const boardSettings = '/board-settings';
   static const connect = '/connect';
   static const settings = '/settings';
+  static const account = '/account';
+  static const policy = '/policy';
+  static const publicPolicy = '/public-policy';
+}
+
+CustomTransitionPage buildPageWithDefaultTransition<T>({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    opaque: false,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+        FadeTransition(
+            opacity: Tween<double>(begin: 0.5, end: 1.0).animate(animation),
+            child: SlideTransition(
+              position: Tween<Offset>(
+                      begin: const Offset(0.03, -0.005),
+                      end: const Offset(0, 0))
+                  .animate(animation),
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
+                child: child,
+              ),
+            )),
+    transitionDuration: const Duration(milliseconds: 150),
+  );
 }
 
 @riverpod
@@ -36,73 +65,103 @@ GoRouter router(RouterRef ref) {
       path: PagePath.signIn,
       builder: (_, __) => const SignInPage(),
     ),
+    GoRoute(
+      path: PagePath.publicPolicy,
+      pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+        context: context,
+        state: state,
+        child: const PolicyPage(),
+      ),
+    ),
     ShellRoute(
       builder: (_, __, child) => Scaffold(
           backgroundColor: MyColor.green,
           body: Stack(
             fit: StackFit.expand,
             children: [
-              const BgPaint(
-                width: double.infinity,
-                height: double.infinity,
-              ),
-              SafeArea(
-                child: Stack(
-                  children: [
-                    child,
-                    const Align(
-                      alignment: Alignment.bottomCenter,
-                      child: CustomBottomNav(),
-                    ),
-                  ],
-                ),
+              Stack(
+                children: [
+                  child,
+                  const Align(
+                    alignment: Alignment.bottomCenter,
+                    child: CustomBottomNav(),
+                  ),
+                ],
               )
             ],
           )),
       routes: [
-        // GoRoute(
-        //   path: PagePath.home,
-        //   builder: (_, __) => const HomePage(),
-        // ),
-        // GoRoute(
-        //   path: PagePath.home,
-        //   builder: (context, state) => const HomePage(),
-        // ),
         GoRoute(
           path: PagePath.home,
-          builder: (context, state) => const HomePage(),
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const HomePage(),
+          ),
         ),
         GoRoute(
           path: PagePath.boardEditList,
-          builder: (context, state) => const EditListPage(),
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const EditListPage(),
+          ),
         ),
-        // GoRoute(
-        //   path: PagePath.boardEditList,
-        //   builder: (context, state) => const EditListPage(),
-        // ),
         GoRoute(
           path: PagePath.boardEdit,
-          builder: (_, __) => const EditPage(),
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const EditPage(),
+          ),
         ),
         GoRoute(
           path: PagePath.boardView,
-          builder: (_, __) => const BoardViewPage(),
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const BoardViewPage(),
+          ),
         ),
         GoRoute(
-          path: PagePath.boardSetting,
-          builder: (_, __) => const BoardSettingPage(),
+          path: PagePath.boardSettings,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const BoardSettingsPage(),
+          ),
         ),
-        // GoRoute(
-        //   path: PagePath.connect,
-        //   builder: (_, __) => const ConnectPage(),
-        // ),
         GoRoute(
           path: PagePath.connect,
-          builder: (context, state) => const ConnectPage(),
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const ConnectPage(),
+          ),
         ),
         GoRoute(
           path: PagePath.settings,
-          builder: (_, __) => const SettingsPage(),
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const SettingsPage(),
+          ),
+        ),
+        GoRoute(
+          path: PagePath.account,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const AccountPage(),
+          ),
+        ),
+        GoRoute(
+          path: PagePath.policy,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const PolicyPage(),
+          ),
         ),
       ],
     ),

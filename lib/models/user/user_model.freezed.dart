@@ -14,10 +14,6 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-UserModel _$UserModelFromJson(Map<String, dynamic> json) {
-  return _UserModel.fromJson(json);
-}
-
 /// @nodoc
 mixin _$UserModel {
   String get userId => throw _privateConstructorUsedError;
@@ -27,7 +23,6 @@ mixin _$UserModel {
   UserType get userType => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $UserModelCopyWith<UserModel> get copyWith =>
       throw _privateConstructorUsedError;
@@ -161,7 +156,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$UserModelImpl implements _UserModel {
   _$UserModelImpl(
       {required this.userId,
@@ -171,9 +166,6 @@ class _$UserModelImpl implements _UserModel {
       required this.userType,
       required this.createdAt})
       : _ownedBoardsId = ownedBoardsId;
-
-  factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$UserModelImplFromJson(json);
 
   @override
   final String userId;
@@ -217,7 +209,6 @@ class _$UserModelImpl implements _UserModel {
                 other.createdAt == createdAt));
   }
 
-  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -233,13 +224,6 @@ class _$UserModelImpl implements _UserModel {
   @pragma('vm:prefer-inline')
   _$$UserModelImplCopyWith<_$UserModelImpl> get copyWith =>
       __$$UserModelImplCopyWithImpl<_$UserModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$UserModelImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _UserModel implements UserModel {
@@ -250,9 +234,6 @@ abstract class _UserModel implements UserModel {
       final String? avatarUrl,
       required final UserType userType,
       required final DateTime createdAt}) = _$UserModelImpl;
-
-  factory _UserModel.fromJson(Map<String, dynamic> json) =
-      _$UserModelImpl.fromJson;
 
   @override
   String get userId;

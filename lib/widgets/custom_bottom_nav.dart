@@ -22,7 +22,7 @@ class CustomBottomNav extends HookConsumerWidget {
     final navState = ref.watch(bottomNavigationStateProvider);
     final currentRoute = navState.currentRoute;
     final w = MediaQuery.sizeOf(context).width;
-    final navSize = Size(w, 60);
+    final navSize = Size(w, 65);
 
     /// Listen to route & change the current route
     void routeListener() {
@@ -42,68 +42,72 @@ class CustomBottomNav extends HookConsumerWidget {
     }, []);
 
     return navState.visible
-        ? Container(
-            width: navSize.width,
-            height: navSize.height,
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: MyColor.greenLight,
-              border: Border.all(width: 3, color: MyColor.greenDark),
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 4,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: navItems
-                  .map((item) => GestureDetector(
-                      onTap: () {
-                        context.go(item['route'] as String);
-                      },
-                      child:
-                          // ItemIcon(
-                          //   asset: Assets.lotties.hello,
-                          //   isMove: currentRoute.value == item['route'] as String,
-                          // )
-                          Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          // color: currentRoute == item['route']
-                          //     ? Colors.black.withOpacity(0.01)
-                          //     : Colors.transparent,
-                          shape: BoxShape.circle,
-                          // border: Border.all(
-                          //   width: 1,
-                          //   color: currentRoute == item['route']
-                          //       ? Colors.grey.withOpacity(0.3)
-                          //       : Colors.transparent,
-                          // ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: currentRoute == item['route']
-                                  ? Colors.black.withOpacity(0.05)
-                                  : Colors.transparent,
-                              blurRadius: 6,
-                              spreadRadius: 1,
-                              // offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          item['icon'] as IconData,
-                          color: currentRoute == item['route']
-                              ? MyColor.pink
-                              : MyColor.greenSuperLight,
-                          size: 36,
-                        ),
-                      )))
-                  .toList(),
+        ? SafeArea(
+            child: Container(
+              width: navSize.width,
+              height: navSize.height,
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: MyColor.greenLight,
+                border: Border.all(width: 4, color: MyColor.greenDark),
+                borderRadius: BorderRadius.circular(50),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 3,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: navItems
+                    .map((item) => Expanded(
+                          child: InkWell(
+                              onTap: () {
+                                context.go(item['route'] as String);
+                              },
+                              child:
+                                  // ItemIcon(
+                                  //   asset: Assets.lotties.hello,
+                                  //   isMove: currentRoute.value == item['route'] as String,
+                                  // )
+                                  Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  // color: currentRoute == item['route']
+                                  //     ? Colors.black.withOpacity(0.01)
+                                  //     : Colors.transparent,
+                                  shape: BoxShape.circle,
+                                  // border: Border.all(
+                                  //   width: 1,
+                                  //   color: currentRoute == item['route']
+                                  //       ? Colors.grey.withOpacity(0.3)
+                                  //       : Colors.transparent,
+                                  // ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: currentRoute == item['route']
+                                          ? Colors.black.withOpacity(0.05)
+                                          : Colors.transparent,
+                                      blurRadius: 6,
+                                      spreadRadius: 1,
+                                      // offset: const Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  item['icon'] as IconData,
+                                  color: currentRoute == item['route']
+                                      ? MyColor.pink
+                                      : MyColor.greenSuperLight,
+                                  size: 36,
+                                ),
+                              )),
+                        ))
+                    .toList(),
+              ),
             ),
           )
         : const SizedBox.shrink();

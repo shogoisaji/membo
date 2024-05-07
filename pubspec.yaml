@@ -29,8 +29,8 @@ dependencies:
   flutter_joystick:
   cached_network_image:
   flutter_colorpicker:
-  flutter_image_compress:
   envied:
+  webview_flutter:
 
   cupertino_icons: ^1.0.6
 

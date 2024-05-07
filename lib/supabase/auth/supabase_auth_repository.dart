@@ -9,7 +9,6 @@ import 'package:membo/env/env.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:envied/envied.dart';
 
 part 'supabase_auth_repository.g.dart';
 
@@ -33,36 +32,6 @@ class SupabaseAuthRepository {
     });
     return sessionController.stream;
   }
-
-// Email and password sign up
-  // Future<String?> signUp(
-  //   String email,
-  //   String password,
-  //   String username,
-  // ) async {
-  //   try {
-  //     await _client.auth.signUp(
-  //         email: email, password: password, data: {"user_name": username});
-  //     return null;
-  //   } on AuthException catch (er) {
-  //     debugPrint(er.message);
-  //     return er.message;
-  //   }
-  // }
-
-// Email and password login
-  // Future<String?> signIn(String email, String password) async {
-  //   try {
-  //     await _client.auth.signInWithPassword(
-  //       email: email,
-  //       password: password,
-  //     );
-  //     return null;
-  //   } on AuthException catch (er) {
-  //     debugPrint(er.message);
-  //     return '${er.statusCode}:${er.message}';
-  //   }
-  // }
 
 // Google login
   Future<void> signInWithGoogle() async {
@@ -93,11 +62,12 @@ class SupabaseAuthRepository {
           throw 'No ID Token found.';
         }
 
-        await _client.auth.signInWithIdToken(
+        final AuthResponse res = await _client.auth.signInWithIdToken(
           provider: OAuthProvider.google,
           idToken: idToken,
           accessToken: accessToken,
         );
+        print('user name : ${res.user?.userMetadata?['full_name']}');
       } else {
         /// Web Client ID that you registered with Google Cloud.
         await _client.auth.signInWithOAuth(

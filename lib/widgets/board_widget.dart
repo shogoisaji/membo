@@ -156,17 +156,19 @@ class ObjectWidget extends StatelessWidget {
     }
     return CachedNetworkImage(
         imageUrl: object.imageUrl!,
-        width: object.imageWidth != null
-            ? object.imageWidth! * object.scale
-            : null,
-        height: object.imageHeight != null
-            ? object.imageHeight! * object.scale
-            : null,
+        // width: object.imageWidth != null
+        //     ? object.imageWidth! * object.scale
+        //     : null,
+        // height: object.imageHeight != null
+        //     ? object.imageHeight! * object.scale
+        //     : null,
+        width: object.imageWidth,
+        height: object.imageHeight,
         imageBuilder: (context, imageProvider) => Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: imageProvider,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
