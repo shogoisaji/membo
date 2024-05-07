@@ -36,6 +36,10 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.transparent,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+        ),
         fontFamily: FontFamily.mPlusRounded1c,
         colorScheme: myColorTheme,
         iconTheme: const IconThemeData(color: MyColor.greenText),

@@ -74,42 +74,40 @@ class BoardViewPage extends HookConsumerWidget {
     }, [board]);
 
     return Scaffold(
+        extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: MyColor.pink,
+          backgroundColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => context.go('/'),
           ),
         ),
-        body: SafeArea(
-          child: isLoading.value
-              ? const Center(child: CircularProgressIndicator())
-              : Container(
-                  color: Colors.grey.shade700,
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Stack(
-                    children: [
-                      InteractiveViewer(
-                          transformationController: transformController,
-                          boundaryMargin: const EdgeInsets.all(double.infinity),
-                          minScale: 0.1,
-                          maxScale: 10.0,
-                          child: OverflowBox(
-                            minWidth: 0.0,
-                            maxWidth: double.infinity,
-                            minHeight: 0.0,
-                            maxHeight: double.infinity,
-                            alignment: Alignment.center,
-                            child: board == null
-                                ? const SizedBox.shrink()
-                                : BoardWidget(
-                                    board: board, selectedObject: null),
-                          )),
-                    ],
-                  ),
+        body: isLoading.value
+            ? const Center(child: CircularProgressIndicator())
+            : Container(
+                color: MyColor.green,
+                width: double.infinity,
+                height: double.infinity,
+                child: Stack(
+                  children: [
+                    InteractiveViewer(
+                        transformationController: transformController,
+                        boundaryMargin: const EdgeInsets.all(double.infinity),
+                        minScale: 0.1,
+                        maxScale: 20.0,
+                        child: OverflowBox(
+                          minWidth: 0.0,
+                          maxWidth: double.infinity,
+                          minHeight: 0.0,
+                          maxHeight: double.infinity,
+                          alignment: Alignment.center,
+                          child: board == null
+                              ? const SizedBox.shrink()
+                              : BoardWidget(board: board, selectedObject: null),
+                        )),
+                  ],
                 ),
-        ));
+              ));
   }
 }

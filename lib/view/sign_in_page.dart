@@ -7,6 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/error_dialog.dart';
 
@@ -35,146 +36,155 @@ class SignInPage extends HookConsumerWidget {
       return null;
     }, [user]);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Sign In', style: lightTextTheme.titleLarge),
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
+      children: [
+        BgPaint(width: w, height: h),
+        Scaffold(
+          appBar: AppBar(),
+          body: SafeArea(
+            bottom: false,
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                SizedBox(
-                  height: 120,
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: const Alignment(0.5, -0.95),
-                        child: Lottie.asset(
-                          Assets.lotties.hello,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: CustomButton(
-                          width: 300,
-                          height: 60,
-                          color: googleColor,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 70,
-                                child: SvgPicture.asset(
-                                  Assets.images.icons.googleOfficialSvg,
-                                  width: 30,
-                                  height: 30,
-                                ),
-                              ),
-                              Text('Sign In with Google',
-                                  style: lightTextTheme.bodyLarge),
-                            ],
-                          ),
-                          onTap: () async {
-                            animationController.reset();
-
-                            shutterColor.value = googleColor;
-                            animationController.forward();
-
-                            await ref
-                                .read(supabaseAuthRepositoryProvider)
-                                .signInWithGoogle();
-                            animationController.reverse();
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 50),
-                CustomButton(
-                  width: 300,
-                  height: 60,
-                  color: appleColor,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 70,
-                        child: SvgPicture.asset(
-                          Assets.images.icons.appleOfficialSvg,
-                          width: 30,
-                          height: 30,
-                        ),
-                      ),
-                      Text('Sign In with Apple',
-                          style: lightTextTheme.bodyLarge),
-                    ],
-                  ),
-                  onTap: () async {
-                    animationController.reset();
-
-                    shutterColor.value = appleColor;
-                    animationController.forward();
-
-                    try {
-                      await ref
-                          .read(supabaseAuthRepositoryProvider)
-                          .signInWithApple();
-                    } catch (e) {
-                      if (context.mounted) {
-                        ErrorDialog.show(
-                            context, 'Error signing in with Apple');
-                      }
-                    }
-                    animationController.reverse();
-                  },
-                ),
-              ],
-            ),
-            AnimatedBuilder(
-              animation: animation,
-              builder: (context, _) => IgnorePointer(
-                child: Stack(
-                  fit: StackFit.expand,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Positioned(
-                      bottom: 0,
-                      left: w / 2 * (animation.value - 1) * 1.1,
-                      child: CustomPaint(
-                        size: Size(w, h),
-                        painter: BgCustomPainter(shutterColor.value, true),
+                    SizedBox(
+                      height: 120,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: const Alignment(0.5, -0.95),
+                            child: Lottie.asset(
+                              Assets.lotties.hello,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: CustomButton(
+                              width: 300,
+                              height: 60,
+                              color: googleColor,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 70,
+                                    child: SvgPicture.asset(
+                                      Assets.images.icons.googleOfficialSvg,
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                  ),
+                                  Text('Sign In with Google',
+                                      style: lightTextTheme.bodyLarge),
+                                ],
+                              ),
+                              onTap: () async {
+                                animationController.reset();
+
+                                shutterColor.value = googleColor;
+                                animationController.forward();
+                                try {
+                                  await ref
+                                      .read(supabaseAuthRepositoryProvider)
+                                      .signInWithGoogle();
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ErrorDialog.show(context,
+                                        'Error signing in with Google');
+                                  }
+                                }
+                                animationController.reverse();
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Positioned(
-                      bottom: 0,
-                      left: w / 2 * (1 - animation.value) * 1.1,
-                      child: CustomPaint(
-                        size: Size(w, h),
-                        painter: BgCustomPainter(shutterColor.value, false),
+                    const SizedBox(height: 50),
+                    CustomButton(
+                      width: 300,
+                      height: 60,
+                      color: appleColor,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 70,
+                            child: SvgPicture.asset(
+                              Assets.images.icons.appleOfficialSvg,
+                              width: 30,
+                              height: 30,
+                            ),
+                          ),
+                          Text('Sign In with Apple',
+                              style: lightTextTheme.bodyLarge),
+                        ],
                       ),
+                      onTap: () async {
+                        animationController.reset();
+
+                        shutterColor.value = appleColor;
+                        animationController.forward();
+
+                        try {
+                          await ref
+                              .read(supabaseAuthRepositoryProvider)
+                              .signInWithApple();
+                        } catch (e) {
+                          if (context.mounted) {
+                            ErrorDialog.show(
+                                context, 'Error signing in with Apple');
+                          }
+                        }
+                        animationController.reverse();
+                      },
                     ),
                   ],
                 ),
-              ),
+                AnimatedBuilder(
+                  animation: animation,
+                  builder: (context, _) => IgnorePointer(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Positioned(
+                          bottom: 0,
+                          left: w / 2 * (animation.value - 1) * 1.1,
+                          child: CustomPaint(
+                            size: Size(w, h),
+                            painter: BgCustomPainter(shutterColor.value, true),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: w / 2 * (1 - animation.value) * 1.1,
+                          child: CustomPaint(
+                            size: Size(w, h),
+                            painter: BgCustomPainter(shutterColor.value, false),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Align(
+                    alignment: const Alignment(0, 0.9),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.go('/');
+                      },
+                      child: const Text('test'),
+                    )),
+              ],
             ),
-            Align(
-                alignment: const Alignment(0, 0.9),
-                child: ElevatedButton(
-                  onPressed: () {
-                    context.go('/');
-                  },
-                  child: const Text('test'),
-                )),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

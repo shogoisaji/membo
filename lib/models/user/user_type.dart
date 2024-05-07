@@ -20,6 +20,7 @@ class UserType {
 
   get maxImageCount => _maxImageCount;
   get maxBoardCount => _maxBoardCount;
+  get string => type.toString();
 
   Map<String, dynamic> toJson() => {
         'type': type.toString(),

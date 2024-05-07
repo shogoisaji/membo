@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:membo/env/env.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,47 +33,15 @@ class SupabaseAuthRepository {
     return sessionController.stream;
   }
 
-// Email and password sign up
-  // Future<String?> signUp(
-  //   String email,
-  //   String password,
-  //   String username,
-  // ) async {
-  //   try {
-  //     await _client.auth.signUp(
-  //         email: email, password: password, data: {"user_name": username});
-  //     return null;
-  //   } on AuthException catch (er) {
-  //     debugPrint(er.message);
-  //     return er.message;
-  //   }
-  // }
-
-// Email and password login
-  // Future<String?> signIn(String email, String password) async {
-  //   try {
-  //     await _client.auth.signInWithPassword(
-  //       email: email,
-  //       password: password,
-  //     );
-  //     return null;
-  //   } on AuthException catch (er) {
-  //     debugPrint(er.message);
-  //     return '${er.statusCode}:${er.message}';
-  //   }
-  // }
-
 // Google login
   Future<void> signInWithGoogle() async {
     try {
       if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
         /// Web Client ID that you registered with Google Cloud.
-        const webClientId =
-            '1060492417369-64g5v64ihohj67s5hlnvc6a1dttmukvr.apps.googleusercontent.com';
+        final webClientId = Env.googleWebClientId;
 
         /// iOS Client ID that you registered with Google Cloud.
-        const iosClientId =
-            '1060492417369-q13g6qkj44ovnt3llapv2nph7ie6ak05.apps.googleusercontent.com';
+        final iosClientId = Env.googleIosClientId;
 
         final GoogleSignIn googleSignIn = GoogleSignIn(
           clientId: iosClientId,
@@ -93,11 +62,12 @@ class SupabaseAuthRepository {
           throw 'No ID Token found.';
         }
 
-        await _client.auth.signInWithIdToken(
+        final AuthResponse res = await _client.auth.signInWithIdToken(
           provider: OAuthProvider.google,
           idToken: idToken,
           accessToken: accessToken,
         );
+        print('user name : ${res.user?.userMetadata?['full_name']}');
       } else {
         /// Web Client ID that you registered with Google Cloud.
         await _client.auth.signInWithOAuth(

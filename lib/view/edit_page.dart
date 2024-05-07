@@ -8,10 +8,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/utils/color_utils.dart';
 import 'package:membo/utils/image_utils.dart';
-import 'package:membo/view_model/board_settings_view_model.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
 import 'package:membo/widgets/board_widget.dart';
+import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:uuid/uuid.dart';
 
@@ -78,71 +79,74 @@ class EditPage extends HookConsumerWidget {
     }, [board]);
 
     return Scaffold(
+        extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: MyColor.pink,
+          backgroundColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => context.go('/'),
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  if (board == null) return;
+                  ref
+                      .read(editPageViewModelProvider.notifier)
+                      .clearSelectedObject();
+                  context.go('/board-settings');
+                },
+                child: const Icon(Icons.settings),
+              ),
+            ),
+          ],
         ),
-        body: SafeArea(
-          child: isLoading.value
-              ? const Center(child: CircularProgressIndicator())
-              : Container(
-                  color: Colors.grey.shade700,
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Stack(
-                    children: [
-                      InteractiveViewer(
-                          transformationController: transformController,
-                          boundaryMargin: const EdgeInsets.all(double.infinity),
-                          minScale: 0.1,
-                          maxScale: 10.0,
-                          child: OverflowBox(
-                              minWidth: 0.0,
-                              maxWidth: double.infinity,
-                              minHeight: 0.0,
-                              maxHeight: double.infinity,
-                              alignment: Alignment.center,
-                              child: board == null
-                                  ? const SizedBox.shrink()
-                                  : Center(
-                                      child: BoardWidget(
-                                          board: board,
-                                          selectedObject:
-                                              editPageState.selectedObject),
-                                    ))),
-                      Align(
-                        alignment: const Alignment(0.9, -0.95),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (board == null) return;
-                            ref
-                                .read(editPageViewModelProvider.notifier)
-                                .clearSelectedObject();
-                            context.push('/board-setting');
-                          },
-                          child: const Icon(Icons.settings),
-                        ),
-                      ),
-                      const CustomFloatingButton(),
-                      const TextInputModal(),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: EditToolBar(width: w),
-                      ),
-                    ],
+        body: isLoading.value
+            ? const Center(child: CircularProgressIndicator())
+            : Stack(
+                children: [
+                  Container(
+                    color: MyColor.green,
+                    width: double.infinity,
+                    height: double.infinity,
                   ),
-                ),
-        ));
+                  InteractiveViewer(
+                      transformationController: transformController,
+                      boundaryMargin: const EdgeInsets.all(double.infinity),
+                      minScale: 0.1,
+                      maxScale: 20.0,
+                      child: OverflowBox(
+                          minWidth: 0.0,
+                          maxWidth: double.infinity,
+                          minHeight: 0.0,
+                          maxHeight: double.infinity,
+                          alignment: Alignment.center,
+                          child: board == null
+                              ? const SizedBox.shrink()
+                              : Center(
+                                  child: BoardWidget(
+                                      board: board,
+                                      selectedObject:
+                                          editPageState.selectedObject),
+                                ))),
+                  editPageState.selectedObject == null
+                      ? const CustomFloatingButton()
+                      : const SizedBox.shrink(),
+                  const TextInputModal(),
+                  Align(
+                    alignment: const Alignment(0, 0.9),
+                    child: EditToolBar(width: w),
+                  ),
+                ],
+              ));
   }
 }
 
 class EditToolBar extends HookConsumerWidget {
   final double width;
-  final double height = 120;
+  final double height = 150;
   const EditToolBar({super.key, required this.width});
 
   @override
@@ -150,6 +154,11 @@ class EditToolBar extends HookConsumerWidget {
     final editPageState = ref.watch(editPageViewModelProvider);
     final scale = useState(1.0);
     final angle = useState(0.0);
+
+    void clearState() {
+      scale.value = 1.0;
+      angle.value = 0.0;
+    }
 
     void moveSelectedObject(Offset offset) {
       ref.read(editPageViewModelProvider.notifier).moveSelectedObject(offset);
@@ -184,76 +193,127 @@ class EditToolBar extends HookConsumerWidget {
                       ref
                           .read(editPageViewModelProvider.notifier)
                           .selectObject(null, null);
+                      clearState();
                     },
                     icon: const Icon(Icons.delete),
                   ),
                   IconButton(
                     onPressed: () {
-                      // ref.read(supabaseStorageProvider).uploadImage(
-                      //     editPageState.selectedImageFile!, 'test');
                       ref
                           .read(editPageViewModelProvider.notifier)
                           .insertSelectedObject();
+                      clearState();
                     },
                     icon: const Icon(Icons.add),
                   ),
                 ],
               ),
-              Container(
+              SizedBox(
                 width: width,
                 height: height,
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  border: Border.all(color: Colors.black),
-                ),
+                // decoration: BoxDecoration(
+                //   color: Colors.green,
+                //   border: Border.all(color: Colors.black),
+                // ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onPanUpdate: (details) {
-                          final scaleDelta = -details.delta.dy * 0.003;
-                          scaleSelectedObject(scaleDelta);
-                        },
-                        child: Container(
-                          height: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.amber,
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onPanUpdate: (details) {
+                            final scaleDelta = -details.delta.dy * 0.003;
+                            scaleSelectedObject(scaleDelta);
+                          },
+                          child: Container(
+                            width: width / 4 > 100 ? 100 : width / 4,
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: MyColor.greenSuperLight,
+                              borderRadius: BorderRadius.circular(99),
+                              border: Border.all(
+                                  width: 6, color: MyColor.greenDark),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  offset: const Offset(1, 1),
+                                  blurRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: const Icon(Icons.zoom_out_map),
                           ),
-                          child: const Icon(Icons.zoom_out_map),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onPanUpdate: (details) {
-                          rotateSelectedObject(details.delta.dy * 0.01);
-                        },
-                        child: Container(
-                          height: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
+                        const SizedBox(width: 20),
+                        GestureDetector(
+                          onPanUpdate: (details) {
+                            rotateSelectedObject(details.delta.dy * 0.01);
+                          },
+                          child: Container(
+                            width: width / 4 > 100 ? 100 : width / 4,
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: MyColor.greenSuperLight,
+                              borderRadius: BorderRadius.circular(99),
+                              border: Border.all(
+                                  width: 6, color: MyColor.greenDark),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  offset: const Offset(1, 1),
+                                  blurRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: const Icon(Icons.refresh),
                           ),
-                          child: const Icon(Icons.refresh),
                         ),
-                      ),
+                      ],
                     ),
                     SizedBox(
-                      width: 150,
-                      height: 150,
+                      width: width / 3 > 170 ? 170 : width / 3,
+                      height: width / 3 > 170 ? 170 : width / 3,
+                      // decoration: BoxDecoration(
+                      //   color: MyColor.greenSuperLight,
+                      //   borderRadius: BorderRadius.circular(99),
+                      //   border: Border.all(width: 6, color: MyColor.greenDark),
+                      //   boxShadow: [
+                      //     BoxShadow(
+                      //       color: Colors.black.withOpacity(0.3),
+                      //       offset: const Offset(1, 1),
+                      //       blurRadius: 2,
+                      //     ),
+                      //   ],
+                      // ),
                       child: JoystickArea(
                         base: Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.transparent,
-                            shape: BoxShape.circle,
+                          decoration: BoxDecoration(
+                            color: MyColor.greenSuperLight,
+                            borderRadius: BorderRadius.circular(99),
+                            border:
+                                Border.all(width: 6, color: MyColor.greenDark),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                offset: const Offset(1, 1),
+                                blurRadius: 2,
+                              ),
+                            ],
                           ),
                         ),
                         stick: Container(
                           width: 50,
                           height: 50,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
+                          decoration: BoxDecoration(
+                            color: MyColor.pink,
                             shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                offset: const Offset(1, 1),
+                                blurRadius: 2,
+                              ),
+                            ],
                           ),
                           child: const Icon(Icons.open_with),
                         ),
@@ -283,6 +343,8 @@ class CustomFloatingButton extends HookConsumerWidget {
     );
     final editPageState = ref.watch(editPageViewModelProvider);
 
+    final isShowMenu = useState(false);
+
     Offset initialPosition() {
       if (editPageState.boardModel == null) return const Offset(0, 0);
       final boardSettings = editPageState.boardModel!.settings;
@@ -291,9 +353,69 @@ class CustomFloatingButton extends HookConsumerWidget {
       return Offset(initialPositionX, initialPositionY);
     }
 
-    final isShowMenu = useState(false);
+    void handleTextSelect() {
+      ref.read(editPageViewModelProvider.notifier).showTextInput();
+    }
 
-    return editPageState.showInputMenu
+    Future<void> handleImageSelect() async {
+      final picker = ImagePicker();
+      try {
+        final XFile? image = await picker.pickImage(
+          source: ImageSource.gallery,
+          maxWidth: 1000,
+          maxHeight: 1000,
+          imageQuality: 85,
+        );
+
+        if (image == null) {
+          isShowMenu.value = false;
+          return;
+        }
+
+        /// 画像のデータサイズチェック
+        final uint8List = await image.readAsBytes();
+        final imageSizeInBytes = uint8List.lengthInBytes;
+
+        double imageSizeInMB = imageSizeInBytes / (1024 * 1024);
+
+        // print('Image size: $imageSizeInMB MB');
+
+        if (imageSizeInMB > 1.0) {
+          if (context.mounted) {
+            ErrorDialog.show(context, 'Image size is too large.');
+          }
+          return;
+        }
+
+        /// 画像サイズを取得
+        final imageSize =
+            await ImageUtils().getImageSize(image) ?? const Size(0, 0);
+        print('Image size: $imageSize');
+        final selectedObject = ObjectModel(
+            objectId: const Uuid().v4(),
+            type: ObjectType.localImage,
+            positionX: initialPosition().dx,
+            positionY: initialPosition().dy,
+            angle: 0.0,
+            scale: 1.0,
+            imageUrl: image.path,
+            imageWidth: imageSize.width,
+            imageHeight: imageSize.height,
+            creatorId: ref.read(userStateProvider)!.id,
+            createdAt: DateTime.now(),
+            bgColor: '0xFF000000');
+        ref
+            .read(editPageViewModelProvider.notifier)
+            .selectObject(selectedObject, image);
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
+        return;
+      }
+    }
+
+    return (editPageState.showInputMenu)
         ? Stack(
             fit: StackFit.expand,
             children: [
@@ -317,21 +439,24 @@ class CustomFloatingButton extends HookConsumerWidget {
                 ),
               ),
               Positioned(
-                bottom: 20,
-                right: 20,
+                bottom: 40,
+                right: 30,
                 child: !editPageState.showTextInput
-                    ? Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
+                    ? CustomButton(
+                        width: 60,
+                        height: 140,
+                        color: ColorUtils.moreDark(
+                          MyColor.pink,
                         ),
+                        onTap: () {
+                          // none
+                        },
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             IconButton(
                               onPressed: () {
-                                ref
-                                    .read(editPageViewModelProvider.notifier)
-                                    .showTextInput();
+                                handleTextSelect();
                               },
                               icon: const Icon(
                                 Icons.text_format,
@@ -340,43 +465,7 @@ class CustomFloatingButton extends HookConsumerWidget {
                             ),
                             IconButton(
                               onPressed: () async {
-                                final picker = ImagePicker();
-                                final XFile? image = await picker.pickImage(
-                                  source: ImageSource.gallery,
-                                  maxWidth: 1000,
-                                  maxHeight: 1000,
-                                  imageQuality: 85,
-                                );
-                                if (image == null) {
-                                  isShowMenu.value = false;
-                                  return;
-                                }
-
-                                /// centerに表示するために画像サイズを取得
-                                final imageSize =
-                                    await ImageUtils().getImageSize(image) ??
-                                        const Size(0, 0);
-                                ref
-                                    .read(editPageViewModelProvider.notifier)
-                                    .selectObject(
-                                        ObjectModel(
-                                            objectId: const Uuid().v4(),
-                                            type: ObjectType.localImage,
-                                            positionX: initialPosition().dx,
-                                            positionY: initialPosition().dy,
-                                            angle: 0.0,
-                                            scale: 1.0,
-                                            imageUrl: image.path,
-                                            imageWidth: imageSize.width,
-                                            imageHeight: imageSize.height,
-                                            creatorId:
-                                                ref.read(userStateProvider)!.id,
-                                            createdAt: DateTime.now(),
-                                            bgColor: '0xFF000000'),
-                                        image);
-                                ref
-                                    .read(editPageViewModelProvider.notifier)
-                                    .hideInputMenu();
+                                await handleImageSelect();
                               },
                               icon: const Icon(
                                 Icons.image,
@@ -390,15 +479,21 @@ class CustomFloatingButton extends HookConsumerWidget {
             ],
           )
         : Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton(
-              onPressed: () {
+            bottom: 40,
+            right: 30,
+            child: CustomButton(
+              width: 60,
+              height: 60,
+              elevation: 5.0,
+              color: MyColor.pink,
+              child: const Icon(
+                Icons.add,
+                size: 32,
+              ),
+              onTap: () {
                 animationController.forward();
                 ref.read(editPageViewModelProvider.notifier).showInputMenu();
               },
-              backgroundColor: Colors.green,
-              child: const Icon(Icons.add),
             ),
           );
   }
