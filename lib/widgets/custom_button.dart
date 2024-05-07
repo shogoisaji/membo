@@ -48,33 +48,51 @@ class CustomButton extends HookWidget {
           child: AnimatedBuilder(
             animation: controller,
             builder: (context, _) => Stack(
+              fit: StackFit.expand,
               children: [
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    width: width,
-                    height: height - elevation * (1 - controller.value * 0.5),
-                    decoration: BoxDecoration(
-                      color: ColorUtils.moreDark(color),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
+                CustomPaint(
+                  painter: ButtonShapePainter(
+                      color: ColorUtils.moreDark(color), elevation: elevation),
+                  size: Size(width, height),
                 ),
-                Positioned(
-                  top: elevation * controller.value * 0.5,
-                  child: Container(
-                    width: width,
-                    height: height - elevation,
-                    decoration: BoxDecoration(
+                CustomPaint(
+                  painter: ButtonShapePainter(
                       color: color,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: child,
-                  ),
+                      elevation: elevation * controller.value * 0.5),
+                  size: Size(width, height),
+                ),
+                Transform.translate(
+                  offset: Offset(
+                      0, elevation / 2 * controller.value), // ここでchildを動かす
+                  child: child,
                 ),
               ],
             ),
           )),
     );
+  }
+}
+
+class ButtonShapePainter extends CustomPainter {
+  final Color color;
+  final double elevation;
+  final double radius = 24;
+  ButtonShapePainter({required this.color, required this.elevation});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(0, elevation, size.width, size.height),
+            Radius.circular(radius)),
+        paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
