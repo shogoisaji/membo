@@ -7,6 +7,7 @@ import 'package:membo/settings/text_theme.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/view_model/board_settings_view_model.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
+import 'package:membo/widgets/custom_list_content.dart';
 import 'package:membo/widgets/hue_ring_custom_picker.dart';
 
 class BoardSettingPage extends HookConsumerWidget {
@@ -72,11 +73,14 @@ class BoardSettingPage extends HookConsumerWidget {
                           },
                           child: const Text('仮 Change Owner'),
                         ),
-                        _settingContent(
-                          verticalPadding: 6.0,
-                          const Icon(Icons.zoom_out_map),
-                          'Board Size',
-                          [
+                        CustomListContent(
+                          titleIcon: const Icon(Icons.zoom_out_map),
+                          title: 'Board Size',
+                          titleStyle: lightTextTheme.bodyLarge!,
+                          backgroundColor: MyColor.greenLight,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14.0, vertical: 6.0),
+                          contentWidgets: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -142,10 +146,12 @@ class BoardSettingPage extends HookConsumerWidget {
                           ],
                         ),
                         const SizedBox(height: 20.0),
-                        _settingContent(
-                          const Icon(Icons.color_lens),
-                          'Background Color',
-                          [
+                        CustomListContent(
+                          titleIcon: const Icon(Icons.color_lens),
+                          title: 'Background Color',
+                          titleStyle: lightTextTheme.bodyLarge!,
+                          backgroundColor: MyColor.greenLight,
+                          contentWidgets: [
                             GestureDetector(
                               onTap: () {
                                 if (!boardSettingsState.isOwner) return;
@@ -193,10 +199,12 @@ class BoardSettingPage extends HookConsumerWidget {
                           ],
                         ),
                         const SizedBox(height: 20.0),
-                        _settingContent(
-                          const Icon(Icons.sentiment_satisfied_alt),
-                          'Board Owner',
-                          [
+                        CustomListContent(
+                          titleIcon: const Icon(Icons.sentiment_satisfied_alt),
+                          title: 'Board Owner',
+                          titleStyle: lightTextTheme.bodyLarge!,
+                          backgroundColor: MyColor.greenLight,
+                          contentWidgets: [
                             GestureDetector(
                               onTap: () {
                                 //
@@ -221,10 +229,12 @@ class BoardSettingPage extends HookConsumerWidget {
                           ],
                         ),
                         const SizedBox(height: 20.0),
-                        _settingContent(
-                          const Icon(Icons.language),
-                          'Share Settings',
-                          [
+                        CustomListContent(
+                          titleIcon: const Icon(Icons.language),
+                          title: 'Share Settings',
+                          titleStyle: lightTextTheme.bodyLarge!,
+                          backgroundColor: MyColor.greenLight,
+                          contentWidgets: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -324,40 +334,6 @@ class BoardSettingPage extends HookConsumerWidget {
                     : const SizedBox.shrink()
               ],
             ),
-    );
-  }
-
-  Widget _settingContent(
-    Icon titleIcon,
-    String title,
-    List<Widget> contentWidgets, {
-    double verticalPadding = 16.0,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const SizedBox(width: 4.0),
-            titleIcon,
-            const SizedBox(width: 8.0),
-            Text(title, style: lightTextTheme.bodyLarge),
-          ],
-        ),
-        Container(
-          width: double.infinity,
-          padding:
-              EdgeInsets.symmetric(horizontal: 14.0, vertical: verticalPadding),
-          decoration: BoxDecoration(
-            color: MyColor.greenLight,
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: contentWidgets,
-          ),
-        ),
-      ],
     );
   }
 }
