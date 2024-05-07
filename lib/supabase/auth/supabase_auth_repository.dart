@@ -5,9 +5,11 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:membo/env/env.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:envied/envied.dart';
 
 part 'supabase_auth_repository.g.dart';
 
@@ -67,12 +69,10 @@ class SupabaseAuthRepository {
     try {
       if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
         /// Web Client ID that you registered with Google Cloud.
-        const webClientId =
-            '1060492417369-64g5v64ihohj67s5hlnvc6a1dttmukvr.apps.googleusercontent.com';
+        final webClientId = Env.googleWebClientId;
 
         /// iOS Client ID that you registered with Google Cloud.
-        const iosClientId =
-            '1060492417369-q13g6qkj44ovnt3llapv2nph7ie6ak05.apps.googleusercontent.com';
+        final iosClientId = Env.googleIosClientId;
 
         final GoogleSignIn googleSignIn = GoogleSignIn(
           clientId: iosClientId,
