@@ -91,10 +91,11 @@ flutter:
           weight: 400
         - asset: assets/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Light.ttf
           weight: 300
-# flutter_launcher_icons:
-#     android: true
-#     ios: true
-#     image_path: 'assets/images/icon.png'
-#     min_sdk_android: 21
-#     adaptive_icon_background: '#E47858'
-#     adaptive_icon_foreground: 'assets/images/icon.png'
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#678A74"
+  adaptive_icon_foreground: "assets/images/icon.png"

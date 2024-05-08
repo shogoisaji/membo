@@ -22,7 +22,7 @@ class CustomBottomNav extends HookConsumerWidget {
     final navState = ref.watch(bottomNavigationStateProvider);
     final currentRoute = navState.currentRoute;
     final w = MediaQuery.sizeOf(context).width;
-    final navSize = Size(w, 65);
+    final navSize = Size(w, 70);
 
     /// Listen to route & change the current route
     void routeListener() {
@@ -53,7 +53,7 @@ class CustomBottomNav extends HookConsumerWidget {
                 borderRadius: BorderRadius.circular(50),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 3,
                     spreadRadius: 1,
                     offset: const Offset(0, 2),
@@ -74,35 +74,55 @@ class CustomBottomNav extends HookConsumerWidget {
                                   //   isMove: currentRoute.value == item['route'] as String,
                                   // )
                                   Container(
-                                padding: const EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(7),
                                 decoration: BoxDecoration(
-                                  // color: currentRoute == item['route']
-                                  //     ? Colors.black.withOpacity(0.01)
-                                  //     : Colors.transparent,
+                                  color: currentRoute == item['route']
+                                      ? MyColor.greenSuperLight
+                                          .withOpacity(0.08)
+                                      : Colors.transparent,
                                   shape: BoxShape.circle,
-                                  // border: Border.all(
-                                  //   width: 1,
-                                  //   color: currentRoute == item['route']
-                                  //       ? Colors.grey.withOpacity(0.3)
-                                  //       : Colors.transparent,
-                                  // ),
+                                  border: Border.all(
+                                    width: 0.5,
+                                    color: currentRoute == item['route']
+                                        ? MyColor.greenSuperLight
+                                            .withOpacity(0.2)
+                                        : Colors.transparent,
+                                  ),
                                   boxShadow: [
                                     BoxShadow(
                                       color: currentRoute == item['route']
-                                          ? Colors.black.withOpacity(0.05)
+                                          ? MyColor.green.withOpacity(0.6)
                                           : Colors.transparent,
-                                      blurRadius: 6,
-                                      spreadRadius: 1,
-                                      // offset: const Offset(0, 1),
+                                      blurRadius: 0.5,
+                                      spreadRadius: 0,
+                                      offset: const Offset(-2, -2),
                                     ),
                                   ],
                                 ),
-                                child: Icon(
-                                  item['icon'] as IconData,
-                                  color: currentRoute == item['route']
-                                      ? MyColor.pink
-                                      : MyColor.greenSuperLight,
-                                  size: 36,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: currentRoute == item['route']
+                                        ? MyColor.greenLight
+                                        : Colors.transparent,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: currentRoute == item['route']
+                                            ? MyColor.greenLight
+                                            : Colors.transparent,
+                                        blurRadius: 5,
+                                        spreadRadius: 7,
+                                        offset: const Offset(-1.5, -2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    item['icon'] as IconData,
+                                    color: currentRoute == item['route']
+                                        ? MyColor.pink
+                                        : MyColor.greenSuperLight,
+                                    size: 36,
+                                  ),
                                 ),
                               )),
                         ))

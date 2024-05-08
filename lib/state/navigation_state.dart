@@ -16,7 +16,8 @@ class NavigationState {
 const invisibleList = [
   '/edit',
   '/view',
-  '/board-settings' '/view',
+  '/board-settings',
+  '/account',
   '/policy',
   '/public-policy'
 ];
