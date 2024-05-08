@@ -5,8 +5,8 @@ part 'board_settings_state.freezed.dart';
 
 @freezed
 class BoardSettingsState with _$BoardSettingsState {
-  factory BoardSettingsState({
-    @Default(false) bool isOwner,
-    BoardSettingsModel? tempBoardSettings,
-  }) = _BoardSettingsState;
+  factory BoardSettingsState(
+      {@Default(false) bool isOwner,
+      BoardSettingsModel? tempBoardSettings,
+      String? tempBoardName}) = _BoardSettingsState;
 }

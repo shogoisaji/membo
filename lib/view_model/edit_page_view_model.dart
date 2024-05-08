@@ -6,6 +6,7 @@ import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/models/view_model_state/edit_page_state.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/supabase/db/supabase_repository.dart';
+import 'package:membo/supabase/storage/supabase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -64,7 +65,6 @@ class EditPageViewModel extends _$EditPageViewModel {
       ownerId: user.id,
       settings: const BoardSettingsModel(),
       createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
     );
 
     await ref.read(supabaseRepositoryProvider).insertBoard(newBoard);
@@ -222,11 +222,48 @@ class EditPageViewModel extends _$EditPageViewModel {
         boardModel: state.boardModel!.copyWith(settings: settings));
     ref.read(supabaseRepositoryProvider).updateBoard(state.boardModel!);
   }
+
+  Future<String> getObjectCreatorName(String id) async {
+    try {
+      final user = await ref.read(supabaseRepositoryProvider).fetchUserData(id);
+      if (user == null) {
+        return 'Unknown';
+      }
+      return user.userName;
+    } catch (_) {
+      return 'Unknown';
+    }
+  }
+
+  Future<void> deleteObject(String objectId) async {
+    if (state.boardModel == null) {
+      throw Exception('Board is not set');
+    }
+    try {
+      final deleteObject = state.boardModel!.objects
+          .firstWhere((element) => element.objectId == objectId);
+      if (deleteObject.type == ObjectType.networkImage) {
+        final res = await ref
+            .read(supabaseStorageProvider)
+            .deleteImage(deleteObject.imageUrl!);
+        if (!res) {
+          throw Exception('Error delete image');
+        }
+      }
+      final newObjects = state.boardModel!.objects
+          .where((element) => element.objectId != objectId)
+          .toList();
+      final newBoard = state.boardModel!.copyWith(objects: newObjects);
+      state = state.copyWith(boardModel: newBoard);
+      ref.read(supabaseRepositoryProvider).updateBoard(newBoard);
+    } catch (e) {
+      throw Exception('Error delete: $e');
+    }
+  }
 }
 
 @Riverpod(keepAlive: true)
 Stream<BoardModel?> boardStream(BoardStreamRef ref) {
-  // final boardId = '0996ec38-d300-4dd4-9e8b-1a887954c275';
   final boardId = ref.read(editPageViewModelProvider).selectedBoardId;
   if (boardId == null) {
     return Stream.value(null);

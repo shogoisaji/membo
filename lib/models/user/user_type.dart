@@ -31,7 +31,7 @@ class UserType {
   factory UserType.fromJson(Map<String, dynamic> json) {
     return UserType(
       type: UserTypes.values.firstWhere(
-        (e) => e.toString() == json['type'],
+        (e) => e.toString().split('.')[1] == json['type'],
         orElse: () => UserTypes.free,
       ),
     );

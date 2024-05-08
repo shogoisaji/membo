@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/models/user/user_type.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
@@ -29,6 +30,7 @@ class AccountPage extends HookConsumerWidget {
           .fetchUserData(signedInUser.id);
       if (user == null) return;
       ref.read(accountPageViewModelProvider.notifier).getUser(user);
+      print('fetched user: ${user.userType.type == UserTypes.free}');
     }
 
     useEffect(() {
@@ -40,7 +42,7 @@ class AccountPage extends HookConsumerWidget {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back, size: 36),
             onPressed: () {
               context.go('/settings');
             },
@@ -58,11 +60,29 @@ class AccountPage extends HookConsumerWidget {
                           constraints: const BoxConstraints(maxWidth: 500),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 16.0),
+                                horizontal: 20.0, vertical: 16.0),
                             child: Column(
                               children: [
                                 const SizedBox(height: 30.0),
                                 _avatarImage(accountPageState.user!.avatarUrl),
+                                const SizedBox(height: 30.0),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 4.0),
+                                  decoration: BoxDecoration(
+                                    color: MyColor.green,
+                                    border: Border.all(
+                                        color: MyColor.greenText, width: 2),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Text(
+                                    accountPageState.user!.userType.type
+                                        .toString()
+                                        .split('.')[1]
+                                        .toUpperCase(),
+                                    style: lightTextTheme.bodyLarge,
+                                  ),
+                                ),
                                 CustomListContent(
                                   title: 'Name',
                                   titleStyle: lightTextTheme.titleLarge!,
@@ -88,6 +108,26 @@ class AccountPage extends HookConsumerWidget {
                                     ),
                                   ],
                                 ),
+                                const SizedBox(height: 26.0),
+
+                                /// subscription features
+                                ///
+                                // accountPageState.user!.userType.type ==
+                                //         UserTypes.free
+                                //     ? CustomButton(
+                                //         width: double.infinity,
+                                //         height: 50,
+                                //         color: MyColor.blue,
+                                //         onTap: null,
+                                //         child: Center(
+                                //             child: Text('Upgrade to Pro',
+                                //                 style: lightTextTheme
+                                //                     .titleLarge!
+                                //                     .copyWith(
+                                //                         color: MyColor
+                                //                             .greenSuperLight))),
+                                //       )
+                                //     : const SizedBox(),
                                 const SizedBox(height: 26.0),
                                 CustomButton(
                                   width: double.infinity,
@@ -117,15 +157,15 @@ class AccountPage extends HookConsumerWidget {
   Widget _avatarImage(String? avatarUrl) {
     return avatarUrl == null
         ? const CircleAvatar(
-            radius: 50,
-            child: Icon(Icons.person, size: 50),
+            radius: 70,
+            child: Icon(Icons.person, size: 70),
           )
         : ClipRRect(
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(99),
             child: CachedNetworkImage(
               imageUrl: avatarUrl,
-              width: 100,
-              height: 100,
+              width: 130,
+              height: 130,
               imageBuilder: (context, imageProvider) => Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(

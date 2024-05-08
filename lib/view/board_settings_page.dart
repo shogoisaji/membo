@@ -9,7 +9,9 @@ import 'package:membo/utils/color_utils.dart';
 import 'package:membo/view_model/board_settings_view_model.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
+import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_list_content.dart';
+import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/hue_ring_custom_picker.dart';
 
 class BoardSettingsPage extends HookConsumerWidget {
@@ -19,6 +21,8 @@ class BoardSettingsPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
+    final isFocus = useState(false);
+    final focusNode = useFocusNode();
     final showPassword = useState(false);
     final showColorPicker = useState(false);
     final boardSettingsState = ref.watch(boardSettingsViewModelProvider);
@@ -27,6 +31,8 @@ class BoardSettingsPage extends HookConsumerWidget {
     final backgroundColor = boardSettingsState.tempBoardSettings != null
         ? Color(int.parse(boardSettingsState.tempBoardSettings!.bgColor))
         : Color(int.parse(currentSettings!.bgColor));
+    final boardNameTextController =
+        useTextEditingController(text: board?.boardName ?? '');
 
     void handleHideModal() {
       showColorPicker.value = false;
@@ -46,18 +52,84 @@ class BoardSettingsPage extends HookConsumerWidget {
       ref.read(boardSettingsViewModelProvider.notifier).updateHeight(height);
     }
 
+    void saveTempBoardSettings() {
+      try {
+        ref
+            .read(boardSettingsViewModelProvider.notifier)
+            .saveTempBoardSettings();
+        context.go('/edit');
+      } catch (e) {
+        throw Exception(e.toString());
+      }
+    }
+
+    bool isSaveable() {
+      return boardSettingsState.tempBoardSettings != null ||
+          boardSettingsState.tempBoardName != null;
+    }
+
+    useEffect(() {
+      focusNode.addListener(() {
+        isFocus.value = focusNode.hasFocus;
+      });
+      return null;
+    }, []);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, size: 36),
           onPressed: () {
-            ref.read(boardSettingsViewModelProvider.notifier).clear();
-            context.go('/edit');
+            if (isSaveable()) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  actionsAlignment: MainAxisAlignment.spaceEvenly,
+                  title: const Text('設定変更データを保存していません'),
+                  actions: [
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MyColor.greenDark,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(99.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          try {
+                            Navigator.of(context).pop();
+                            saveTempBoardSettings();
+                          } catch (e) {
+                            ErrorDialog.show(context, e.toString());
+                          }
+                        },
+                        child: Text(
+                          '保存する',
+                          style: lightTextTheme.bodyMedium!
+                              .copyWith(color: MyColor.greenSuperLight),
+                        )),
+                    ElevatedButton(
+                      onPressed: () {
+                        ref
+                            .read(boardSettingsViewModelProvider.notifier)
+                            .clear();
+                        Navigator.of(context).pop();
+                        context.go('/edit');
+                      },
+                      child: Text('保存しない', style: lightTextTheme.bodyMedium),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              ref.read(boardSettingsViewModelProvider.notifier).clear();
+              context.go('/edit');
+            }
           },
         ),
       ),
-      body: currentSettings == null
+      body: (currentSettings == null || board == null)
           ? const SizedBox.shrink()
           : Stack(
               children: [
@@ -78,6 +150,84 @@ class BoardSettingsPage extends HookConsumerWidget {
                             },
                             child: const Text('仮 Change Owner'),
                           ),
+                          CustomListContent(
+                            titleIcon: const Icon(Icons.local_mall),
+                            title: 'Board Name',
+                            titleStyle: lightTextTheme.bodyLarge!,
+                            backgroundColor: MyColor.greenLight,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 14.0,
+                                vertical:
+                                    boardSettingsState.isOwner ? 0.0 : 21),
+                            contentWidgets: [
+                              GestureDetector(
+                                onTap: () {
+                                  //
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Name',
+                                        style: lightTextTheme.bodyLarge),
+                                    const SizedBox(width: 22.0),
+                                    Expanded(
+                                        child: boardSettingsState.isOwner
+                                            ? Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: TextField(
+                                                      focusNode: focusNode,
+                                                      textAlign: TextAlign.end,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Colors
+                                                                        .transparent),
+                                                              ),
+                                                              enabledBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Colors
+                                                                        .transparent),
+                                                              )),
+                                                      controller:
+                                                          boardNameTextController,
+                                                      onChanged: (value) {
+                                                        ref
+                                                            .read(
+                                                                boardSettingsViewModelProvider
+                                                                    .notifier)
+                                                            .updateBoardName(
+                                                                value);
+                                                      },
+                                                      style: lightTextTheme
+                                                          .bodyLarge,
+                                                    ),
+                                                  ),
+                                                  const Icon(
+                                                    Icons.edit,
+                                                    color: MyColor.greenDark,
+                                                  )
+                                                ],
+                                              )
+                                            : Text(
+                                                board.boardName,
+                                                textAlign: TextAlign.end,
+                                                style: lightTextTheme.bodyLarge!
+                                                    .copyWith(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              )),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20.0),
                           CustomListContent(
                             titleIcon: const Icon(Icons.zoom_out_map),
                             title: 'Board Size',
@@ -230,7 +380,8 @@ class BoardSettingsPage extends HookConsumerWidget {
                                     const SizedBox(width: 22.0),
                                     Expanded(
                                         child: Text(
-                                      board!.ownerId,
+                                      board.ownerId,
+                                      textAlign: TextAlign.end,
                                       style: lightTextTheme.bodyLarge!.copyWith(
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -264,8 +415,9 @@ class BoardSettingsPage extends HookConsumerWidget {
                                   ),
                                 ],
                               ),
-                              currentSettings.isPublished !=
-                                      true // TODO: 仮に反転している
+                              // TODO: 仮に反転している
+                              currentSettings.isPublished != true &&
+                                      boardSettingsState.isOwner
                                   ? Column(
                                       children: [
                                         const Divider(color: MyColor.greenDark),
@@ -309,33 +461,25 @@ class BoardSettingsPage extends HookConsumerWidget {
                           ),
                           const SizedBox(height: 24.0),
                           boardSettingsState.isOwner
-                              ? GestureDetector(
-                                  onTap: () {
-                                    if (boardSettingsState.tempBoardSettings !=
-                                        null) {
-                                      ref
-                                          .read(boardSettingsViewModelProvider
-                                              .notifier)
-                                          .saveTempBoardSettings();
-                                      context.go('/edit');
-                                    }
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: boardSettingsState
-                                                  .tempBoardSettings !=
-                                              null
-                                          ? MyColor.pink
-                                          : MyColor.pink.withOpacity(0.4),
-                                      borderRadius:
-                                          BorderRadius.circular(999.0),
-                                    ),
-                                    child: Center(
-                                        child: Text('Save',
-                                            style: lightTextTheme.bodyLarge)),
-                                  ),
+                              ? CustomButton(
+                                  width: double.infinity,
+                                  height: 50,
+                                  color: isSaveable()
+                                      ? MyColor.pink
+                                      : MyColor.greenDark,
+                                  onTap: isSaveable()
+                                      ? () {
+                                          try {
+                                            saveTempBoardSettings();
+                                          } catch (e) {
+                                            ErrorDialog.show(
+                                                context, e.toString());
+                                          }
+                                        }
+                                      : null,
+                                  child: Center(
+                                      child: Text('Save',
+                                          style: lightTextTheme.bodyLarge)),
                                 )
                               : const SizedBox.shrink(),
                           const SizedBox(height: 100.0),
@@ -344,6 +488,19 @@ class BoardSettingsPage extends HookConsumerWidget {
                     ),
                   ),
                 ),
+                isFocus.value
+                    // focusNode.hasFocus
+                    ? GestureDetector(
+                        onTap: () {
+                          focusNode.unfocus();
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          color: Colors.transparent,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
                 showColorPicker.value
                     ? BoardColorChangeModal(
                         hideModal: handleHideModal,

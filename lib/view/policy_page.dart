@@ -25,7 +25,7 @@ class _PolicyPageState extends State<PolicyPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, size: 36),
           onPressed: () {
             context.go('/settings');
           },

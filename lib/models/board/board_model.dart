@@ -10,12 +10,12 @@ part 'board_model.g.dart';
 class BoardModel with _$BoardModel {
   const factory BoardModel({
     required String boardId,
+    @Default('-') String boardName,
     required String password,
     required List<ObjectModel> objects,
     required String ownerId,
     @Default(BoardSettingsModel()) BoardSettingsModel settings,
     required DateTime createdAt,
-    required DateTime updatedAt,
   }) = _BoardModel;
 
   factory BoardModel.fromJson(Map<String, dynamic> json) =>

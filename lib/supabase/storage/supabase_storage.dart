@@ -40,13 +40,16 @@ class SupabaseStorage {
     }
   }
 
-  Future<String?> deleteImage(String path) async {
-    final paths = [path];
+  Future<bool> deleteImage(String path) async {
+    /// TODO:hard code path
+    final imagePath = path.split('public_image/').last;
+    final paths = [imagePath];
     try {
-      await _client.storage.from('image').remove(paths);
+      final res = await _client.storage.from('public_image').remove(paths);
+      return res.isNotEmpty;
     } on PostgrestException catch (error) {
       print(error);
     }
-    return null;
+    return false;
   }
 }

@@ -21,12 +21,12 @@ BoardModel _$BoardModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$BoardModel {
   String get boardId => throw _privateConstructorUsedError;
+  String get boardName => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
   List<ObjectModel> get objects => throw _privateConstructorUsedError;
   String get ownerId => throw _privateConstructorUsedError;
   BoardSettingsModel get settings => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
-  DateTime get updatedAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -42,12 +42,12 @@ abstract class $BoardModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String boardId,
+      String boardName,
       String password,
       List<ObjectModel> objects,
       String ownerId,
       BoardSettingsModel settings,
-      DateTime createdAt,
-      DateTime updatedAt});
+      DateTime createdAt});
 
   $BoardSettingsModelCopyWith<$Res> get settings;
 }
@@ -66,17 +66,21 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
   @override
   $Res call({
     Object? boardId = null,
+    Object? boardName = null,
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
     Object? settings = null,
     Object? createdAt = null,
-    Object? updatedAt = null,
   }) {
     return _then(_value.copyWith(
       boardId: null == boardId
           ? _value.boardId
           : boardId // ignore: cast_nullable_to_non_nullable
+              as String,
+      boardName: null == boardName
+          ? _value.boardName
+          : boardName // ignore: cast_nullable_to_non_nullable
               as String,
       password: null == password
           ? _value.password
@@ -97,10 +101,6 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
     ) as $Val);
   }
@@ -124,12 +124,12 @@ abstract class _$$BoardModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String boardId,
+      String boardName,
       String password,
       List<ObjectModel> objects,
       String ownerId,
       BoardSettingsModel settings,
-      DateTime createdAt,
-      DateTime updatedAt});
+      DateTime createdAt});
 
   @override
   $BoardSettingsModelCopyWith<$Res> get settings;
@@ -147,17 +147,21 @@ class __$$BoardModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? boardId = null,
+    Object? boardName = null,
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
     Object? settings = null,
     Object? createdAt = null,
-    Object? updatedAt = null,
   }) {
     return _then(_$BoardModelImpl(
       boardId: null == boardId
           ? _value.boardId
           : boardId // ignore: cast_nullable_to_non_nullable
+              as String,
+      boardName: null == boardName
+          ? _value.boardName
+          : boardName // ignore: cast_nullable_to_non_nullable
               as String,
       password: null == password
           ? _value.password
@@ -179,10 +183,6 @@ class __$$BoardModelImplCopyWithImpl<$Res>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
     ));
   }
 }
@@ -192,12 +192,12 @@ class __$$BoardModelImplCopyWithImpl<$Res>
 class _$BoardModelImpl implements _BoardModel {
   const _$BoardModelImpl(
       {required this.boardId,
+      this.boardName = '-',
       required this.password,
       required final List<ObjectModel> objects,
       required this.ownerId,
       this.settings = const BoardSettingsModel(),
-      required this.createdAt,
-      required this.updatedAt})
+      required this.createdAt})
       : _objects = objects;
 
   factory _$BoardModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -205,6 +205,9 @@ class _$BoardModelImpl implements _BoardModel {
 
   @override
   final String boardId;
+  @override
+  @JsonKey()
+  final String boardName;
   @override
   final String password;
   final List<ObjectModel> _objects;
@@ -222,12 +225,10 @@ class _$BoardModelImpl implements _BoardModel {
   final BoardSettingsModel settings;
   @override
   final DateTime createdAt;
-  @override
-  final DateTime updatedAt;
 
   @override
   String toString() {
-    return 'BoardModel(boardId: $boardId, password: $password, objects: $objects, ownerId: $ownerId, settings: $settings, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, settings: $settings, createdAt: $createdAt)';
   }
 
   @override
@@ -236,6 +237,8 @@ class _$BoardModelImpl implements _BoardModel {
         (other.runtimeType == runtimeType &&
             other is _$BoardModelImpl &&
             (identical(other.boardId, boardId) || other.boardId == boardId) &&
+            (identical(other.boardName, boardName) ||
+                other.boardName == boardName) &&
             (identical(other.password, password) ||
                 other.password == password) &&
             const DeepCollectionEquality().equals(other._objects, _objects) &&
@@ -243,9 +246,7 @@ class _$BoardModelImpl implements _BoardModel {
             (identical(other.settings, settings) ||
                 other.settings == settings) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+                other.createdAt == createdAt));
   }
 
   @JsonKey(ignore: true)
@@ -253,12 +254,12 @@ class _$BoardModelImpl implements _BoardModel {
   int get hashCode => Object.hash(
       runtimeType,
       boardId,
+      boardName,
       password,
       const DeepCollectionEquality().hash(_objects),
       ownerId,
       settings,
-      createdAt,
-      updatedAt);
+      createdAt);
 
   @JsonKey(ignore: true)
   @override
@@ -277,18 +278,20 @@ class _$BoardModelImpl implements _BoardModel {
 abstract class _BoardModel implements BoardModel {
   const factory _BoardModel(
       {required final String boardId,
+      final String boardName,
       required final String password,
       required final List<ObjectModel> objects,
       required final String ownerId,
       final BoardSettingsModel settings,
-      required final DateTime createdAt,
-      required final DateTime updatedAt}) = _$BoardModelImpl;
+      required final DateTime createdAt}) = _$BoardModelImpl;
 
   factory _BoardModel.fromJson(Map<String, dynamic> json) =
       _$BoardModelImpl.fromJson;
 
   @override
   String get boardId;
+  @override
+  String get boardName;
   @override
   String get password;
   @override
@@ -299,8 +302,6 @@ abstract class _BoardModel implements BoardModel {
   BoardSettingsModel get settings;
   @override
   DateTime get createdAt;
-  @override
-  DateTime get updatedAt;
   @override
   @JsonKey(ignore: true)
   _$$BoardModelImplCopyWith<_$BoardModelImpl> get copyWith =>
