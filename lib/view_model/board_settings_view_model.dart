@@ -1,5 +1,3 @@
-import 'package:membo/models/board/board_model.dart';
-import 'package:membo/models/board/board_settings_model.dart';
 import 'package:membo/models/view_model_state/board_settings_state.dart';
 import 'package:membo/supabase/db/supabase_repository.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
@@ -12,12 +10,12 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
   @override
   BoardSettingsState build() => BoardSettingsState();
 
-  // void setTempBoardSettings(BoardSettingsModel boardSettings) {
-  //   state = state.copyWith(tempBoardSettings: boardSettings);
-  // }
-
   void changeOwner() {
     state = state.copyWith(isOwner: state.isOwner ? false : true);
+  }
+
+  void updateBoardName(String boardName) {
+    state = state.copyWith(tempBoardName: boardName);
   }
 
   void updateWidth(double width) {
@@ -70,15 +68,25 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     if (board == null) {
       throw Exception('Board is not loaded');
     }
-    if (state.tempBoardSettings == null) {
+    if (state.tempBoardSettings == null && state.tempBoardName == null) {
       throw Exception('Temp board settings is not set');
     }
-    final newBoard = board.copyWith(settings: state.tempBoardSettings!);
-    ref.read(supabaseRepositoryProvider).updateBoard(newBoard);
-    clear();
+    try {
+      final newBoard = board.copyWith(
+          settings: state.tempBoardSettings ?? board.settings,
+          boardName: state.tempBoardName ?? board.boardName);
+      ref.read(supabaseRepositoryProvider).updateBoard(newBoard);
+      clear();
+    } catch (e) {
+      throw Exception('error saving temp board settings: $e');
+    }
   }
 
   void clear() {
     state = BoardSettingsState();
+  }
+
+  bool isUpdatable() {
+    return (state.tempBoardSettings != null || state.tempBoardName != null);
   }
 }
