@@ -9,7 +9,7 @@ class CustomButton extends HookWidget {
   final Color color;
   final Widget child;
   final double elevation;
-  final Function() onTap;
+  final Function()? onTap;
   const CustomButton(
       {super.key,
       required this.width,
@@ -38,9 +38,10 @@ class CustomButton extends HookWidget {
 
     return GestureDetector(
       onTap: () {
+        if (onTap == null) return;
         controller.reset();
         Future.delayed(const Duration(milliseconds: 200), () {
-          onTap();
+          onTap!();
         });
         controller.forward();
       },
@@ -60,7 +61,7 @@ class CustomButton extends HookWidget {
                 CustomPaint(
                   painter: ButtonShapePainter(
                       color: color,
-                      elevation: elevation * controller.value * 0.5),
+                      elevation: elevation * controller.value * 0.7),
                   size: Size(width, height),
                 ),
                 Transform.translate(

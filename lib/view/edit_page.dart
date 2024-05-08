@@ -1,4 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
@@ -7,6 +10,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
+import 'package:membo/settings/text_theme.dart';
 import 'package:membo/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/utils/image_utils.dart';
@@ -15,12 +19,16 @@ import 'package:membo/widgets/board_widget.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:uuid/uuid.dart';
+import 'package:membo/string.dart';
 
 class EditPage extends HookConsumerWidget {
   const EditPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// Drawerで使用
+    final scaffoldKey = useMemoized(() => GlobalKey<ScaffoldState>(), []);
+
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
 
@@ -30,6 +38,7 @@ class EditPage extends HookConsumerWidget {
 
     final board = ref.watch(boardModelStateProvider);
     final editPageState = ref.watch(editPageViewModelProvider);
+    final objectList = editPageState.boardModel?.objects ?? [];
     final isLoading = useState(false);
 
     void setInitialTransform() {
@@ -79,12 +88,13 @@ class EditPage extends HookConsumerWidget {
     }, [board]);
 
     return Scaffold(
+        key: scaffoldKey,
         extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back, size: 36),
             onPressed: () => context.go('/'),
           ),
           actions: [
@@ -101,7 +111,88 @@ class EditPage extends HookConsumerWidget {
                 child: const Icon(Icons.settings),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  scaffoldKey.currentState?.openEndDrawer();
+                  // Scaffold.of(context).openDrawer();
+                },
+                child: const Icon(Icons.format_list_bulleted),
+              ),
+            ),
           ],
+        ),
+        endDrawer: Drawer(
+          width: (w * 0.85).clamp(200, 500),
+          backgroundColor: MyColor.green,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(6),
+              bottomLeft: Radius.circular(6),
+            ),
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                height:
+                    MediaQuery.of(context).orientation == Orientation.portrait
+                        ? 200
+                        : 130,
+                decoration: const BoxDecoration(
+                  color: MyColor.greenDark,
+                  border: Border(
+                    bottom: BorderSide(color: Colors.white, width: 0),
+                  ),
+                ),
+                child: SafeArea(
+                  bottom: false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 16),
+                        child: Text(
+                          'Object List',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.all(12),
+                        icon: const Icon(Icons.arrow_forward,
+                            size: 32, color: Colors.white),
+                        onPressed: () {
+                          scaffoldKey.currentState?.closeEndDrawer();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    const SizedBox(height: 6),
+                    ...objectList.map((object) {
+                      return DrawerCard(
+                        object: object,
+                        onTap: () {
+                          //
+                        },
+                      );
+                    }),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
         body: isLoading.value
             ? const Center(child: CircularProgressIndicator())
@@ -141,6 +232,229 @@ class EditPage extends HookConsumerWidget {
                   ),
                 ],
               ));
+  }
+}
+
+class DrawerCard extends HookConsumerWidget {
+  final Function onTap;
+  final ObjectModel object;
+  const DrawerCard({super.key, required this.onTap, required this.object});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isTaped = useState(false);
+    final isDeleteTaped = useState(false);
+    final creatorName = useState('');
+
+    void handleCardTap() async {
+      isTaped.value = !isTaped.value;
+      creatorName.value = await ref
+          .read(editPageViewModelProvider.notifier)
+          .getObjectCreatorName(object.creatorId);
+    }
+
+    void handleDeleteIconTap() async {
+      isTaped.value = true;
+      isDeleteTaped.value = true;
+      creatorName.value = await ref
+          .read(editPageViewModelProvider.notifier)
+          .getObjectCreatorName(object.creatorId);
+    }
+
+    void handleDeleteCancel() {
+      isTaped.value = false;
+      isDeleteTaped.value = false;
+    }
+
+    void handleDelete() async {
+      try {
+        await ref
+            .read(editPageViewModelProvider.notifier)
+            .deleteObject(object.objectId);
+      } catch (e) {
+        ErrorDialog.show(context, e.toString());
+      }
+      isTaped.value = false;
+      isDeleteTaped.value = false;
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDeleteTaped.value ? MyColor.pink : MyColor.greenLight,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(1, 1.5),
+            blurRadius: 2,
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        child: Row(children: [
+          object.type == ObjectType.text
+              ? const Icon(Icons.text_fields)
+              : const Icon(Icons.image),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                handleCardTap();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      child: Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          // color: MyColor.greenSuperLight,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: MyColor.greenDark),
+                        ),
+                        child: object.type == ObjectType.text
+                            ? Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(object.text ?? 'Text',
+                                    style: lightTextTheme.bodyMedium,
+                                    overflow: isTaped.value
+                                        ? TextOverflow.visible
+                                        : TextOverflow.ellipsis),
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: CachedNetworkImage(
+                                    imageUrl: object.imageUrl!,
+                                    width: double.infinity,
+                                    height: isTaped.value ? 200 : 100,
+                                    alignment: Alignment.centerLeft,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: isTaped.value
+                                                  ? BoxFit.contain
+                                                  : BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                    placeholder: (context, url) =>
+                                        const ColoredBox(color: Colors.white),
+                                    errorWidget: (context, url, error) =>
+                                        const ColoredBox(color: Colors.white)),
+                              ),
+                      ),
+                    ),
+                    isTaped.value
+                        ? Column(
+                            children: [
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: MyColor.greenDark),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 6.0),
+                                      child: Icon(Icons.person),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        creatorName.value,
+                                        style: lightTextTheme.bodyMedium,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: MyColor.greenDark),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 6.0),
+                                      child: Icon(
+                                        Icons.calendar_month,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        object.createdAt
+                                            .toIso8601String()
+                                            .toYMDString(),
+                                        style: lightTextTheme.bodyMedium,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
+                    isDeleteTaped.value
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 12.0),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red.shade300,
+                                      ),
+                                      onPressed: () {
+                                        handleDelete();
+                                      },
+                                      child: Text('Delete',
+                                          style: lightTextTheme.bodyMedium!
+                                              .copyWith(color: Colors.white))),
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            MyColor.greenSuperLight,
+                                      ),
+                                      onPressed: () {
+                                        handleDeleteCancel();
+                                      },
+                                      child: Text('Cancel',
+                                          style: lightTextTheme.bodyMedium)),
+                                ]),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            child: Container(
+                color: Colors.transparent,
+                padding: const EdgeInsets.all(8),
+                child: const Icon(Icons.delete)),
+            onTap: () {
+              handleDeleteIconTap();
+            },
+          )
+        ]),
+      ),
+    );
   }
 }
 
@@ -241,7 +555,10 @@ class EditToolBar extends HookConsumerWidget {
                                 ),
                               ],
                             ),
-                            child: const Icon(Icons.zoom_out_map),
+                            child: const Icon(
+                              Icons.zoom_out_map,
+                              size: 36,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 20),
@@ -265,7 +582,10 @@ class EditToolBar extends HookConsumerWidget {
                                 ),
                               ],
                             ),
-                            child: const Icon(Icons.refresh),
+                            child: const Icon(
+                              Icons.refresh,
+                              size: 36,
+                            ),
                           ),
                         ),
                       ],
@@ -273,19 +593,7 @@ class EditToolBar extends HookConsumerWidget {
                     SizedBox(
                       width: width / 3 > 170 ? 170 : width / 3,
                       height: width / 3 > 170 ? 170 : width / 3,
-                      // decoration: BoxDecoration(
-                      //   color: MyColor.greenSuperLight,
-                      //   borderRadius: BorderRadius.circular(99),
-                      //   border: Border.all(width: 6, color: MyColor.greenDark),
-                      //   boxShadow: [
-                      //     BoxShadow(
-                      //       color: Colors.black.withOpacity(0.3),
-                      //       offset: const Offset(1, 1),
-                      //       blurRadius: 2,
-                      //     ),
-                      //   ],
-                      // ),
-                      child: JoystickArea(
+                      child: Joystick(
                         base: Container(
                           decoration: BoxDecoration(
                             color: MyColor.greenSuperLight,
@@ -315,7 +623,10 @@ class EditToolBar extends HookConsumerWidget {
                               ),
                             ],
                           ),
-                          child: const Icon(Icons.open_with),
+                          child: const Icon(
+                            Icons.open_with,
+                            size: 36,
+                          ),
                         ),
                         period: const Duration(milliseconds: 5),
                         listener: (details) {
@@ -509,7 +820,6 @@ class TextInputModal extends HookConsumerWidget {
     final TextEditingController textController = useTextEditingController();
     final editPageState = ref.watch(editPageViewModelProvider);
     final selectedTextColor = useState<Color>(Colors.black);
-    final selectedBgColor = useState<Color>(Colors.black);
     final focusNode = useFocusNode();
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
@@ -528,10 +838,6 @@ class TextInputModal extends HookConsumerWidget {
 
     void handleChangeTextColor(Color color) {
       selectedTextColor.value = color;
-    }
-
-    void handleChangeBgColor(Color color) {
-      selectedBgColor.value = color;
     }
 
     return editPageState.showTextInput

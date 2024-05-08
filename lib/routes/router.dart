@@ -75,6 +75,7 @@ GoRouter router(RouterRef ref) {
     ),
     ShellRoute(
       builder: (_, __, child) => Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: MyColor.green,
           body: Stack(
             fit: StackFit.expand,

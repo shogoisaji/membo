@@ -9,7 +9,7 @@ const myColorTheme = ColorScheme(
   error: Colors.red,
   onError: Colors.white,
   background: Color(0xFF678A74),
-  onBackground: Color.fromARGB(255, 240, 105, 188),
+  onBackground: MyColor.greenText,
   surface: MyColor.greenLight,
   onSurface: MyColor.greenText,
 );
@@ -21,4 +21,5 @@ class MyColor {
   static const Color greenDark = Color(0xFF4D705B);
   static const Color greenText = Color(0xFF20412C);
   static const Color pink = Color(0xFFFFA0A0);
+  static const Color blue = Color(0xFF57627E);
 }

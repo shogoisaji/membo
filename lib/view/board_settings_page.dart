@@ -80,7 +80,7 @@ class BoardSettingsPage extends HookConsumerWidget {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, size: 36),
           onPressed: () {
             if (isSaveable()) {
               showDialog(

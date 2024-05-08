@@ -53,10 +53,10 @@ class CustomBottomNav extends HookConsumerWidget {
                 borderRadius: BorderRadius.circular(50),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withOpacity(0.15),
                     blurRadius: 3,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 3),
+                    spreadRadius: 1,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),

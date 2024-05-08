@@ -42,7 +42,7 @@ class AccountPage extends HookConsumerWidget {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back, size: 36),
             onPressed: () {
               context.go('/settings');
             },
