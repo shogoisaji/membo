@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:membo/models/board/board_model.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/state/navigation_state.dart';
 import 'package:membo/view/account_page.dart';
@@ -114,7 +113,7 @@ GoRouter router(RouterRef ref) {
           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
             context: context,
             state: state,
-            child: const EditPage(),
+            child: EditPage(boardId: state.extra as String),
           ),
         ),
         GoRoute(
@@ -130,7 +129,9 @@ GoRouter router(RouterRef ref) {
           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
             context: context,
             state: state,
-            child: const BoardSettingsPage(),
+            child: BoardSettingsPage(
+              boardId: state.extra as String,
+            ),
           ),
         ),
         GoRoute(

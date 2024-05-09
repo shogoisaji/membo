@@ -16,10 +16,6 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$BoardViewPageState {
-  BoardModel? get boardModel => throw _privateConstructorUsedError;
-  double get viewScale => throw _privateConstructorUsedError;
-  double get viewTranslateX => throw _privateConstructorUsedError;
-  double get viewTranslateY => throw _privateConstructorUsedError;
   Matrix4? get transformationMatrix => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -33,14 +29,7 @@ abstract class $BoardViewPageStateCopyWith<$Res> {
           BoardViewPageState value, $Res Function(BoardViewPageState) then) =
       _$BoardViewPageStateCopyWithImpl<$Res, BoardViewPageState>;
   @useResult
-  $Res call(
-      {BoardModel? boardModel,
-      double viewScale,
-      double viewTranslateX,
-      double viewTranslateY,
-      Matrix4? transformationMatrix});
-
-  $BoardModelCopyWith<$Res>? get boardModel;
+  $Res call({Matrix4? transformationMatrix});
 }
 
 /// @nodoc
@@ -56,46 +45,14 @@ class _$BoardViewPageStateCopyWithImpl<$Res, $Val extends BoardViewPageState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? boardModel = freezed,
-    Object? viewScale = null,
-    Object? viewTranslateX = null,
-    Object? viewTranslateY = null,
     Object? transformationMatrix = freezed,
   }) {
     return _then(_value.copyWith(
-      boardModel: freezed == boardModel
-          ? _value.boardModel
-          : boardModel // ignore: cast_nullable_to_non_nullable
-              as BoardModel?,
-      viewScale: null == viewScale
-          ? _value.viewScale
-          : viewScale // ignore: cast_nullable_to_non_nullable
-              as double,
-      viewTranslateX: null == viewTranslateX
-          ? _value.viewTranslateX
-          : viewTranslateX // ignore: cast_nullable_to_non_nullable
-              as double,
-      viewTranslateY: null == viewTranslateY
-          ? _value.viewTranslateY
-          : viewTranslateY // ignore: cast_nullable_to_non_nullable
-              as double,
       transformationMatrix: freezed == transformationMatrix
           ? _value.transformationMatrix
           : transformationMatrix // ignore: cast_nullable_to_non_nullable
               as Matrix4?,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $BoardModelCopyWith<$Res>? get boardModel {
-    if (_value.boardModel == null) {
-      return null;
-    }
-
-    return $BoardModelCopyWith<$Res>(_value.boardModel!, (value) {
-      return _then(_value.copyWith(boardModel: value) as $Val);
-    });
   }
 }
 
@@ -107,15 +64,7 @@ abstract class _$$EditPageStateImplCopyWith<$Res>
       __$$EditPageStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {BoardModel? boardModel,
-      double viewScale,
-      double viewTranslateX,
-      double viewTranslateY,
-      Matrix4? transformationMatrix});
-
-  @override
-  $BoardModelCopyWith<$Res>? get boardModel;
+  $Res call({Matrix4? transformationMatrix});
 }
 
 /// @nodoc
@@ -129,29 +78,9 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? boardModel = freezed,
-    Object? viewScale = null,
-    Object? viewTranslateX = null,
-    Object? viewTranslateY = null,
     Object? transformationMatrix = freezed,
   }) {
     return _then(_$EditPageStateImpl(
-      boardModel: freezed == boardModel
-          ? _value.boardModel
-          : boardModel // ignore: cast_nullable_to_non_nullable
-              as BoardModel?,
-      viewScale: null == viewScale
-          ? _value.viewScale
-          : viewScale // ignore: cast_nullable_to_non_nullable
-              as double,
-      viewTranslateX: null == viewTranslateX
-          ? _value.viewTranslateX
-          : viewTranslateX // ignore: cast_nullable_to_non_nullable
-              as double,
-      viewTranslateY: null == viewTranslateY
-          ? _value.viewTranslateY
-          : viewTranslateY // ignore: cast_nullable_to_non_nullable
-              as double,
       transformationMatrix: freezed == transformationMatrix
           ? _value.transformationMatrix
           : transformationMatrix // ignore: cast_nullable_to_non_nullable
@@ -163,30 +92,14 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$EditPageStateImpl implements _EditPageState {
-  _$EditPageStateImpl(
-      {this.boardModel,
-      this.viewScale = 1.0,
-      this.viewTranslateX = 0.0,
-      this.viewTranslateY = 0.0,
-      this.transformationMatrix});
+  _$EditPageStateImpl({this.transformationMatrix});
 
-  @override
-  final BoardModel? boardModel;
-  @override
-  @JsonKey()
-  final double viewScale;
-  @override
-  @JsonKey()
-  final double viewTranslateX;
-  @override
-  @JsonKey()
-  final double viewTranslateY;
   @override
   final Matrix4? transformationMatrix;
 
   @override
   String toString() {
-    return 'BoardViewPageState(boardModel: $boardModel, viewScale: $viewScale, viewTranslateX: $viewTranslateX, viewTranslateY: $viewTranslateY, transformationMatrix: $transformationMatrix)';
+    return 'BoardViewPageState(transformationMatrix: $transformationMatrix)';
   }
 
   @override
@@ -194,21 +107,12 @@ class _$EditPageStateImpl implements _EditPageState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EditPageStateImpl &&
-            (identical(other.boardModel, boardModel) ||
-                other.boardModel == boardModel) &&
-            (identical(other.viewScale, viewScale) ||
-                other.viewScale == viewScale) &&
-            (identical(other.viewTranslateX, viewTranslateX) ||
-                other.viewTranslateX == viewTranslateX) &&
-            (identical(other.viewTranslateY, viewTranslateY) ||
-                other.viewTranslateY == viewTranslateY) &&
             (identical(other.transformationMatrix, transformationMatrix) ||
                 other.transformationMatrix == transformationMatrix));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, boardModel, viewScale,
-      viewTranslateX, viewTranslateY, transformationMatrix);
+  int get hashCode => Object.hash(runtimeType, transformationMatrix);
 
   @JsonKey(ignore: true)
   @override
@@ -218,21 +122,9 @@ class _$EditPageStateImpl implements _EditPageState {
 }
 
 abstract class _EditPageState implements BoardViewPageState {
-  factory _EditPageState(
-      {final BoardModel? boardModel,
-      final double viewScale,
-      final double viewTranslateX,
-      final double viewTranslateY,
-      final Matrix4? transformationMatrix}) = _$EditPageStateImpl;
+  factory _EditPageState({final Matrix4? transformationMatrix}) =
+      _$EditPageStateImpl;
 
-  @override
-  BoardModel? get boardModel;
-  @override
-  double get viewScale;
-  @override
-  double get viewTranslateX;
-  @override
-  double get viewTranslateY;
   @override
   Matrix4? get transformationMatrix;
   @override

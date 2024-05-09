@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -7,7 +6,6 @@ import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/view_model/board_settings_view_model.dart';
-import 'package:membo/view_model/edit_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_list_content.dart';
@@ -15,7 +13,8 @@ import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/hue_ring_custom_picker.dart';
 
 class BoardSettingsPage extends HookConsumerWidget {
-  const BoardSettingsPage({super.key});
+  final String boardId;
+  const BoardSettingsPage({super.key, required this.boardId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,13 +25,9 @@ class BoardSettingsPage extends HookConsumerWidget {
     final showPassword = useState(false);
     final showColorPicker = useState(false);
     final boardSettingsState = ref.watch(boardSettingsViewModelProvider);
-    final board = ref.watch(boardModelStateProvider);
-    final currentSettings = board?.settings;
-    final backgroundColor = boardSettingsState.tempBoardSettings != null
-        ? Color(int.parse(boardSettingsState.tempBoardSettings!.bgColor))
-        : Color(int.parse(currentSettings!.bgColor));
-    final boardNameTextController =
-        useTextEditingController(text: board?.boardName ?? '');
+    final boardNameTextController = useTextEditingController();
+
+    final isFirstTextInput = useState(true);
 
     void handleHideModal() {
       showColorPicker.value = false;
@@ -57,15 +52,14 @@ class BoardSettingsPage extends HookConsumerWidget {
         ref
             .read(boardSettingsViewModelProvider.notifier)
             .saveTempBoardSettings();
-        context.go('/edit');
+        context.go('/edit', extra: boardId);
       } catch (e) {
         throw Exception(e.toString());
       }
     }
 
     bool isSaveable() {
-      return boardSettingsState.tempBoardSettings != null ||
-          boardSettingsState.tempBoardName != null;
+      return ref.read(boardSettingsViewModelProvider.notifier).isChangeCheck();
     }
 
     useEffect(() {
@@ -74,6 +68,24 @@ class BoardSettingsPage extends HookConsumerWidget {
       });
       return null;
     }, []);
+
+    void init() {
+      ref.read(boardSettingsViewModelProvider.notifier).initializeLoad(boardId);
+    }
+
+    useEffect(() {
+      init();
+      return;
+    }, []);
+
+    /// tempBoardName（Nameの初期値）が1度だけセットされる
+    useEffect(() {
+      if (!isFirstTextInput.value) return;
+      if (boardSettingsState.tempBoardName == null) return;
+      boardNameTextController.text = boardSettingsState.tempBoardName!;
+      isFirstTextInput.value = false;
+      return;
+    }, [boardSettingsState.tempBoardName]);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -115,7 +127,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                             .read(boardSettingsViewModelProvider.notifier)
                             .clear();
                         Navigator.of(context).pop();
-                        context.go('/edit');
+                        context.go('/edit', extra: boardId);
                       },
                       child: Text('保存しない', style: lightTextTheme.bodyMedium),
                     ),
@@ -124,12 +136,13 @@ class BoardSettingsPage extends HookConsumerWidget {
               );
             } else {
               ref.read(boardSettingsViewModelProvider.notifier).clear();
-              context.go('/edit');
+              context.go('/edit', extra: boardId);
             }
           },
         ),
       ),
-      body: (currentSettings == null || board == null)
+      body: (boardSettingsState.tempBoardSettings == null ||
+              boardSettingsState.tempBoardName == null)
           ? const SizedBox.shrink()
           : Stack(
               children: [
@@ -214,7 +227,8 @@ class BoardSettingsPage extends HookConsumerWidget {
                                                 ],
                                               )
                                             : Text(
-                                                board.boardName,
+                                                boardSettingsState
+                                                    .tempBoardName!,
                                                 textAlign: TextAlign.end,
                                                 style: lightTextTheme.bodyLarge!
                                                     .copyWith(
@@ -246,8 +260,9 @@ class BoardSettingsPage extends HookConsumerWidget {
                                       ? SizedBox(
                                           width: 100,
                                           child: SizeDropDown(
-                                            initialSize:
-                                                currentSettings.width.toInt(),
+                                            initialSize: boardSettingsState
+                                                .tempBoardSettings!.width
+                                                .toInt(),
                                             onChanged: (value) {
                                               handleUpdateWidth(
                                                   value.toDouble());
@@ -260,7 +275,8 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8.0),
                                           child: Text(
-                                            currentSettings.width
+                                            boardSettingsState
+                                                .tempBoardSettings!.width
                                                 .toStringAsFixed(0),
                                             style: lightTextTheme.bodyLarge,
                                           ),
@@ -280,8 +296,9 @@ class BoardSettingsPage extends HookConsumerWidget {
                                       ? SizedBox(
                                           width: 100,
                                           child: SizeDropDown(
-                                            initialSize:
-                                                currentSettings.height.toInt(),
+                                            initialSize: boardSettingsState
+                                                .tempBoardSettings!.height
+                                                .toInt(),
                                             onChanged: (value) {
                                               handleUpdateHeight(
                                                   value.toDouble());
@@ -294,7 +311,8 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8.0),
                                           child: Text(
-                                            currentSettings.height
+                                            boardSettingsState
+                                                .tempBoardSettings!.height
                                                 .toStringAsFixed(0),
                                             style: lightTextTheme.bodyLarge,
                                           ),
@@ -342,13 +360,17 @@ class BoardSettingsPage extends HookConsumerWidget {
                                             ],
                                             borderRadius:
                                                 BorderRadius.circular(2.0),
-                                            color: backgroundColor,
+                                            color: Color(int.parse(
+                                                boardSettingsState
+                                                    .tempBoardSettings!
+                                                    .bgColor)),
                                           ),
                                         ),
                                         const SizedBox(width: 4.0),
                                         Text(
                                           ColorUtils.colorToString(
-                                            backgroundColor,
+                                            Color(int.parse(boardSettingsState
+                                                .tempBoardSettings!.bgColor)),
                                           ),
                                           style: lightTextTheme.bodyLarge,
                                         ),
@@ -375,12 +397,12 @@ class BoardSettingsPage extends HookConsumerWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('OwnerID',
+                                    Text('OwnerName',
                                         style: lightTextTheme.bodyLarge),
                                     const SizedBox(width: 22.0),
                                     Expanded(
                                         child: Text(
-                                      board.ownerId,
+                                      boardSettingsState.ownerName,
                                       textAlign: TextAlign.end,
                                       style: lightTextTheme.bodyLarge!.copyWith(
                                         overflow: TextOverflow.ellipsis,
@@ -407,7 +429,9 @@ class BoardSettingsPage extends HookConsumerWidget {
                                   Row(
                                     children: [
                                       Text(
-                                          currentSettings.isPublished == true
+                                          boardSettingsState.tempBoardSettings!
+                                                      .isPublished ==
+                                                  true
                                               ? 'Public'
                                               : 'Private',
                                           style: lightTextTheme.bodyLarge),
@@ -416,7 +440,9 @@ class BoardSettingsPage extends HookConsumerWidget {
                                 ],
                               ),
                               // TODO: 仮に反転している
-                              currentSettings.isPublished != true &&
+                              boardSettingsState
+                                              .tempBoardSettings!.isPublished !=
+                                          true &&
                                       boardSettingsState.isOwner
                                   ? Column(
                                       children: [
@@ -432,10 +458,12 @@ class BoardSettingsPage extends HookConsumerWidget {
                                               children: [
                                                 Text(
                                                     showPassword.value
-                                                        ? board.password
-                                                        : '⚫︎' *
-                                                            board.password
-                                                                .length,
+                                                        ? boardSettingsState
+                                                                .tempPassword ??
+                                                            boardSettingsState
+                                                                .currentBoard!
+                                                                .password
+                                                        : '⚫︎' * 7,
                                                     style: lightTextTheme
                                                         .bodyLarge),
                                                 const SizedBox(width: 6.0),
@@ -568,8 +596,8 @@ class BoardColorChangeModal extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final board = ref.watch(boardModelStateProvider);
-    final boardSettings = board?.settings;
+    final boardSettings =
+        ref.watch(boardSettingsViewModelProvider).tempBoardSettings;
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
     final selectedColor = useState<Color>(boardSettings?.bgColor != null

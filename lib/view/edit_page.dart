@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/state/stream_board_state.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/utils/image_utils.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
@@ -22,10 +25,13 @@ import 'package:uuid/uuid.dart';
 import 'package:membo/string.dart';
 
 class EditPage extends HookConsumerWidget {
-  const EditPage({super.key});
+  final String boardId;
+  const EditPage({super.key, required this.boardId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final streamBoard = ref.watch(streamBoardModelProvider);
+
     /// Drawerで使用
     final scaffoldKey = useMemoized(() => GlobalKey<ScaffoldState>(), []);
 
@@ -36,56 +42,63 @@ class EditPage extends HookConsumerWidget {
     final TransformationController transformController =
         useTransformationController();
 
-    final board = ref.watch(boardModelStateProvider);
     final editPageState = ref.watch(editPageViewModelProvider);
     final objectList = editPageState.boardModel?.objects ?? [];
-    final isLoading = useState(false);
 
-    void setInitialTransform() {
-      final state = ref.read(editPageViewModelProvider);
-      transformController.value = Matrix4.identity()
-        ..translate(state.viewTranslateX, state.viewTranslateY, 0.0)
-        ..scale(state.viewScale, state.viewScale, 1.0);
-    }
+    final isLoading = useState(true);
+    final isMatrixSet = useState(false);
+    final timer = useState<Timer?>(null);
 
     void initialize() async {
-      try {
-        await ref.read(editPageViewModelProvider.notifier).initializeLoad(w, h);
-      } catch (e) {
+      await ref
+          .read(editPageViewModelProvider.notifier)
+          .initialize(boardId, w, h)
+          .catchError((e) {
         if (context.mounted) {
-          ErrorDialog.show(context, e.toString(),
-              secondaryMessage: 'Please check your network connection.',
-              onTap: () => context.go('/'));
+          ErrorDialog.show(
+            context,
+            e.toString(),
+            secondaryMessage: 'Please check your network connection.',
+            onTap: () => context.go('/'),
+          );
         }
-        return;
-      }
-
-      /// interactive viewerのcontrollerの監視とscaleの更新
-      transformController.addListener(() {
-        final matrix = transformController.value;
-        final scale = matrix.getMaxScaleOnAxis();
-        ref.read(editPageViewModelProvider.notifier).updateViewScale(scale);
       });
-
-      setInitialTransform();
-
-      isLoading.value = false;
     }
 
     useEffect(() {
-      isLoading.value = true;
       initialize();
       return null;
     }, []);
 
-    /// BoardModelが更新されたら再描画
+    /// マトリックスの更新（基本的には初期化時）
     useEffect(() {
-      if (board == null) return;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(editPageViewModelProvider.notifier).setBoardModel(board);
-      });
+      if (editPageState.transformationMatrix == null) return;
+      transformController.value = editPageState.transformationMatrix!;
+      isMatrixSet.value = true;
       return null;
-    }, [board]);
+    }, [editPageState.transformationMatrix]);
+
+    /// 準備ができたらloadingをfalseにする
+    void standbyCheck() {
+      if (isMatrixSet.value == false) return;
+
+      /// 故意的に遅延させている
+      Future.delayed(const Duration(milliseconds: 500), () {
+        isLoading.value = false;
+      });
+    }
+
+    useEffect(() {
+      timer.value = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+        if (!isLoading.value) {
+          timer.cancel();
+        }
+        standbyCheck();
+      });
+      return () {
+        timer.value?.cancel();
+      };
+    }, []);
 
     return Scaffold(
         key: scaffoldKey,
@@ -102,11 +115,10 @@ class EditPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(right: 12.0),
               child: ElevatedButton(
                 onPressed: () {
-                  if (board == null) return;
                   ref
                       .read(editPageViewModelProvider.notifier)
                       .clearSelectedObject();
-                  context.go('/board-settings');
+                  context.go('/board-settings', extra: boardId);
                 },
                 child: const Icon(Icons.settings),
               ),
@@ -194,7 +206,7 @@ class EditPage extends HookConsumerWidget {
             ],
           ),
         ),
-        body: isLoading.value
+        body: isLoading.value || streamBoard == null
             ? const Center(child: CircularProgressIndicator())
             : Stack(
                 children: [
@@ -214,14 +226,11 @@ class EditPage extends HookConsumerWidget {
                           minHeight: 0.0,
                           maxHeight: double.infinity,
                           alignment: Alignment.center,
-                          child: board == null
-                              ? const SizedBox.shrink()
-                              : Center(
-                                  child: BoardWidget(
-                                      board: board,
-                                      selectedObject:
-                                          editPageState.selectedObject),
-                                ))),
+                          child: Center(
+                            child: BoardWidget(
+                                board: streamBoard,
+                                selectedObject: editPageState.selectedObject),
+                          ))),
                   editPageState.selectedObject == null
                       ? const CustomFloatingButton()
                       : const SizedBox.shrink(),
@@ -703,7 +712,6 @@ class CustomFloatingButton extends HookConsumerWidget {
         /// 画像サイズを取得
         final imageSize =
             await ImageUtils().getImageSize(image) ?? const Size(0, 0);
-        print('Image size: $imageSize');
         final selectedObject = ObjectModel(
             objectId: const Uuid().v4(),
             type: ObjectType.localImage,

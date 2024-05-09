@@ -25,6 +25,7 @@ mixin _$EditPageState {
   XFile? get selectedImageFile => throw _privateConstructorUsedError;
   bool get showTextInput => throw _privateConstructorUsedError;
   bool get showInputMenu => throw _privateConstructorUsedError;
+  Matrix4? get transformationMatrix => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $EditPageStateCopyWith<EditPageState> get copyWith =>
@@ -46,7 +47,8 @@ abstract class $EditPageStateCopyWith<$Res> {
       double viewTranslateY,
       XFile? selectedImageFile,
       bool showTextInput,
-      bool showInputMenu});
+      bool showInputMenu,
+      Matrix4? transformationMatrix});
 
   $ObjectModelCopyWith<$Res>? get selectedObject;
   $BoardModelCopyWith<$Res>? get boardModel;
@@ -74,6 +76,7 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
     Object? selectedImageFile = freezed,
     Object? showTextInput = null,
     Object? showInputMenu = null,
+    Object? transformationMatrix = freezed,
   }) {
     return _then(_value.copyWith(
       selectedObject: freezed == selectedObject
@@ -112,6 +115,10 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
           ? _value.showInputMenu
           : showInputMenu // ignore: cast_nullable_to_non_nullable
               as bool,
+      transformationMatrix: freezed == transformationMatrix
+          ? _value.transformationMatrix
+          : transformationMatrix // ignore: cast_nullable_to_non_nullable
+              as Matrix4?,
     ) as $Val);
   }
 
@@ -157,7 +164,8 @@ abstract class _$$EditPageStateImplCopyWith<$Res>
       double viewTranslateY,
       XFile? selectedImageFile,
       bool showTextInput,
-      bool showInputMenu});
+      bool showInputMenu,
+      Matrix4? transformationMatrix});
 
   @override
   $ObjectModelCopyWith<$Res>? get selectedObject;
@@ -185,6 +193,7 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
     Object? selectedImageFile = freezed,
     Object? showTextInput = null,
     Object? showInputMenu = null,
+    Object? transformationMatrix = freezed,
   }) {
     return _then(_$EditPageStateImpl(
       selectedObject: freezed == selectedObject
@@ -223,6 +232,10 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
           ? _value.showInputMenu
           : showInputMenu // ignore: cast_nullable_to_non_nullable
               as bool,
+      transformationMatrix: freezed == transformationMatrix
+          ? _value.transformationMatrix
+          : transformationMatrix // ignore: cast_nullable_to_non_nullable
+              as Matrix4?,
     ));
   }
 }
@@ -239,7 +252,8 @@ class _$EditPageStateImpl implements _EditPageState {
       this.viewTranslateY = 0.0,
       this.selectedImageFile,
       this.showTextInput = false,
-      this.showInputMenu = false});
+      this.showInputMenu = false,
+      this.transformationMatrix});
 
   @override
   final ObjectModel? selectedObject;
@@ -264,10 +278,12 @@ class _$EditPageStateImpl implements _EditPageState {
   @override
   @JsonKey()
   final bool showInputMenu;
+  @override
+  final Matrix4? transformationMatrix;
 
   @override
   String toString() {
-    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, selectedBoardId: $selectedBoardId, viewScale: $viewScale, viewTranslateX: $viewTranslateX, viewTranslateY: $viewTranslateY, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu)';
+    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, selectedBoardId: $selectedBoardId, viewScale: $viewScale, viewTranslateX: $viewTranslateX, viewTranslateY: $viewTranslateY, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu, transformationMatrix: $transformationMatrix)';
   }
 
   @override
@@ -292,7 +308,9 @@ class _$EditPageStateImpl implements _EditPageState {
             (identical(other.showTextInput, showTextInput) ||
                 other.showTextInput == showTextInput) &&
             (identical(other.showInputMenu, showInputMenu) ||
-                other.showInputMenu == showInputMenu));
+                other.showInputMenu == showInputMenu) &&
+            (identical(other.transformationMatrix, transformationMatrix) ||
+                other.transformationMatrix == transformationMatrix));
   }
 
   @override
@@ -306,7 +324,8 @@ class _$EditPageStateImpl implements _EditPageState {
       viewTranslateY,
       selectedImageFile,
       showTextInput,
-      showInputMenu);
+      showInputMenu,
+      transformationMatrix);
 
   @JsonKey(ignore: true)
   @override
@@ -325,7 +344,8 @@ abstract class _EditPageState implements EditPageState {
       final double viewTranslateY,
       final XFile? selectedImageFile,
       final bool showTextInput,
-      final bool showInputMenu}) = _$EditPageStateImpl;
+      final bool showInputMenu,
+      final Matrix4? transformationMatrix}) = _$EditPageStateImpl;
 
   @override
   ObjectModel? get selectedObject;
@@ -345,6 +365,8 @@ abstract class _EditPageState implements EditPageState {
   bool get showTextInput;
   @override
   bool get showInputMenu;
+  @override
+  Matrix4? get transformationMatrix;
   @override
   @JsonKey(ignore: true)
   _$$EditPageStateImplCopyWith<_$EditPageStateImpl> get copyWith =>

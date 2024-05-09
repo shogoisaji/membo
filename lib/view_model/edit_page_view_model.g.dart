@@ -6,41 +6,12 @@ part of 'edit_page_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$boardStreamHash() => r'4b24cf4fb6d57d470ce631f323145d6c4daa1f5c';
-
-/// See also [boardStream].
-@ProviderFor(boardStream)
-final boardStreamProvider = StreamProvider<BoardModel?>.internal(
-  boardStream,
-  name: r'boardStreamProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$boardStreamHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef BoardStreamRef = StreamProviderRef<BoardModel?>;
-String _$boardModelStateHash() => r'e072f9b5b6526531b8b05cd9cde3673b6b66f3f3';
-
-/// See also [boardModelState].
-@ProviderFor(boardModelState)
-final boardModelStateProvider = Provider<BoardModel?>.internal(
-  boardModelState,
-  name: r'boardModelStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$boardModelStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef BoardModelStateRef = ProviderRef<BoardModel?>;
-String _$editPageViewModelHash() => r'4b345eaed16b2e050f5f3d6fc26b47c19e234f17';
+String _$editPageViewModelHash() => r'd2e19d3eea0002d765a8b66f6029fb5d86112bb0';
 
 /// See also [EditPageViewModel].
 @ProviderFor(EditPageViewModel)
 final editPageViewModelProvider =
-    NotifierProvider<EditPageViewModel, EditPageState>.internal(
+    AutoDisposeNotifierProvider<EditPageViewModel, EditPageState>.internal(
   EditPageViewModel.new,
   name: r'editPageViewModelProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -50,6 +21,6 @@ final editPageViewModelProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$EditPageViewModel = Notifier<EditPageState>;
+typedef _$EditPageViewModel = AutoDisposeNotifier<EditPageState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
