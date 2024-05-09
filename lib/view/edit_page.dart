@@ -95,7 +95,7 @@ class EditPage extends HookConsumerWidget {
           backgroundColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 36),
-            onPressed: () => context.go('/'),
+            onPressed: () => context.go('/edit-list'),
           ),
           actions: [
             Padding(
@@ -272,7 +272,9 @@ class DrawerCard extends HookConsumerWidget {
             .read(editPageViewModelProvider.notifier)
             .deleteObject(object.objectId);
       } catch (e) {
-        ErrorDialog.show(context, e.toString());
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
       }
       isTaped.value = false;
       isDeleteTaped.value = false;

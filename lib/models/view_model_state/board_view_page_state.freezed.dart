@@ -20,6 +20,7 @@ mixin _$BoardViewPageState {
   double get viewScale => throw _privateConstructorUsedError;
   double get viewTranslateX => throw _privateConstructorUsedError;
   double get viewTranslateY => throw _privateConstructorUsedError;
+  Matrix4? get transformationMatrix => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $BoardViewPageStateCopyWith<BoardViewPageState> get copyWith =>
@@ -36,7 +37,8 @@ abstract class $BoardViewPageStateCopyWith<$Res> {
       {BoardModel? boardModel,
       double viewScale,
       double viewTranslateX,
-      double viewTranslateY});
+      double viewTranslateY,
+      Matrix4? transformationMatrix});
 
   $BoardModelCopyWith<$Res>? get boardModel;
 }
@@ -58,6 +60,7 @@ class _$BoardViewPageStateCopyWithImpl<$Res, $Val extends BoardViewPageState>
     Object? viewScale = null,
     Object? viewTranslateX = null,
     Object? viewTranslateY = null,
+    Object? transformationMatrix = freezed,
   }) {
     return _then(_value.copyWith(
       boardModel: freezed == boardModel
@@ -76,6 +79,10 @@ class _$BoardViewPageStateCopyWithImpl<$Res, $Val extends BoardViewPageState>
           ? _value.viewTranslateY
           : viewTranslateY // ignore: cast_nullable_to_non_nullable
               as double,
+      transformationMatrix: freezed == transformationMatrix
+          ? _value.transformationMatrix
+          : transformationMatrix // ignore: cast_nullable_to_non_nullable
+              as Matrix4?,
     ) as $Val);
   }
 
@@ -104,7 +111,8 @@ abstract class _$$EditPageStateImplCopyWith<$Res>
       {BoardModel? boardModel,
       double viewScale,
       double viewTranslateX,
-      double viewTranslateY});
+      double viewTranslateY,
+      Matrix4? transformationMatrix});
 
   @override
   $BoardModelCopyWith<$Res>? get boardModel;
@@ -125,6 +133,7 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
     Object? viewScale = null,
     Object? viewTranslateX = null,
     Object? viewTranslateY = null,
+    Object? transformationMatrix = freezed,
   }) {
     return _then(_$EditPageStateImpl(
       boardModel: freezed == boardModel
@@ -143,6 +152,10 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
           ? _value.viewTranslateY
           : viewTranslateY // ignore: cast_nullable_to_non_nullable
               as double,
+      transformationMatrix: freezed == transformationMatrix
+          ? _value.transformationMatrix
+          : transformationMatrix // ignore: cast_nullable_to_non_nullable
+              as Matrix4?,
     ));
   }
 }
@@ -154,7 +167,8 @@ class _$EditPageStateImpl implements _EditPageState {
       {this.boardModel,
       this.viewScale = 1.0,
       this.viewTranslateX = 0.0,
-      this.viewTranslateY = 0.0});
+      this.viewTranslateY = 0.0,
+      this.transformationMatrix});
 
   @override
   final BoardModel? boardModel;
@@ -167,10 +181,12 @@ class _$EditPageStateImpl implements _EditPageState {
   @override
   @JsonKey()
   final double viewTranslateY;
+  @override
+  final Matrix4? transformationMatrix;
 
   @override
   String toString() {
-    return 'BoardViewPageState(boardModel: $boardModel, viewScale: $viewScale, viewTranslateX: $viewTranslateX, viewTranslateY: $viewTranslateY)';
+    return 'BoardViewPageState(boardModel: $boardModel, viewScale: $viewScale, viewTranslateX: $viewTranslateX, viewTranslateY: $viewTranslateY, transformationMatrix: $transformationMatrix)';
   }
 
   @override
@@ -185,12 +201,14 @@ class _$EditPageStateImpl implements _EditPageState {
             (identical(other.viewTranslateX, viewTranslateX) ||
                 other.viewTranslateX == viewTranslateX) &&
             (identical(other.viewTranslateY, viewTranslateY) ||
-                other.viewTranslateY == viewTranslateY));
+                other.viewTranslateY == viewTranslateY) &&
+            (identical(other.transformationMatrix, transformationMatrix) ||
+                other.transformationMatrix == transformationMatrix));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, boardModel, viewScale, viewTranslateX, viewTranslateY);
+  int get hashCode => Object.hash(runtimeType, boardModel, viewScale,
+      viewTranslateX, viewTranslateY, transformationMatrix);
 
   @JsonKey(ignore: true)
   @override
@@ -204,7 +222,8 @@ abstract class _EditPageState implements BoardViewPageState {
       {final BoardModel? boardModel,
       final double viewScale,
       final double viewTranslateX,
-      final double viewTranslateY}) = _$EditPageStateImpl;
+      final double viewTranslateY,
+      final Matrix4? transformationMatrix}) = _$EditPageStateImpl;
 
   @override
   BoardModel? get boardModel;
@@ -214,6 +233,8 @@ abstract class _EditPageState implements BoardViewPageState {
   double get viewTranslateX;
   @override
   double get viewTranslateY;
+  @override
+  Matrix4? get transformationMatrix;
   @override
   @JsonKey(ignore: true)
   _$$EditPageStateImplCopyWith<_$EditPageStateImpl> get copyWith =>

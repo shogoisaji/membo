@@ -7,12 +7,12 @@ part of 'board_view_page_view_model.dart';
 // **************************************************************************
 
 String _$boardViewPageViewModelHash() =>
-    r'1574b6065b01816b71cda36a3b9b74ce3f515370';
+    r'bb1ce4b89ae1ad441d78d9a65fec1458016b60ae';
 
 /// See also [BoardViewPageViewModel].
 @ProviderFor(BoardViewPageViewModel)
-final boardViewPageViewModelProvider =
-    NotifierProvider<BoardViewPageViewModel, BoardViewPageState>.internal(
+final boardViewPageViewModelProvider = AutoDisposeNotifierProvider<
+    BoardViewPageViewModel, BoardViewPageState>.internal(
   BoardViewPageViewModel.new,
   name: r'boardViewPageViewModelProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,6 +22,6 @@ final boardViewPageViewModelProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$BoardViewPageViewModel = Notifier<BoardViewPageState>;
+typedef _$BoardViewPageViewModel = AutoDisposeNotifier<BoardViewPageState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
