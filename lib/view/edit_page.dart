@@ -11,7 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
-import 'package:membo/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/utils/image_utils.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';

@@ -31,18 +31,19 @@ class BoardViewPage extends HookConsumerWidget {
     }
 
     void initialize() async {
-      try {
-        await ref
-            .read(boardViewPageViewModelProvider.notifier)
-            .initializeLoad(w, h);
-      } catch (e) {
+      await ref
+          .read(boardViewPageViewModelProvider.notifier)
+          .initializeLoad(w, h)
+          .catchError((e) {
         if (context.mounted) {
-          ErrorDialog.show(context, e.toString(),
-              secondaryMessage: 'Please check your network connection.',
-              onTap: () => context.go('/'));
+          ErrorDialog.show(
+            context,
+            e.toString(),
+            secondaryMessage: 'Please check your network connection.',
+            onTap: () => context.go('/'),
+          );
         }
-        return;
-      }
+      });
 
       /// interactive viewerのcontrollerの監視とscaleの更新
       transformController.addListener(() {

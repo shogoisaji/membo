@@ -8,7 +8,7 @@ import 'package:membo/view/connect_page.dart';
 import 'package:membo/view/edit_list_page.dart';
 import 'package:membo/view/edit_page.dart';
 import 'package:membo/view/board_view_page.dart';
-import 'package:membo/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/view/policy_page.dart';
 import 'package:membo/widgets/custom_bottom_nav.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

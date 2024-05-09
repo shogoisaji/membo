@@ -1,7 +1,7 @@
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/view_model_state/board_view_page_state.dart';
 import 'package:membo/state/board_view_state.dart';
-import 'package:membo/supabase/db/supabase_repository.dart';
+import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'board_view_page_view_model.g.dart';

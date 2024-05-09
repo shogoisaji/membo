@@ -35,7 +35,7 @@ final boardModelStateProvider = Provider<BoardModel?>.internal(
 );
 
 typedef BoardModelStateRef = ProviderRef<BoardModel?>;
-String _$editPageViewModelHash() => r'99b2ba70421fff3ed02be69ddc0c3feef8a3f3e4';
+String _$editPageViewModelHash() => r'4b345eaed16b2e050f5f3d6fc26b47c19e234f17';
 
 /// See also [EditPageViewModel].
 @ProviderFor(EditPageViewModel)
