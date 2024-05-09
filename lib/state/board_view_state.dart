@@ -1,5 +1,5 @@
 import 'package:membo/models/board/board_model.dart';
-import 'package:membo/supabase/db/supabase_repository.dart';
+import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'board_view_state.g.dart';

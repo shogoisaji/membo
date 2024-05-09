@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:membo/models/board/board_model.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -11,5 +12,6 @@ class BoardViewPageState with _$BoardViewPageState {
     @Default(1.0) double viewScale,
     @Default(0.0) double viewTranslateX,
     @Default(0.0) double viewTranslateY,
+    Matrix4? transformationMatrix,
   }) = _EditPageState;
 }

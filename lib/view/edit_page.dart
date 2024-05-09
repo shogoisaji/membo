@@ -11,7 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
-import 'package:membo/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/utils/image_utils.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
@@ -95,7 +95,7 @@ class EditPage extends HookConsumerWidget {
           backgroundColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 36),
-            onPressed: () => context.go('/'),
+            onPressed: () => context.go('/edit-list'),
           ),
           actions: [
             Padding(
@@ -272,7 +272,9 @@ class DrawerCard extends HookConsumerWidget {
             .read(editPageViewModelProvider.notifier)
             .deleteObject(object.objectId);
       } catch (e) {
-        ErrorDialog.show(context, e.toString());
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
       }
       isTaped.value = false;
       isDeleteTaped.value = false;
