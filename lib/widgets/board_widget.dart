@@ -19,7 +19,17 @@ class BoardWidget extends HookWidget {
     return Container(
         width: board.settings.width,
         height: board.settings.height,
-        color: Color(int.parse(board.settings.bgColor)),
+        decoration: BoxDecoration(
+          color: Color(int.parse(board.settings.bgColor)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              blurRadius: 60,
+              spreadRadius: 15,
+              offset: const Offset(10, 20),
+            ),
+          ],
+        ),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -50,10 +60,24 @@ class BoardCanvasPainter extends CustomPainter {
   });
 
   @override
-  void paint(Canvas canvas, Size size) async {}
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = canvasColor
+      ..style = PaintingStyle.fill;
+
+    // final shadowPaint = Paint()
+    //   ..color = Colors.black.withOpacity(0.5)
+    //   ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 30);
+
+    // // 影を描画
+    // canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), shadowPaint);
+    // キャンバスの背景を塗りつぶす
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width - 50, size.height - 50), paint);
+  }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+  bool shouldRepaint(CustomPainter oldDelegate) {
     return false;
   }
 }

@@ -131,16 +131,13 @@ class EditPageViewModel extends _$EditPageViewModel {
   }
 
   void clearSelectedObject() {
-    state = state.copyWith(
-        selectedObject: null,
-        viewScale: 1.0,
-        viewTranslateX: 0.0,
-        viewTranslateY: 0.0,
-        selectedImageFile: null);
+    state = state.copyWith(selectedObject: null, selectedImageFile: null);
   }
 
   void setBoardModel(BoardModel board) {
-    state = state.copyWith(boardModel: board);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      state = state.copyWith(boardModel: board);
+    });
   }
 
   void insertSelectedObject() {
@@ -159,7 +156,7 @@ class EditPageViewModel extends _$EditPageViewModel {
         /// 画像の場合
         case ObjectType.localImage:
           if (state.selectedImageFile == null) {
-            throw Exception('addObject():selectedImageFile is null');
+            throw Exception('select local image is null');
           }
           ref.read(supabaseRepositoryProvider).addImageObject(
               board, state.selectedObject!, state.selectedImageFile!);
