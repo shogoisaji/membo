@@ -1,13 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
-import 'package:membo/state/board_view_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
@@ -59,10 +57,6 @@ class HomePage extends HookConsumerWidget {
                         alignment: const Alignment(0, 0.2),
                         child: GestureDetector(
                           onTap: () {
-                            ref
-                                .read(selectedBoardIdProvider.notifier)
-                                .setSelectedBoardId(
-                                    homePageState.boardModel[index].boardId);
                             context.go('/view',
                                 extra: homePageState.boardModel[index].boardId);
                           },

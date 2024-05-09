@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
@@ -18,5 +19,6 @@ class EditPageState with _$EditPageState {
     XFile? selectedImageFile,
     @Default(false) bool showTextInput,
     @Default(false) bool showInputMenu,
+    Matrix4? transformationMatrix,
   }) = _EditPageState;
 }

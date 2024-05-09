@@ -7,49 +7,20 @@ import 'package:membo/models/view_model_state/edit_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
+import 'package:membo/state/stream_board_state.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'edit_page_view_model.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class EditPageViewModel extends _$EditPageViewModel {
   @override
   EditPageState build() => EditPageState();
 
   void setSelectedBoardId(String boardId) {
     state = state.copyWith(selectedBoardId: boardId);
-  }
-
-  Map<String, double> calcInitialTransform(
-      BoardModel board, double w, double h) {
-    final scaleW = w / board.settings.width;
-    final scaleH = (h - kToolbarHeight) / board.settings.height;
-    final scale = scaleW < scaleH ? scaleW : scaleH;
-
-    /// 横長の画面の場合
-    if (scaleW > scaleH) {
-      final addX = (w - board.settings.width * scale) / 2;
-      final translateX = (board.settings.width - w) / 2 * scale + addX;
-      final translateY = (board.settings.height - h) / 2 * scale;
-      return {
-        'scale': scale,
-        'translateX': translateX,
-        'translateY': translateY,
-      };
-
-      /// 縦長の画面の場合
-    } else {
-      final addY = (h - board.settings.height * scale) / 2;
-      final translateX = (board.settings.width - w) / 2 * scale;
-      final translateY = (board.settings.height - h) / 2 * scale + addY;
-      return {
-        'scale': scale,
-        'translateX': translateX,
-        'translateY': translateY,
-      };
-    }
   }
 
   Future<void> createNewBoard() async {
@@ -72,31 +43,48 @@ class EditPageViewModel extends _$EditPageViewModel {
     state = state.copyWith(boardModel: newBoard);
   }
 
-  Future<void> initializeLoad(double w, double h) async {
-    if (state.selectedBoardId == null) {
-      await createNewBoard();
+  Matrix4 calcInitialTransform(BoardModel board, double w, double h) {
+    final scaleW = w / board.settings.width;
+    final scaleH = h / board.settings.height;
+    final scale = scaleW < scaleH ? scaleW : scaleH;
+
+    /// 横長の画面の場合
+    if (scaleW > scaleH) {
+      final addX = (w - board.settings.width * scale) / 2 / scale;
+      final translateX = (board.settings.width - w) / 2 * 1 + addX;
+      final translateY = (board.settings.height - h) / 2 * 1;
+      final matrix = Matrix4.identity()
+        ..scale(scale)
+        ..translate(translateX, translateY, 0);
+      return matrix;
+
+      /// 縦長の画面の場合
     } else {
-      final board = await ref
-          .read(supabaseRepositoryProvider)
-          .getBoardById(state.selectedBoardId!);
-      if (board == null) {
-        throw Exception('Board not found');
-      }
-      final transformMap = calcInitialTransform(board, w, h);
-      state = state.copyWith(
-        selectedObject: null,
-        boardModel: board,
-        viewScale: transformMap['scale'] as double,
-        viewTranslateX: transformMap['translateX'] as double,
-        viewTranslateY: transformMap['translateY'] as double,
-        showInputMenu: false,
-        showTextInput: false,
-      );
+      final addY = (h - board.settings.height * scale) / 2 / scale;
+      final translateX = (board.settings.width - w) / 2 * 1;
+      final translateY = (board.settings.height - h) / 2 * 1 + addY;
+      final matrix = Matrix4.identity()
+        ..scale(scale)
+        ..translate(translateX, translateY, 0);
+      return matrix;
     }
   }
 
-  void updateViewScale(double scale) {
-    state = state.copyWith(viewScale: scale);
+  Future<void> initialize(String boardId, double w, double h) async {
+    final board =
+        await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+
+    if (board == null) return;
+
+    ref.read(streamBoardIdProvider.notifier).setStreamBoardId(boardId);
+
+    final matrix = calcInitialTransform(board, w, h);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      state = state.copyWith(
+        boardModel: board,
+        transformationMatrix: matrix,
+      );
+    });
   }
 
   void selectObject(ObjectModel? object, XFile? file) {
@@ -157,7 +145,6 @@ class EditPageViewModel extends _$EditPageViewModel {
 
   void insertSelectedObject() {
     if (state.selectedObject == null) {
-      print('insertObject(): Object is null');
       return;
     }
 
@@ -260,29 +247,4 @@ class EditPageViewModel extends _$EditPageViewModel {
       throw Exception('Error delete: $e');
     }
   }
-}
-
-@Riverpod(keepAlive: true)
-Stream<BoardModel?> boardStream(BoardStreamRef ref) {
-  final boardId = ref.read(editPageViewModelProvider).selectedBoardId;
-  if (boardId == null) {
-    return Stream.value(null);
-  }
-  return ref.watch(supabaseRepositoryProvider).boardStream(boardId);
-}
-
-@Riverpod(keepAlive: true)
-BoardModel? boardModelState(BoardModelStateRef ref) {
-  final boardStream = ref.watch(boardStreamProvider);
-  return boardStream.when(
-    loading: () {
-      return null;
-    },
-    error: (e, __) {
-      return null;
-    },
-    data: (d) {
-      return d;
-    },
-  );
 }

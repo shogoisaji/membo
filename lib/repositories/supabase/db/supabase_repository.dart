@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
+import 'package:membo/models/board/board_settings_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
@@ -74,6 +75,22 @@ class SupabaseRepository {
           .from('boards')
           .update(object)
           .eq('boardId', updatedBoard.boardId)
+          .single();
+    } catch (err) {
+      /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
+      print('Error updating board: $err');
+    }
+  }
+
+  /// maybe no use
+  Future<void> updateBoardSettings(
+      String boardId, BoardSettingsModel updatedBoardSettings) async {
+    final newSettings = updatedBoardSettings.toJson();
+    try {
+      await _client
+          .from('boards')
+          .update({'settings': newSettings})
+          .eq('boardId', boardId)
           .single();
     } catch (err) {
       /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
