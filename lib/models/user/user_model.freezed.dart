@@ -14,15 +14,26 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+UserModel _$UserModelFromJson(Map<String, dynamic> json) {
+  return _UserModel.fromJson(json);
+}
+
 /// @nodoc
 mixin _$UserModel {
+  @JsonKey(name: 'user_id')
   String get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_name')
   String get userName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owned_boards_id')
   List<String> get ownedBoardsId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'avatar_url')
   String? get avatarUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_type')
   UserType get userType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $UserModelCopyWith<UserModel> get copyWith =>
       throw _privateConstructorUsedError;
@@ -34,12 +45,12 @@ abstract class $UserModelCopyWith<$Res> {
       _$UserModelCopyWithImpl<$Res, UserModel>;
   @useResult
   $Res call(
-      {String userId,
-      String userName,
-      List<String> ownedBoardsId,
-      String? avatarUrl,
-      UserType userType,
-      DateTime createdAt});
+      {@JsonKey(name: 'user_id') String userId,
+      @JsonKey(name: 'user_name') String userName,
+      @JsonKey(name: 'owned_boards_id') List<String> ownedBoardsId,
+      @JsonKey(name: 'avatar_url') String? avatarUrl,
+      @JsonKey(name: 'user_type') UserType userType,
+      @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
 /// @nodoc
@@ -100,12 +111,12 @@ abstract class _$$UserModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String userId,
-      String userName,
-      List<String> ownedBoardsId,
-      String? avatarUrl,
-      UserType userType,
-      DateTime createdAt});
+      {@JsonKey(name: 'user_id') String userId,
+      @JsonKey(name: 'user_name') String userName,
+      @JsonKey(name: 'owned_boards_id') List<String> ownedBoardsId,
+      @JsonKey(name: 'avatar_url') String? avatarUrl,
+      @JsonKey(name: 'user_type') UserType userType,
+      @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
 /// @nodoc
@@ -156,23 +167,30 @@ class __$$UserModelImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$UserModelImpl implements _UserModel {
   _$UserModelImpl(
-      {required this.userId,
-      required this.userName,
+      {@JsonKey(name: 'user_id') required this.userId,
+      @JsonKey(name: 'user_name') required this.userName,
+      @JsonKey(name: 'owned_boards_id')
       required final List<String> ownedBoardsId,
-      this.avatarUrl,
-      required this.userType,
-      required this.createdAt})
+      @JsonKey(name: 'avatar_url') this.avatarUrl,
+      @JsonKey(name: 'user_type') required this.userType,
+      @JsonKey(name: 'created_at') required this.createdAt})
       : _ownedBoardsId = ownedBoardsId;
 
+  factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UserModelImplFromJson(json);
+
   @override
+  @JsonKey(name: 'user_id')
   final String userId;
   @override
+  @JsonKey(name: 'user_name')
   final String userName;
   final List<String> _ownedBoardsId;
   @override
+  @JsonKey(name: 'owned_boards_id')
   List<String> get ownedBoardsId {
     if (_ownedBoardsId is EqualUnmodifiableListView) return _ownedBoardsId;
     // ignore: implicit_dynamic_type
@@ -180,10 +198,13 @@ class _$UserModelImpl implements _UserModel {
   }
 
   @override
+  @JsonKey(name: 'avatar_url')
   final String? avatarUrl;
   @override
+  @JsonKey(name: 'user_type')
   final UserType userType;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   @override
@@ -209,6 +230,7 @@ class _$UserModelImpl implements _UserModel {
                 other.createdAt == createdAt));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -224,28 +246,46 @@ class _$UserModelImpl implements _UserModel {
   @pragma('vm:prefer-inline')
   _$$UserModelImplCopyWith<_$UserModelImpl> get copyWith =>
       __$$UserModelImplCopyWithImpl<_$UserModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UserModelImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _UserModel implements UserModel {
   factory _UserModel(
-      {required final String userId,
-      required final String userName,
-      required final List<String> ownedBoardsId,
-      final String? avatarUrl,
-      required final UserType userType,
-      required final DateTime createdAt}) = _$UserModelImpl;
+          {@JsonKey(name: 'user_id') required final String userId,
+          @JsonKey(name: 'user_name') required final String userName,
+          @JsonKey(name: 'owned_boards_id')
+          required final List<String> ownedBoardsId,
+          @JsonKey(name: 'avatar_url') final String? avatarUrl,
+          @JsonKey(name: 'user_type') required final UserType userType,
+          @JsonKey(name: 'created_at') required final DateTime createdAt}) =
+      _$UserModelImpl;
+
+  factory _UserModel.fromJson(Map<String, dynamic> json) =
+      _$UserModelImpl.fromJson;
 
   @override
+  @JsonKey(name: 'user_id')
   String get userId;
   @override
+  @JsonKey(name: 'user_name')
   String get userName;
   @override
+  @JsonKey(name: 'owned_boards_id')
   List<String> get ownedBoardsId;
   @override
+  @JsonKey(name: 'avatar_url')
   String? get avatarUrl;
   @override
+  @JsonKey(name: 'user_type')
   UserType get userType;
   @override
+  @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override
   @JsonKey(ignore: true)

@@ -9,13 +9,15 @@ part 'board_model.g.dart';
 @freezed
 class BoardModel with _$BoardModel {
   const factory BoardModel({
-    required String boardId,
-    @Default('-') String boardName,
-    required String password,
-    required List<ObjectModel> objects,
-    required String ownerId,
-    @Default(BoardSettingsModel()) BoardSettingsModel settings,
-    required DateTime createdAt,
+    @JsonKey(name: 'board_id') required String boardId,
+    @JsonKey(name: 'board_name') @Default('-') String boardName,
+    @JsonKey(name: 'password') required String password,
+    @JsonKey(name: 'objects') required List<ObjectModel> objects,
+    @JsonKey(name: 'owner_id') required String ownerId,
+    @JsonKey(name: 'settings')
+    @Default(BoardSettingsModel())
+    BoardSettingsModel settings,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
   }) = _BoardModel;
 
   factory BoardModel.fromJson(Map<String, dynamic> json) =>

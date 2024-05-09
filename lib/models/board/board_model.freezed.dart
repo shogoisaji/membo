@@ -20,12 +20,19 @@ BoardModel _$BoardModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$BoardModel {
+  @JsonKey(name: 'board_id')
   String get boardId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'board_name')
   String get boardName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'password')
   String get password => throw _privateConstructorUsedError;
+  @JsonKey(name: 'objects')
   List<ObjectModel> get objects => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner_id')
   String get ownerId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'settings')
   BoardSettingsModel get settings => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,13 +48,13 @@ abstract class $BoardModelCopyWith<$Res> {
       _$BoardModelCopyWithImpl<$Res, BoardModel>;
   @useResult
   $Res call(
-      {String boardId,
-      String boardName,
-      String password,
-      List<ObjectModel> objects,
-      String ownerId,
-      BoardSettingsModel settings,
-      DateTime createdAt});
+      {@JsonKey(name: 'board_id') String boardId,
+      @JsonKey(name: 'board_name') String boardName,
+      @JsonKey(name: 'password') String password,
+      @JsonKey(name: 'objects') List<ObjectModel> objects,
+      @JsonKey(name: 'owner_id') String ownerId,
+      @JsonKey(name: 'settings') BoardSettingsModel settings,
+      @JsonKey(name: 'created_at') DateTime createdAt});
 
   $BoardSettingsModelCopyWith<$Res> get settings;
 }
@@ -123,13 +130,13 @@ abstract class _$$BoardModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String boardId,
-      String boardName,
-      String password,
-      List<ObjectModel> objects,
-      String ownerId,
-      BoardSettingsModel settings,
-      DateTime createdAt});
+      {@JsonKey(name: 'board_id') String boardId,
+      @JsonKey(name: 'board_name') String boardName,
+      @JsonKey(name: 'password') String password,
+      @JsonKey(name: 'objects') List<ObjectModel> objects,
+      @JsonKey(name: 'owner_id') String ownerId,
+      @JsonKey(name: 'settings') BoardSettingsModel settings,
+      @JsonKey(name: 'created_at') DateTime createdAt});
 
   @override
   $BoardSettingsModelCopyWith<$Res> get settings;
@@ -191,27 +198,30 @@ class __$$BoardModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$BoardModelImpl implements _BoardModel {
   const _$BoardModelImpl(
-      {required this.boardId,
-      this.boardName = '-',
-      required this.password,
-      required final List<ObjectModel> objects,
-      required this.ownerId,
-      this.settings = const BoardSettingsModel(),
-      required this.createdAt})
+      {@JsonKey(name: 'board_id') required this.boardId,
+      @JsonKey(name: 'board_name') this.boardName = '-',
+      @JsonKey(name: 'password') required this.password,
+      @JsonKey(name: 'objects') required final List<ObjectModel> objects,
+      @JsonKey(name: 'owner_id') required this.ownerId,
+      @JsonKey(name: 'settings') this.settings = const BoardSettingsModel(),
+      @JsonKey(name: 'created_at') required this.createdAt})
       : _objects = objects;
 
   factory _$BoardModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$BoardModelImplFromJson(json);
 
   @override
+  @JsonKey(name: 'board_id')
   final String boardId;
   @override
-  @JsonKey()
+  @JsonKey(name: 'board_name')
   final String boardName;
   @override
+  @JsonKey(name: 'password')
   final String password;
   final List<ObjectModel> _objects;
   @override
+  @JsonKey(name: 'objects')
   List<ObjectModel> get objects {
     if (_objects is EqualUnmodifiableListView) return _objects;
     // ignore: implicit_dynamic_type
@@ -219,11 +229,13 @@ class _$BoardModelImpl implements _BoardModel {
   }
 
   @override
+  @JsonKey(name: 'owner_id')
   final String ownerId;
   @override
-  @JsonKey()
+  @JsonKey(name: 'settings')
   final BoardSettingsModel settings;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   @override
@@ -277,30 +289,38 @@ class _$BoardModelImpl implements _BoardModel {
 
 abstract class _BoardModel implements BoardModel {
   const factory _BoardModel(
-      {required final String boardId,
-      final String boardName,
-      required final String password,
-      required final List<ObjectModel> objects,
-      required final String ownerId,
-      final BoardSettingsModel settings,
-      required final DateTime createdAt}) = _$BoardModelImpl;
+          {@JsonKey(name: 'board_id') required final String boardId,
+          @JsonKey(name: 'board_name') final String boardName,
+          @JsonKey(name: 'password') required final String password,
+          @JsonKey(name: 'objects') required final List<ObjectModel> objects,
+          @JsonKey(name: 'owner_id') required final String ownerId,
+          @JsonKey(name: 'settings') final BoardSettingsModel settings,
+          @JsonKey(name: 'created_at') required final DateTime createdAt}) =
+      _$BoardModelImpl;
 
   factory _BoardModel.fromJson(Map<String, dynamic> json) =
       _$BoardModelImpl.fromJson;
 
   @override
+  @JsonKey(name: 'board_id')
   String get boardId;
   @override
+  @JsonKey(name: 'board_name')
   String get boardName;
   @override
+  @JsonKey(name: 'password')
   String get password;
   @override
+  @JsonKey(name: 'objects')
   List<ObjectModel> get objects;
   @override
+  @JsonKey(name: 'owner_id')
   String get ownerId;
   @override
+  @JsonKey(name: 'settings')
   BoardSettingsModel get settings;
   @override
+  @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override
   @JsonKey(ignore: true)

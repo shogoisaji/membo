@@ -74,7 +74,7 @@ class SupabaseRepository {
       await _client
           .from('boards')
           .update(object)
-          .eq('boardId', updatedBoard.boardId)
+          .eq('board_id', updatedBoard.boardId)
           .single();
     } catch (err) {
       /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
@@ -90,7 +90,7 @@ class SupabaseRepository {
       await _client
           .from('boards')
           .update({'settings': newSettings})
-          .eq('boardId', boardId)
+          .eq('board_id', boardId)
           .single();
     } catch (err) {
       /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
@@ -104,8 +104,8 @@ class SupabaseRepository {
 
     _client
         .from('boards')
-        .stream(primaryKey: ['boardId'])
-        .eq('boardId', boardId)
+        .stream(primaryKey: ['board_id'])
+        .eq('board_id', boardId)
         .listen((data) {
           if (data.isNotEmpty) {
             final board = BoardModel.fromJson(data[0]);
@@ -122,7 +122,7 @@ class SupabaseRepository {
   Future<BoardModel?> getBoardById(String id) async {
     try {
       final response =
-          await _client.from('boards').select().eq('boardId', id).single();
+          await _client.from('boards').select().eq('board_id', id).single();
       final board = BoardModel.fromJson(response);
       return board;
     } catch (err) {
