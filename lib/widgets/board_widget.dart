@@ -39,15 +39,39 @@ class BoardWidget extends HookWidget {
                   objects: board.objects),
               size: Size(board.settings.width, board.settings.height),
             ),
-            ...board.objects
-                .map((object) => ObjectWidget(object: object, opacity: 1.0)),
+            ...board.objects.map((object) => ClipRect(
+                clipper: MyCustomClipper(),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ObjectWidget(object: object, opacity: 1.0),
+                  ],
+                ))),
             if (selectedObject != null)
-              SelectedObject(object: selectedObject!)
+              ClipRect(
+                clipper: MyCustomClipper(),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    SelectedObject(object: selectedObject!),
+                  ],
+                ),
+              )
             else
               const SizedBox.shrink(),
           ],
         ));
   }
+}
+
+class MyCustomClipper extends CustomClipper<Rect> {
+  @override
+  Rect getClip(Size size) {
+    return Rect.fromLTWH(0, 0, size.width, size.height);
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Rect> oldClipper) => false;
 }
 
 class BoardCanvasPainter extends CustomPainter {
@@ -65,13 +89,6 @@ class BoardCanvasPainter extends CustomPainter {
       ..color = canvasColor
       ..style = PaintingStyle.fill;
 
-    // final shadowPaint = Paint()
-    //   ..color = Colors.black.withOpacity(0.5)
-    //   ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 30);
-
-    // // 影を描画
-    // canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), shadowPaint);
-    // キャンバスの背景を塗りつぶす
     canvas.drawRect(
         Rect.fromLTWH(0, 0, size.width - 50, size.height - 50), paint);
   }
