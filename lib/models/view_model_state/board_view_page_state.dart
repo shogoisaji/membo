@@ -9,9 +9,9 @@ part 'board_view_page_state.freezed.dart';
 class BoardViewPageState with _$BoardViewPageState {
   factory BoardViewPageState({
     BoardModel? boardModel,
-    @Default(1.0) double viewScale,
-    @Default(0.0) double viewTranslateX,
-    @Default(0.0) double viewTranslateY,
+    // @Default(1.0) double viewScale,
+    // @Default(0.0) double viewTranslateX,
+    // @Default(0.0) double viewTranslateY,
     Matrix4? transformationMatrix,
   }) = _EditPageState;
 }
