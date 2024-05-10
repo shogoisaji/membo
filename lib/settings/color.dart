@@ -22,4 +22,5 @@ class MyColor {
   static const Color greenText = Color(0xFF20412C);
   static const Color pink = Color(0xFFFFA0A0);
   static const Color blue = Color(0xFF57627E);
+  static const Color red = Color(0xFFD24343);
 }

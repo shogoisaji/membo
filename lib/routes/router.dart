@@ -10,6 +10,7 @@ import 'package:membo/view/edit_page.dart';
 import 'package:membo/view/board_view_page.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/view/policy_page.dart';
+import 'package:membo/view/scan_page.dart';
 import 'package:membo/widgets/custom_bottom_nav.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:membo/view/sign_in_page.dart';
@@ -30,6 +31,7 @@ class PagePath {
   static const account = '/account';
   static const policy = '/policy';
   static const publicPolicy = '/public-policy';
+  static const qrScan = '/qr-scan';
 }
 
 CustomTransitionPage buildPageWithDefaultTransition<T>({
@@ -139,7 +141,15 @@ GoRouter router(RouterRef ref) {
           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
             context: context,
             state: state,
-            child: const ConnectPage(),
+            child: ConnectPage(uuid: state.extra as String?),
+          ),
+        ),
+        GoRoute(
+          path: PagePath.qrScan,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const QrScanPage(),
           ),
         ),
         GoRoute(

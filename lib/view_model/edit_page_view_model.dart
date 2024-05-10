@@ -23,26 +23,6 @@ class EditPageViewModel extends _$EditPageViewModel {
   //   state = state.copyWith(selectedBoardId: boardId);
   // }
 
-  Future<void> createNewBoard() async {
-    /// Get the current user
-    final User? user = ref.read(userStateProvider);
-    if (user == null) {
-      throw Exception('User is not signed in');
-    }
-    final newBoard = BoardModel(
-      boardId: const Uuid().v4(),
-      password: '',
-      objects: [],
-      ownerId: user.id,
-      settings: const BoardSettingsModel(),
-      createdAt: DateTime.now(),
-    );
-
-    await ref.read(supabaseRepositoryProvider).insertBoard(newBoard);
-
-    state = state.copyWith(boardModel: newBoard);
-  }
-
   Matrix4 calcInitialTransform(BoardModel board, double w, double h) {
     final scaleW = w / board.settings.width;
     final scaleH = h / board.settings.height;

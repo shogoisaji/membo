@@ -58,6 +58,10 @@ class BoardSettingsPage extends HookConsumerWidget {
       }
     }
 
+    void deleteBoard() {
+      ref.read(boardSettingsViewModelProvider.notifier).deleteBoard();
+    }
+
     bool isSaveable() {
       return ref.read(boardSettingsViewModelProvider.notifier).isChangeCheck();
     }
@@ -143,7 +147,7 @@ class BoardSettingsPage extends HookConsumerWidget {
       ),
       body: (boardSettingsState.tempBoardSettings == null ||
               boardSettingsState.tempBoardName == null)
-          ? const SizedBox.shrink()
+          ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
                 BgPaint(width: w, height: h),
@@ -416,7 +420,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           const SizedBox(height: 20.0),
                           CustomListContent(
                             titleIcon: const Icon(Icons.language),
-                            title: 'Share Settings',
+                            title: 'Share Setting',
                             titleStyle: lightTextTheme.bodyLarge!,
                             backgroundColor: MyColor.greenLight,
                             contentWidgets: [
@@ -424,24 +428,25 @@ class BoardSettingsPage extends HookConsumerWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Public State',
+                                  Text('PublicState',
                                       style: lightTextTheme.bodyLarge),
                                   Row(
                                     children: [
-                                      Text(
-                                          boardSettingsState.tempBoardSettings!
-                                                      .isPublished ==
-                                                  true
-                                              ? 'Public'
-                                              : 'Private',
-                                          style: lightTextTheme.bodyLarge),
+                                      boardSettingsState
+                                              .currentBoard!.isPublished
+                                          ? Text(
+                                              'Public',
+                                              style: lightTextTheme.bodyLarge!
+                                                  .copyWith(color: MyColor.red),
+                                            )
+                                          : Text('Private',
+                                              style: lightTextTheme.bodyLarge),
                                     ],
                                   ),
                                 ],
                               ),
                               // TODO: 仮に反転している
-                              boardSettingsState
-                                              .tempBoardSettings!.isPublished !=
+                              boardSettingsState.currentBoard!.isPublished !=
                                           true &&
                                       boardSettingsState.isOwner
                                   ? Column(
@@ -487,7 +492,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                   : const SizedBox.shrink(),
                             ],
                           ),
-                          const SizedBox(height: 24.0),
+                          const SizedBox(height: 32.0),
                           boardSettingsState.isOwner
                               ? CustomButton(
                                   width: double.infinity,
@@ -510,6 +515,33 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           style: lightTextTheme.bodyLarge)),
                                 )
                               : const SizedBox.shrink(),
+                          const SizedBox(height: 32.0),
+                          CustomButton(
+                            width: double.infinity,
+                            height: 50,
+                            color: MyColor.pink,
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text(
+                                      'Are you sure you want to delete this board?'),
+                                  actions: [
+                                    ElevatedButton(
+                                        onPressed: () => deleteBoard(),
+                                        child: const Text('Delete')),
+                                    ElevatedButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('Cancel')),
+                                  ],
+                                ),
+                              );
+                            },
+                            child: Center(
+                                child: Text('Delete',
+                                    style: lightTextTheme.bodyLarge)),
+                          ),
                           const SizedBox(height: 100.0),
                         ],
                       ),

@@ -20,18 +20,28 @@ BoardModel _$BoardModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$BoardModel {
+// ignore: invalid_annotation_target
   @JsonKey(name: 'board_id')
-  String get boardId => throw _privateConstructorUsedError;
+  String get boardId =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'board_name')
-  String get boardName => throw _privateConstructorUsedError;
+  String get boardName =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'password')
-  String get password => throw _privateConstructorUsedError;
+  String get password =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'objects')
-  List<ObjectModel> get objects => throw _privateConstructorUsedError;
+  List<ObjectModel> get objects =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'owner_id')
-  String get ownerId => throw _privateConstructorUsedError;
+  String get ownerId =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'is_published')
+  bool get isPublished =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'settings')
-  BoardSettingsModel get settings => throw _privateConstructorUsedError;
+  BoardSettingsModel get settings =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
 
@@ -53,6 +63,7 @@ abstract class $BoardModelCopyWith<$Res> {
       @JsonKey(name: 'password') String password,
       @JsonKey(name: 'objects') List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') String ownerId,
+      @JsonKey(name: 'is_published') bool isPublished,
       @JsonKey(name: 'settings') BoardSettingsModel settings,
       @JsonKey(name: 'created_at') DateTime createdAt});
 
@@ -77,6 +88,7 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
+    Object? isPublished = null,
     Object? settings = null,
     Object? createdAt = null,
   }) {
@@ -101,6 +113,10 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
               as String,
+      isPublished: null == isPublished
+          ? _value.isPublished
+          : isPublished // ignore: cast_nullable_to_non_nullable
+              as bool,
       settings: null == settings
           ? _value.settings
           : settings // ignore: cast_nullable_to_non_nullable
@@ -135,6 +151,7 @@ abstract class _$$BoardModelImplCopyWith<$Res>
       @JsonKey(name: 'password') String password,
       @JsonKey(name: 'objects') List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') String ownerId,
+      @JsonKey(name: 'is_published') bool isPublished,
       @JsonKey(name: 'settings') BoardSettingsModel settings,
       @JsonKey(name: 'created_at') DateTime createdAt});
 
@@ -158,6 +175,7 @@ class __$$BoardModelImplCopyWithImpl<$Res>
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
+    Object? isPublished = null,
     Object? settings = null,
     Object? createdAt = null,
   }) {
@@ -182,6 +200,10 @@ class __$$BoardModelImplCopyWithImpl<$Res>
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
               as String,
+      isPublished: null == isPublished
+          ? _value.isPublished
+          : isPublished // ignore: cast_nullable_to_non_nullable
+              as bool,
       settings: null == settings
           ? _value.settings
           : settings // ignore: cast_nullable_to_non_nullable
@@ -203,6 +225,7 @@ class _$BoardModelImpl implements _BoardModel {
       @JsonKey(name: 'password') required this.password,
       @JsonKey(name: 'objects') required final List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') required this.ownerId,
+      @JsonKey(name: 'is_published') this.isPublished = false,
       @JsonKey(name: 'settings') this.settings = const BoardSettingsModel(),
       @JsonKey(name: 'created_at') required this.createdAt})
       : _objects = objects;
@@ -210,16 +233,21 @@ class _$BoardModelImpl implements _BoardModel {
   factory _$BoardModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$BoardModelImplFromJson(json);
 
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'board_id')
   final String boardId;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'board_name')
   final String boardName;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'password')
   final String password;
+// ignore: invalid_annotation_target
   final List<ObjectModel> _objects;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'objects')
   List<ObjectModel> get objects {
@@ -228,19 +256,26 @@ class _$BoardModelImpl implements _BoardModel {
     return EqualUnmodifiableListView(_objects);
   }
 
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'owner_id')
   final String ownerId;
+// ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'is_published')
+  final bool isPublished;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'settings')
   final BoardSettingsModel settings;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   @override
   String toString() {
-    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, settings: $settings, createdAt: $createdAt)';
+    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, isPublished: $isPublished, settings: $settings, createdAt: $createdAt)';
   }
 
   @override
@@ -255,6 +290,8 @@ class _$BoardModelImpl implements _BoardModel {
                 other.password == password) &&
             const DeepCollectionEquality().equals(other._objects, _objects) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
+            (identical(other.isPublished, isPublished) ||
+                other.isPublished == isPublished) &&
             (identical(other.settings, settings) ||
                 other.settings == settings) &&
             (identical(other.createdAt, createdAt) ||
@@ -270,6 +307,7 @@ class _$BoardModelImpl implements _BoardModel {
       password,
       const DeepCollectionEquality().hash(_objects),
       ownerId,
+      isPublished,
       settings,
       createdAt);
 
@@ -294,6 +332,7 @@ abstract class _BoardModel implements BoardModel {
           @JsonKey(name: 'password') required final String password,
           @JsonKey(name: 'objects') required final List<ObjectModel> objects,
           @JsonKey(name: 'owner_id') required final String ownerId,
+          @JsonKey(name: 'is_published') final bool isPublished,
           @JsonKey(name: 'settings') final BoardSettingsModel settings,
           @JsonKey(name: 'created_at') required final DateTime createdAt}) =
       _$BoardModelImpl;
@@ -301,25 +340,28 @@ abstract class _BoardModel implements BoardModel {
   factory _BoardModel.fromJson(Map<String, dynamic> json) =
       _$BoardModelImpl.fromJson;
 
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'board_id')
   String get boardId;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'board_name')
   String get boardName;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'password')
   String get password;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'objects')
   List<ObjectModel> get objects;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'owner_id')
   String get ownerId;
-  @override
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'is_published')
+  bool get isPublished;
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'settings')
   BoardSettingsModel get settings;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override

@@ -22,6 +22,29 @@ class EditListPage extends HookConsumerWidget {
       ref.read(editListPageViewModelProvider.notifier).initialize();
     }
 
+    void createNewBoard() async {
+      /// TODO:ボード数を確認した後に新しいボードを作成する
+      /// checkBoardCount()
+      try {
+        final insertedBoardId = await ref
+            .read(editListPageViewModelProvider.notifier)
+            .createNewBoard();
+        if (insertedBoardId == null) {
+          if (context.mounted) {
+            ErrorDialog.show(context, "ボードが作成できませんでした");
+          }
+          return;
+        }
+        if (context.mounted) {
+          context.go('/edit', extra: insertedBoardId);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
+      }
+    }
+
     useEffect(() {
       initialize();
       return;
@@ -42,32 +65,24 @@ class EditListPage extends HookConsumerWidget {
                 child: Center(
                     child: Text('New Board', style: lightTextTheme.bodyLarge)),
                 onTap: () {
-                  try {
-                    // ref
-                    //     .read(editPageViewModelProvider.notifier)
-                    //     .createNewBoard();
-                    const newBoardId = '新しいボードのIDを受け取る';
-                    context.go('/edit', extra: newBoardId);
-                  } catch (e) {
-                    ErrorDialog.show(context, e.toString());
-                  }
+                  createNewBoard();
                 },
               ),
-              CustomButton(
-                width: 300,
-                height: 50,
-                color: Colors.orange,
-                child: Center(
-                    child: Text('sasa', style: lightTextTheme.bodyLarge)),
-                onTap: () async {
-                  try {
-                    context.go('/edit',
-                        extra: '0996ec38-d300-4dd4-9e8b-1a887954c275');
-                  } catch (e) {
-                    ErrorDialog.show(context, e.toString());
-                  }
-                },
-              ),
+              // CustomButton(
+              //   width: 300,
+              //   height: 50,
+              //   color: Colors.orange,
+              //   child: Center(
+              //       child: Text('sasa', style: lightTextTheme.bodyLarge)),
+              //   onTap: () async {
+              //     try {
+              //       context.go('/edit',
+              //           extra: '0996ec38-d300-4dd4-9e8b-1a887954c275');
+              //     } catch (e) {
+              //       ErrorDialog.show(context, e.toString());
+              //     }
+              //   },
+              // ),
               Expanded(
                 child: ListView.builder(
                     itemCount: editListPageState.boardModels.length,

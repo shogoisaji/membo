@@ -15,6 +15,7 @@ _$BoardModelImpl _$$BoardModelImplFromJson(Map<String, dynamic> json) =>
           .map((e) => ObjectModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       ownerId: json['owner_id'] as String,
+      isPublished: json['is_published'] as bool? ?? false,
       settings: json['settings'] == null
           ? const BoardSettingsModel()
           : BoardSettingsModel.fromJson(
@@ -29,6 +30,7 @@ Map<String, dynamic> _$$BoardModelImplToJson(_$BoardModelImpl instance) =>
       'password': instance.password,
       'objects': instance.objects,
       'owner_id': instance.ownerId,
+      'is_published': instance.isPublished,
       'settings': instance.settings,
       'created_at': instance.createdAt.toIso8601String(),
     };

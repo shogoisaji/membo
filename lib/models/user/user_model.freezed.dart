@@ -20,18 +20,25 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserModel {
+// ignore: invalid_annotation_target
   @JsonKey(name: 'user_id')
-  String get userId => throw _privateConstructorUsedError;
+  String get userId =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'user_name')
-  String get userName => throw _privateConstructorUsedError;
+  String get userName =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'owned_board_ids')
-  List<String> get ownedBoardIds => throw _privateConstructorUsedError;
+  List<String> get ownedBoardIds =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'link_board_ids')
-  List<String> get linkBoardIds => throw _privateConstructorUsedError;
+  List<String> get linkBoardIds =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'avatar_url')
-  String? get avatarUrl => throw _privateConstructorUsedError;
+  String? get avatarUrl =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'user_type')
-  UserType get userType => throw _privateConstructorUsedError;
+  UserType get userType =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
 
@@ -198,13 +205,17 @@ class _$UserModelImpl implements _UserModel {
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelImplFromJson(json);
 
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'user_id')
   final String userId;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'user_name')
   final String userName;
+// ignore: invalid_annotation_target
   final List<String> _ownedBoardIds;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'owned_board_ids')
   List<String> get ownedBoardIds {
@@ -213,7 +224,9 @@ class _$UserModelImpl implements _UserModel {
     return EqualUnmodifiableListView(_ownedBoardIds);
   }
 
+// ignore: invalid_annotation_target
   final List<String> _linkBoardIds;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'link_board_ids')
   List<String> get linkBoardIds {
@@ -222,12 +235,15 @@ class _$UserModelImpl implements _UserModel {
     return EqualUnmodifiableListView(_linkBoardIds);
   }
 
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'avatar_url')
   final String? avatarUrl;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'user_type')
   final UserType userType;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
@@ -298,25 +314,25 @@ abstract class _UserModel implements UserModel {
   factory _UserModel.fromJson(Map<String, dynamic> json) =
       _$UserModelImpl.fromJson;
 
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'user_id')
   String get userId;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'user_name')
   String get userName;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'owned_board_ids')
   List<String> get ownedBoardIds;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'link_board_ids')
   List<String> get linkBoardIds;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'avatar_url')
   String? get avatarUrl;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'user_type')
   UserType get userType;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override

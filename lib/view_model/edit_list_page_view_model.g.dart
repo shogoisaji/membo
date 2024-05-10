@@ -7,7 +7,7 @@ part of 'edit_list_page_view_model.dart';
 // **************************************************************************
 
 String _$editListPageViewModelHash() =>
-    r'f96549ab0b5abaa9fc069eae6f3438655d8fb05f';
+    r'0723639cbc7db23d83f4663303411ff5facd7836';
 
 /// See also [EditListPageViewModel].
 @ProviderFor(EditListPageViewModel)

@@ -59,5 +59,7 @@
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>編集画像を選択するためにフォトライブラリーへのアクセス許可が必要です</string>
+	<key>NSCameraUsageDescription</key>
+	<string>QRコードを使用するためにカメラを使用する必要があります</string>
 </dict>
 </plist>

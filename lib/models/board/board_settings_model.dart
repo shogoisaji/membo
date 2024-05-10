@@ -12,7 +12,6 @@ class BoardSettingsModel with _$BoardSettingsModel {
     @Default(defaultHeight) double height,
     @Default(defaultWidth) double width,
     @Default('0xffffffff') String bgColor,
-    @Default(false) bool isPublished,
   }) = _BoardSettingsModel;
 
   factory BoardSettingsModel.fromJson(Map<String, dynamic> json) =>

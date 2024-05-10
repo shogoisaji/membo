@@ -12,7 +12,6 @@ _$BoardSettingsModelImpl _$$BoardSettingsModelImplFromJson(
       height: (json['height'] as num?)?.toDouble() ?? defaultHeight,
       width: (json['width'] as num?)?.toDouble() ?? defaultWidth,
       bgColor: json['bgColor'] as String? ?? '0xffffffff',
-      isPublished: json['isPublished'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$BoardSettingsModelImplToJson(
@@ -21,5 +20,4 @@ Map<String, dynamic> _$$BoardSettingsModelImplToJson(
       'height': instance.height,
       'width': instance.width,
       'bgColor': instance.bgColor,
-      'isPublished': instance.isPublished,
     };

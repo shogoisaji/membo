@@ -23,7 +23,6 @@ mixin _$BoardSettingsModel {
   double get height => throw _privateConstructorUsedError;
   double get width => throw _privateConstructorUsedError;
   String get bgColor => throw _privateConstructorUsedError;
-  bool get isPublished => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -37,7 +36,7 @@ abstract class $BoardSettingsModelCopyWith<$Res> {
           BoardSettingsModel value, $Res Function(BoardSettingsModel) then) =
       _$BoardSettingsModelCopyWithImpl<$Res, BoardSettingsModel>;
   @useResult
-  $Res call({double height, double width, String bgColor, bool isPublished});
+  $Res call({double height, double width, String bgColor});
 }
 
 /// @nodoc
@@ -56,7 +55,6 @@ class _$BoardSettingsModelCopyWithImpl<$Res, $Val extends BoardSettingsModel>
     Object? height = null,
     Object? width = null,
     Object? bgColor = null,
-    Object? isPublished = null,
   }) {
     return _then(_value.copyWith(
       height: null == height
@@ -71,10 +69,6 @@ class _$BoardSettingsModelCopyWithImpl<$Res, $Val extends BoardSettingsModel>
           ? _value.bgColor
           : bgColor // ignore: cast_nullable_to_non_nullable
               as String,
-      isPublished: null == isPublished
-          ? _value.isPublished
-          : isPublished // ignore: cast_nullable_to_non_nullable
-              as bool,
     ) as $Val);
   }
 }
@@ -87,7 +81,7 @@ abstract class _$$BoardSettingsModelImplCopyWith<$Res>
       __$$BoardSettingsModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({double height, double width, String bgColor, bool isPublished});
+  $Res call({double height, double width, String bgColor});
 }
 
 /// @nodoc
@@ -104,7 +98,6 @@ class __$$BoardSettingsModelImplCopyWithImpl<$Res>
     Object? height = null,
     Object? width = null,
     Object? bgColor = null,
-    Object? isPublished = null,
   }) {
     return _then(_$BoardSettingsModelImpl(
       height: null == height
@@ -119,10 +112,6 @@ class __$$BoardSettingsModelImplCopyWithImpl<$Res>
           ? _value.bgColor
           : bgColor // ignore: cast_nullable_to_non_nullable
               as String,
-      isPublished: null == isPublished
-          ? _value.isPublished
-          : isPublished // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
@@ -133,8 +122,7 @@ class _$BoardSettingsModelImpl implements _BoardSettingsModel {
   const _$BoardSettingsModelImpl(
       {this.height = defaultHeight,
       this.width = defaultWidth,
-      this.bgColor = '0xffffffff',
-      this.isPublished = false});
+      this.bgColor = '0xffffffff'});
 
   factory _$BoardSettingsModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$BoardSettingsModelImplFromJson(json);
@@ -148,13 +136,10 @@ class _$BoardSettingsModelImpl implements _BoardSettingsModel {
   @override
   @JsonKey()
   final String bgColor;
-  @override
-  @JsonKey()
-  final bool isPublished;
 
   @override
   String toString() {
-    return 'BoardSettingsModel(height: $height, width: $width, bgColor: $bgColor, isPublished: $isPublished)';
+    return 'BoardSettingsModel(height: $height, width: $width, bgColor: $bgColor)';
   }
 
   @override
@@ -164,15 +149,12 @@ class _$BoardSettingsModelImpl implements _BoardSettingsModel {
             other is _$BoardSettingsModelImpl &&
             (identical(other.height, height) || other.height == height) &&
             (identical(other.width, width) || other.width == width) &&
-            (identical(other.bgColor, bgColor) || other.bgColor == bgColor) &&
-            (identical(other.isPublished, isPublished) ||
-                other.isPublished == isPublished));
+            (identical(other.bgColor, bgColor) || other.bgColor == bgColor));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, height, width, bgColor, isPublished);
+  int get hashCode => Object.hash(runtimeType, height, width, bgColor);
 
   @JsonKey(ignore: true)
   @override
@@ -193,8 +175,7 @@ abstract class _BoardSettingsModel implements BoardSettingsModel {
   const factory _BoardSettingsModel(
       {final double height,
       final double width,
-      final String bgColor,
-      final bool isPublished}) = _$BoardSettingsModelImpl;
+      final String bgColor}) = _$BoardSettingsModelImpl;
 
   factory _BoardSettingsModel.fromJson(Map<String, dynamic> json) =
       _$BoardSettingsModelImpl.fromJson;
@@ -205,8 +186,6 @@ abstract class _BoardSettingsModel implements BoardSettingsModel {
   double get width;
   @override
   String get bgColor;
-  @override
-  bool get isPublished;
   @override
   @JsonKey(ignore: true)
   _$$BoardSettingsModelImplCopyWith<_$BoardSettingsModelImpl> get copyWith =>

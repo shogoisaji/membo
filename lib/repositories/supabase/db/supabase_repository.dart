@@ -27,18 +27,12 @@ class SupabaseRepository {
   ///----------------------------------------
   Future<String?> insertBoard(BoardModel board) async {
     try {
-      final object = board.toJson();
-      final response = await _client.from('boards').insert(object);
-      if (response != null) {
-        throw Exception('Insert error: ${response.error.message}');
-      }
-      print('success insert board');
-      return null;
+      final insertBoardJson = board.toJson();
+      await _client.from('boards').insert(insertBoardJson);
+      return board.boardId;
     } catch (err) {
-      // return ErrorHandler.handleError(err);
-      print('error insert board: $err');
+      throw Exception('Error inserting board: $err');
     }
-    return null;
   }
 
   Future<void> addImageObject(
@@ -79,6 +73,14 @@ class SupabaseRepository {
     } catch (err) {
       /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
       print('Error updating board: $err');
+    }
+  }
+
+  Future<void> deleteBoard(String boardId) async {
+    try {
+      await _client.from('boards').delete().eq('board_id', boardId).single();
+    } catch (err) {
+      throw Exception('Error deleting board: $err');
     }
   }
 
@@ -163,5 +165,34 @@ class SupabaseRepository {
 
   Future<void> deleteAccount(String userId) async {
     await _client.from('profiles').delete().eq('user_id', userId).single();
+  }
+
+  Future<void> addBoardIdToUser(String userId,
+      List<String> currentOwnedBoardIds, String addBoardId) async {
+    final newOwnedBoardIds = [...currentOwnedBoardIds, addBoardId];
+    try {
+      await _client
+          .from('profiles')
+          .update({'owned_board_ids': newOwnedBoardIds})
+          .eq('user_id', userId)
+          .single();
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  Future<void> removeBoardIdFromUser(String userId,
+      List<String> currentOwnedBoardIds, String removeBoardId) async {
+    final newOwnedBoardIds =
+        currentOwnedBoardIds.where((id) => id != removeBoardId).toList();
+    try {
+      await _client
+          .from('profiles')
+          .update({'owned_board_ids': newOwnedBoardIds})
+          .eq('user_id', userId)
+          .single();
+    } catch (err) {
+      rethrow;
+    }
   }
 }

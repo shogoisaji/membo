@@ -102,4 +102,27 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
   bool isUpdatable() {
     return (state.tempBoardSettings != null || state.tempBoardName != null);
   }
+
+  Future<void> deleteBoard() async {
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+    final userData =
+        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    if (userData == null) {
+      throw Exception('User data is not loaded');
+    }
+    if (state.currentBoard == null) {
+      throw Exception('current board is not set');
+    }
+    final board = state.currentBoard!;
+    try {
+      await ref.read(supabaseRepositoryProvider).deleteBoard(board.boardId);
+      await ref.read(supabaseRepositoryProvider).removeBoardIdFromUser(
+          user.id, userData.ownedBoardIds, board.boardId);
+    } catch (e) {
+      throw Exception('error deleting board: $e');
+    }
+  }
 }
