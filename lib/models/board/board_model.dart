@@ -9,14 +9,21 @@ part 'board_model.g.dart';
 @freezed
 class BoardModel with _$BoardModel {
   const factory BoardModel({
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'board_id') required String boardId,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'board_name') @Default('-') String boardName,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'password') required String password,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'objects') required List<ObjectModel> objects,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'owner_id') required String ownerId,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'settings')
     @Default(BoardSettingsModel())
     BoardSettingsModel settings,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'created_at') required DateTime createdAt,
   }) = _BoardModel;
 

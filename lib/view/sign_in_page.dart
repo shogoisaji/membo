@@ -46,16 +46,6 @@ class SignInPage extends HookConsumerWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Positioned(
-                  top: -100,
-                  left: -100,
-                  child: Lottie.asset(
-                    'assets/lotties/test.json', // 'assets/lotties/hello.json
-                    width: 300,
-                    height: 300,
-                    fit: BoxFit.cover,
-                  ),
-                ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

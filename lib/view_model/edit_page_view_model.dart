@@ -19,9 +19,9 @@ class EditPageViewModel extends _$EditPageViewModel {
   @override
   EditPageState build() => EditPageState();
 
-  void setSelectedBoardId(String boardId) {
-    state = state.copyWith(selectedBoardId: boardId);
-  }
+  // void setSelectedBoardId(String boardId) {
+  //   state = state.copyWith(selectedBoardId: boardId);
+  // }
 
   Future<void> createNewBoard() async {
     /// Get the current user
@@ -209,7 +209,13 @@ class EditPageViewModel extends _$EditPageViewModel {
 
   Future<String> getObjectCreatorName(String id) async {
     try {
-      final user = await ref.read(supabaseRepositoryProvider).fetchUserData(id);
+      final user = await ref
+          .read(supabaseRepositoryProvider)
+          .fetchUserData(id)
+          .catchError((e) {
+        print('error: $e');
+        return null;
+      });
       if (user == null) {
         return 'Unknown';
       }

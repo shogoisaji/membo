@@ -123,9 +123,10 @@ class SupabaseAuthRepository {
     await _client.auth.signOut();
   }
 
-// reset password
-  Future<void> resetPassword() async {
-    await _client.auth.reauthenticate();
+  Future<void> deleteAccount(String userId) async {
+    /// Edge Function "delete-user"を呼び出す
+    await _client.functions.invoke("delete-user");
+    signOut();
   }
 }
 

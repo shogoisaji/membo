@@ -16,14 +16,19 @@ class EditListPageViewModel extends _$EditListPageViewModel {
 
     if (user == null) return;
 
-    final userData =
-        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    final userData = await ref
+        .read(supabaseRepositoryProvider)
+        .fetchUserData(user.id)
+        .catchError((e) {
+      print('error: $e');
+      return null;
+    });
 
     if (userData == null) return;
 
     final newBoards = <BoardModel>[];
 
-    for (String id in userData.ownedBoardsId) {
+    for (String id in userData.ownedBoardIds) {
       try {
         final board =
             await ref.read(supabaseRepositoryProvider).getBoardById(id);

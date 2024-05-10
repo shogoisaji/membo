@@ -53,6 +53,21 @@ class EditListPage extends HookConsumerWidget {
                   }
                 },
               ),
+              CustomButton(
+                width: 300,
+                height: 50,
+                color: Colors.orange,
+                child: Center(
+                    child: Text('sasa', style: lightTextTheme.bodyLarge)),
+                onTap: () async {
+                  try {
+                    context.go('/edit',
+                        extra: '0996ec38-d300-4dd4-9e8b-1a887954c275');
+                  } catch (e) {
+                    ErrorDialog.show(context, e.toString());
+                  }
+                },
+              ),
               Expanded(
                 child: ListView.builder(
                     itemCount: editListPageState.boardModels.length,

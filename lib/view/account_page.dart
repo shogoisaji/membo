@@ -12,12 +12,16 @@ import 'package:membo/view_model/account_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_list_content.dart';
+import 'package:membo/widgets/custom_snackbar.dart';
+import 'package:membo/widgets/error_dialog.dart';
 
 class AccountPage extends HookConsumerWidget {
   const AccountPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final formKey = GlobalKey<FormState>();
+    final nameTextController = useTextEditingController();
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
     final accountPageState = ref.watch(accountPageViewModelProvider);
@@ -27,10 +31,98 @@ class AccountPage extends HookConsumerWidget {
       if (signedInUser == null) return;
       final user = await ref
           .read(supabaseRepositoryProvider)
-          .fetchUserData(signedInUser.id);
-      if (user == null) return;
+          .fetchUserData(signedInUser.id)
+          .catchError((e) {
+        return null;
+      });
+      if (user == null) {
+        if (context.mounted) {
+          ErrorDialog.show(context, 'Error fetching user data', onTap: () {
+            // context.go('/');
+            // ref.read(supabaseAuthRepositoryProvider).signOut();
+          });
+        }
+        return;
+      }
       ref.read(accountPageViewModelProvider.notifier).getUser(user);
-      print('fetched user: ${user.userType.type == UserTypes.free}');
+    }
+
+    Future<String> handleSubmitName(String name) async {
+      try {
+        await ref
+            .read(accountPageViewModelProvider.notifier)
+            .updateUserName(name);
+        return 'success';
+      } catch (e) {
+        return 'error';
+      }
+    }
+
+    Future<void> handleTapNameEdit() async {
+      nameTextController.text = accountPageState.user!.userName;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Edit Name', style: lightTextTheme.titleLarge!),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  style: lightTextTheme.bodyLarge,
+                  autofocus: true,
+                  controller: nameTextController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Name is required';
+                    } else if (value.length > 8) {
+                      return 'Name cannot be longer than 8 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          final res =
+                              await handleSubmitName(nameTextController.text);
+                          if (context.mounted) {
+                            res == 'success'
+                                ? CustomSnackBar.show(
+                                    context, 'Name updated', MyColor.blue)
+                                : CustomSnackBar.show(context,
+                                    'Name update Error', Colors.red.shade400);
+                            Navigator.pop(context);
+                          }
+                        }
+                      },
+                      child: const Text('Save')),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    Future<void> handleDeleteAccount() async {
+      if (accountPageState.user == null) return;
+      try {
+        await ref
+            .read(supabaseAuthRepositoryProvider)
+            .deleteAccount(accountPageState.user!.userId);
+        if (context.mounted) {
+          context.go('/sign-in');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, 'Error deleting account');
+        }
+      }
     }
 
     useEffect(() {
@@ -48,110 +140,161 @@ class AccountPage extends HookConsumerWidget {
             },
           ),
         ),
-        body: accountPageState.user == null
-            ? const Center(child: CircularProgressIndicator())
-            : Stack(
-                children: [
-                  BgPaint(width: w, height: h),
-                  SafeArea(
-                    child: SingleChildScrollView(
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 500),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 16.0),
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 30.0),
-                                _avatarImage(accountPageState.user!.avatarUrl),
-                                const SizedBox(height: 30.0),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12.0, vertical: 4.0),
-                                  decoration: BoxDecoration(
-                                    color: MyColor.green,
-                                    border: Border.all(
-                                        color: MyColor.greenText, width: 2),
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: Text(
-                                    accountPageState.user!.userType.type
-                                        .toString()
-                                        .split('.')[1]
-                                        .toUpperCase(),
-                                    style: lightTextTheme.bodyLarge,
-                                  ),
-                                ),
-                                CustomListContent(
-                                  title: 'Name',
-                                  titleStyle: lightTextTheme.titleLarge!,
-                                  backgroundColor: MyColor.greenLight,
-                                  contentWidgets: [
-                                    Text(
-                                      accountPageState.user!.userName,
-                                      style: lightTextTheme.bodyLarge,
-                                    ),
+        body: Stack(
+          children: [
+            BgPaint(width: w, height: h),
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 16.0),
+                      child: Column(
+                        children: [
+                          accountPageState.user == null
+                              ? const Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(child: CircularProgressIndicator()),
+                                    SizedBox(height: 200.0),
                                   ],
-                                ),
-                                const SizedBox(height: 20.0),
-                                CustomListContent(
-                                  title: 'Owned Board',
-                                  titleStyle: lightTextTheme.titleLarge!,
-                                  backgroundColor: MyColor.greenLight,
-                                  contentWidgets: [
-                                    Text(
-                                      accountPageState
-                                          .user!.ownedBoardsId.length
-                                          .toString(),
-                                      style: lightTextTheme.bodyLarge,
+                                )
+                              : Column(
+                                  children: [
+                                    const SizedBox(height: 30.0),
+                                    _avatarImage(
+                                        accountPageState.user!.avatarUrl),
+                                    const SizedBox(height: 30.0),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0, vertical: 4.0),
+                                      decoration: BoxDecoration(
+                                        color: MyColor.green,
+                                        border: Border.all(
+                                            color: MyColor.greenText, width: 2),
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                      child: Text(
+                                        accountPageState.user!.userType.type
+                                            .toString()
+                                            .split('.')[1]
+                                            .toUpperCase(),
+                                        style: lightTextTheme.bodyLarge,
+                                      ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 26.0),
+                                    CustomListContent(
+                                      title: 'Name',
+                                      titleStyle: lightTextTheme.titleLarge!,
+                                      backgroundColor: MyColor.greenLight,
+                                      contentWidgets: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                accountPageState.user!.userName,
+                                                style: lightTextTheme.bodyLarge,
+                                              ),
+                                            ),
+                                            InkWell(
+                                              child: const Icon(Icons.edit),
+                                              onTap: () {
+                                                handleTapNameEdit();
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20.0),
+                                    CustomListContent(
+                                      title: 'Owned Boards',
+                                      titleStyle: lightTextTheme.titleLarge!,
+                                      backgroundColor: MyColor.greenLight,
+                                      contentWidgets: [
+                                        Text(
+                                          accountPageState
+                                              .user!.ownedBoardIds.length
+                                              .toString(),
+                                          style: lightTextTheme.bodyLarge,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20.0),
+                                    CustomListContent(
+                                      title: 'Link Boards',
+                                      titleStyle: lightTextTheme.titleLarge!,
+                                      backgroundColor: MyColor.greenLight,
+                                      contentWidgets: [
+                                        Text(
+                                          accountPageState
+                                              .user!.linkBoardIds.length
+                                              .toString(),
+                                          style: lightTextTheme.bodyLarge,
+                                        ),
+                                      ],
+                                    ),
 
-                                /// subscription features
-                                ///
-                                // accountPageState.user!.userType.type ==
-                                //         UserTypes.free
-                                //     ? CustomButton(
-                                //         width: double.infinity,
-                                //         height: 50,
-                                //         color: MyColor.blue,
-                                //         onTap: null,
-                                //         child: Center(
-                                //             child: Text('Upgrade to Pro',
-                                //                 style: lightTextTheme
-                                //                     .titleLarge!
-                                //                     .copyWith(
-                                //                         color: MyColor
-                                //                             .greenSuperLight))),
-                                //       )
-                                //     : const SizedBox(),
-                                const SizedBox(height: 26.0),
-                                CustomButton(
+                                    /// subscription features
+                                    ///
+                                    // accountPageState.user!.userType.type ==
+                                    //         UserTypes.free
+                                    //     ? CustomButton(
+                                    //         width: double.infinity,
+                                    //         height: 50,
+                                    //         color: MyColor.blue,
+                                    //         onTap: null,
+                                    //         child: Center(
+                                    //             child: Text('Upgrade to Pro',
+                                    //                 style: lightTextTheme
+                                    //                     .titleLarge!
+                                    //                     .copyWith(
+                                    //                         color: MyColor
+                                    //                             .greenSuperLight))),
+                                    //       )
+                                    //     : const SizedBox(),
+                                    const SizedBox(height: 36.0),
+                                  ],
+                                ),
+                          CustomButton(
+                            width: double.infinity,
+                            height: 50,
+                            color: MyColor.pink,
+                            child: Center(
+                                child: Text('Sign out',
+                                    style: lightTextTheme.titleLarge)),
+                            onTap: () {
+                              ref
+                                  .read(supabaseAuthRepositoryProvider)
+                                  .signOut();
+                            },
+                          ),
+                          const SizedBox(height: 32.0),
+                          accountPageState.user == null
+                              ? const SizedBox.shrink()
+                              : CustomButton(
                                   width: double.infinity,
                                   height: 50,
-                                  color: MyColor.pink,
+                                  color: MyColor.pink.withBlue(60),
                                   child: Center(
-                                      child: Text('Sign out',
+                                      child: Text('Delete Account',
                                           style: lightTextTheme.titleLarge)),
-                                  onTap: () {
-                                    ref
-                                        .read(supabaseAuthRepositoryProvider)
-                                        .signOut();
+                                  onTap: () async {
+                                    handleDeleteAccount();
                                   },
                                 ),
-                                const SizedBox(height: 100.0),
-                              ],
-                            ),
-                          ),
-                        ),
+                          const SizedBox(height: 100.0),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ));
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 
   Widget _avatarImage(String? avatarUrl) {

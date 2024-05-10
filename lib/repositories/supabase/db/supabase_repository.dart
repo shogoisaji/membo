@@ -143,4 +143,25 @@ class SupabaseRepository {
       throw Exception('Error getting user data: $err');
     }
   }
+
+  Future<void> updateUserName(
+    String userId,
+    String newUserName,
+  ) async {
+    try {
+      await _client
+          .from('profiles')
+          .update({'user_name': newUserName})
+          .eq('user_id', userId)
+          .single();
+    } on TypeError catch (_) {
+      // ???
+    } catch (err) {
+      throw Exception('Error updating user name: $err');
+    }
+  }
+
+  Future<void> deleteAccount(String userId) async {
+    await _client.from('profiles').delete().eq('user_id', userId).single();
+  }
 }

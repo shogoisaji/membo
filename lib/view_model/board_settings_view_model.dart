@@ -20,8 +20,13 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     if (user == null) {
       throw Exception('User is not loaded');
     }
-    final ownerData =
-        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    final ownerData = await ref
+        .read(supabaseRepositoryProvider)
+        .fetchUserData(user.id)
+        .catchError((e) {
+      print('error: $e');
+      return null;
+    });
     state = state.copyWith(
         currentBoard: board,
         ownerName: ownerData?.userName ?? '-',

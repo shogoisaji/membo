@@ -16,7 +16,11 @@ class HomePageViewModel extends _$HomePageViewModel {
 
     final userData = await ref
         .read(supabaseRepositoryProvider)
-        .fetchUserData(user?.id ?? '');
+        .fetchUserData(user?.id ?? '')
+        .catchError((e) {
+      print('error: $e');
+      return null;
+    });
 
     if (userData == null) {
       print('userData is null');
@@ -24,7 +28,7 @@ class HomePageViewModel extends _$HomePageViewModel {
     }
 
     final newBoards = <BoardModel>[];
-    for (String id in userData.ownedBoardsId) {
+    for (String id in userData.ownedBoardIds) {
       try {
         final board =
             await ref.read(supabaseRepositoryProvider).getBoardById(id);
