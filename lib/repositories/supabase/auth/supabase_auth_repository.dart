@@ -102,8 +102,10 @@ class SupabaseAuthRepository {
         nonce: hashedNonce,
       );
     } catch (e) {
+      /// Apple Sign In canceled!
       return;
     }
+    print(credential);
 
     final idToken = credential.identityToken;
     if (idToken == null) {
@@ -111,11 +113,15 @@ class SupabaseAuthRepository {
           'Could not find ID Token from generated credential.');
     }
 
-    _client.auth.signInWithIdToken(
-      provider: OAuthProvider.apple,
-      idToken: idToken,
-      nonce: rawNonce,
-    );
+    try {
+      await _client.auth.signInWithIdToken(
+        provider: OAuthProvider.apple,
+        idToken: idToken,
+        nonce: rawNonce,
+      );
+    } catch (e) {
+      throw AuthException('Apple Sign In failed on Supabase. $e');
+    }
   }
 
 // Sign out

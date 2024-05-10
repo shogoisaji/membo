@@ -32,6 +32,23 @@ class SignInPage extends HookConsumerWidget {
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
 
+    void handleSignInWithApple() async {
+      animationController.reset();
+
+      shutterColor.value = appleColor;
+      animationController.forward();
+
+      try {
+        await ref.read(supabaseAuthRepositoryProvider).signInWithApple();
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(
+              context, 'Error signing in with Apple ${e.toString()}');
+        }
+      }
+      animationController.reverse();
+    }
+
     useEffect(() {
       return null;
     }, [user]);
@@ -126,22 +143,23 @@ class SignInPage extends HookConsumerWidget {
                         ],
                       ),
                       onTap: () async {
-                        animationController.reset();
+                        handleSignInWithApple();
+                        // animationController.reset();
 
-                        shutterColor.value = appleColor;
-                        animationController.forward();
+                        // shutterColor.value = appleColor;
+                        // animationController.forward();
 
-                        try {
-                          await ref
-                              .read(supabaseAuthRepositoryProvider)
-                              .signInWithApple();
-                        } catch (e) {
-                          if (context.mounted) {
-                            ErrorDialog.show(
-                                context, 'Error signing in with Apple');
-                          }
-                        }
-                        animationController.reverse();
+                        // try {
+                        //   await ref
+                        //       .read(supabaseAuthRepositoryProvider)
+                        //       .signInWithApple();
+                        // } catch (e) {
+                        //   if (context.mounted) {
+                        //     ErrorDialog.show(
+                        //         context, 'Error signing in with Apple');
+                        //   }
+                        // }
+                        // animationController.reverse();
                       },
                     ),
                   ],
