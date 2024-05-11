@@ -20,7 +20,7 @@ class BoardModel with _$BoardModel {
     // ignore: invalid_annotation_target
     @JsonKey(name: 'owner_id') required String ownerId,
     // ignore: invalid_annotation_target
-    @JsonKey(name: 'is_published') @Default(false) bool isPublished,
+    @JsonKey(name: 'is_public') @Default(false) bool isPublic,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'settings')
     @Default(BoardSettingsModel())

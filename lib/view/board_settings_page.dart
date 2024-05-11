@@ -47,6 +47,14 @@ class BoardSettingsPage extends HookConsumerWidget {
       ref.read(boardSettingsViewModelProvider.notifier).updateHeight(height);
     }
 
+    void handleUpdatePublicState() {
+      final newPublicState = !boardSettingsState.currentBoard!.isPublic;
+      ref
+          .read(boardSettingsViewModelProvider.notifier)
+          .updatePublicState(newPublicState);
+      context.go('/edit', extra: boardId);
+    }
+
     void saveTempBoardSettings() {
       try {
         ref
@@ -60,6 +68,7 @@ class BoardSettingsPage extends HookConsumerWidget {
 
     void deleteBoard() {
       ref.read(boardSettingsViewModelProvider.notifier).deleteBoard();
+      context.go('/');
     }
 
     bool isSaveable() {
@@ -432,8 +441,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                       style: lightTextTheme.bodyLarge),
                                   Row(
                                     children: [
-                                      boardSettingsState
-                                              .currentBoard!.isPublished
+                                      boardSettingsState.currentBoard!.isPublic
                                           ? Text(
                                               'Public',
                                               style: lightTextTheme.bodyLarge!
@@ -446,7 +454,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                 ],
                               ),
                               // TODO: 仮に反転している
-                              boardSettingsState.currentBoard!.isPublished !=
+                              boardSettingsState.currentBoard!.isPublic !=
                                           true &&
                                       boardSettingsState.isOwner
                                   ? Column(
@@ -515,6 +523,44 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           style: lightTextTheme.bodyLarge)),
                                 )
                               : const SizedBox.shrink(),
+                          const SizedBox(height: 32.0),
+                          CustomButton(
+                            width: double.infinity,
+                            height: 50,
+                            color: MyColor.blue,
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(boardSettingsState
+                                          .currentBoard!.isPublic
+                                      ? 'Would you like to keep this board private?'
+                                      : 'Would you like to make this board public?'),
+                                  actions: [
+                                    ElevatedButton(
+                                        onPressed: () => {
+                                              handleUpdatePublicState(),
+                                              Navigator.of(context).pop(),
+                                            },
+                                        child: Text(boardSettingsState
+                                                .currentBoard!.isPublic
+                                            ? 'Unpublish'
+                                            : 'Publish')),
+                                    ElevatedButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('Cancel')),
+                                  ],
+                                ),
+                              );
+                            },
+                            child: Center(
+                                child: Text(
+                                    boardSettingsState.currentBoard!.isPublic
+                                        ? 'Unpublish'
+                                        : 'Publish',
+                                    style: lightTextTheme.bodyLarge)),
+                          ),
                           const SizedBox(height: 32.0),
                           CustomButton(
                             width: double.infinity,

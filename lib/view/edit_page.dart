@@ -117,6 +117,23 @@ class EditPage extends HookConsumerWidget {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: MyColor.green,
+                  borderRadius: BorderRadius.circular(99),
+                  border: Border.all(width: 3, color: MyColor.greenText),
+                ),
+                child: Text(
+                  editPageState.boardModel?.isPublic == true
+                      ? 'Public'
+                      : 'Private',
+                  style: lightTextTheme.bodyLarge,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
               child: ElevatedButton(
                 onPressed: () {
                   ref

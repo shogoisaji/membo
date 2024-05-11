@@ -36,8 +36,8 @@ mixin _$BoardModel {
   @JsonKey(name: 'owner_id')
   String get ownerId =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
-  @JsonKey(name: 'is_published')
-  bool get isPublished =>
+  @JsonKey(name: 'is_public')
+  bool get isPublic =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'settings')
   BoardSettingsModel get settings =>
@@ -63,7 +63,7 @@ abstract class $BoardModelCopyWith<$Res> {
       @JsonKey(name: 'password') String password,
       @JsonKey(name: 'objects') List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') String ownerId,
-      @JsonKey(name: 'is_published') bool isPublished,
+      @JsonKey(name: 'is_public') bool isPublic,
       @JsonKey(name: 'settings') BoardSettingsModel settings,
       @JsonKey(name: 'created_at') DateTime createdAt});
 
@@ -88,7 +88,7 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
-    Object? isPublished = null,
+    Object? isPublic = null,
     Object? settings = null,
     Object? createdAt = null,
   }) {
@@ -113,9 +113,9 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
               as String,
-      isPublished: null == isPublished
-          ? _value.isPublished
-          : isPublished // ignore: cast_nullable_to_non_nullable
+      isPublic: null == isPublic
+          ? _value.isPublic
+          : isPublic // ignore: cast_nullable_to_non_nullable
               as bool,
       settings: null == settings
           ? _value.settings
@@ -151,7 +151,7 @@ abstract class _$$BoardModelImplCopyWith<$Res>
       @JsonKey(name: 'password') String password,
       @JsonKey(name: 'objects') List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') String ownerId,
-      @JsonKey(name: 'is_published') bool isPublished,
+      @JsonKey(name: 'is_public') bool isPublic,
       @JsonKey(name: 'settings') BoardSettingsModel settings,
       @JsonKey(name: 'created_at') DateTime createdAt});
 
@@ -175,7 +175,7 @@ class __$$BoardModelImplCopyWithImpl<$Res>
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
-    Object? isPublished = null,
+    Object? isPublic = null,
     Object? settings = null,
     Object? createdAt = null,
   }) {
@@ -200,9 +200,9 @@ class __$$BoardModelImplCopyWithImpl<$Res>
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
               as String,
-      isPublished: null == isPublished
-          ? _value.isPublished
-          : isPublished // ignore: cast_nullable_to_non_nullable
+      isPublic: null == isPublic
+          ? _value.isPublic
+          : isPublic // ignore: cast_nullable_to_non_nullable
               as bool,
       settings: null == settings
           ? _value.settings
@@ -225,7 +225,7 @@ class _$BoardModelImpl implements _BoardModel {
       @JsonKey(name: 'password') required this.password,
       @JsonKey(name: 'objects') required final List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') required this.ownerId,
-      @JsonKey(name: 'is_published') this.isPublished = false,
+      @JsonKey(name: 'is_public') this.isPublic = false,
       @JsonKey(name: 'settings') this.settings = const BoardSettingsModel(),
       @JsonKey(name: 'created_at') required this.createdAt})
       : _objects = objects;
@@ -262,8 +262,8 @@ class _$BoardModelImpl implements _BoardModel {
   final String ownerId;
 // ignore: invalid_annotation_target
   @override
-  @JsonKey(name: 'is_published')
-  final bool isPublished;
+  @JsonKey(name: 'is_public')
+  final bool isPublic;
 // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'settings')
@@ -275,7 +275,7 @@ class _$BoardModelImpl implements _BoardModel {
 
   @override
   String toString() {
-    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, isPublished: $isPublished, settings: $settings, createdAt: $createdAt)';
+    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, isPublic: $isPublic, settings: $settings, createdAt: $createdAt)';
   }
 
   @override
@@ -290,8 +290,8 @@ class _$BoardModelImpl implements _BoardModel {
                 other.password == password) &&
             const DeepCollectionEquality().equals(other._objects, _objects) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
-            (identical(other.isPublished, isPublished) ||
-                other.isPublished == isPublished) &&
+            (identical(other.isPublic, isPublic) ||
+                other.isPublic == isPublic) &&
             (identical(other.settings, settings) ||
                 other.settings == settings) &&
             (identical(other.createdAt, createdAt) ||
@@ -307,7 +307,7 @@ class _$BoardModelImpl implements _BoardModel {
       password,
       const DeepCollectionEquality().hash(_objects),
       ownerId,
-      isPublished,
+      isPublic,
       settings,
       createdAt);
 
@@ -332,7 +332,7 @@ abstract class _BoardModel implements BoardModel {
           @JsonKey(name: 'password') required final String password,
           @JsonKey(name: 'objects') required final List<ObjectModel> objects,
           @JsonKey(name: 'owner_id') required final String ownerId,
-          @JsonKey(name: 'is_published') final bool isPublished,
+          @JsonKey(name: 'is_public') final bool isPublic,
           @JsonKey(name: 'settings') final BoardSettingsModel settings,
           @JsonKey(name: 'created_at') required final DateTime createdAt}) =
       _$BoardModelImpl;
@@ -356,8 +356,8 @@ abstract class _BoardModel implements BoardModel {
   @JsonKey(name: 'owner_id')
   String get ownerId;
   @override // ignore: invalid_annotation_target
-  @JsonKey(name: 'is_published')
-  bool get isPublished;
+  @JsonKey(name: 'is_public')
+  bool get isPublic;
   @override // ignore: invalid_annotation_target
   @JsonKey(name: 'settings')
   BoardSettingsModel get settings;

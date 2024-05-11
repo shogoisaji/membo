@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'board_settings_view_model.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: false)
 class BoardSettingsViewModel extends _$BoardSettingsViewModel {
   @override
   BoardSettingsState build() => BoardSettingsState();
@@ -77,7 +77,19 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     state = state.copyWith(tempBoardSettings: newBoardSettings);
   }
 
-  void saveTempBoardSettings() {
+  Future<void> updatePublicState(bool isPublic) async {
+    if (state.currentBoard == null) {
+      throw Exception('current board is not set');
+    }
+    final newBoard = state.currentBoard!.copyWith(isPublic: isPublic);
+    try {
+      await ref.read(supabaseRepositoryProvider).updateBoard(newBoard);
+    } catch (e) {
+      throw Exception('error saving temp board settings: $e');
+    }
+  }
+
+  Future<void> saveTempBoardSettings() async {
     if (state.currentBoard == null) {
       throw Exception('current board is not set');
     }
@@ -89,9 +101,11 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
         password: state.tempPassword ?? state.currentBoard!.password,
         settings: state.tempBoardSettings ?? state.currentBoard!.settings,
         boardName: state.tempBoardName ?? state.currentBoard!.boardName);
-    ref.read(supabaseRepositoryProvider).updateBoard(newBoard).catchError((e) {
+    try {
+      await ref.read(supabaseRepositoryProvider).updateBoard(newBoard);
+    } catch (e) {
       throw Exception('error saving temp board settings: $e');
-    });
+    }
     clear();
   }
 
