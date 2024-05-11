@@ -8,7 +8,9 @@ part 'home_page_state.freezed.dart';
 @freezed
 class HomePageState with _$HomePageState {
   const factory HomePageState({
+    @Default(true) bool isLoading,
     UserModel? userModel,
-    @Default([]) List<BoardModel> boardModel,
+    @Default([]) List<BoardModel> ownedBoardModel,
+    @Default([]) List<BoardModel> linkedBoardModel,
   }) = _HomePageState;
 }

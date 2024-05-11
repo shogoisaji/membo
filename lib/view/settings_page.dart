@@ -67,6 +67,18 @@ class SettingsPage extends ConsumerWidget {
                                     borderRadius: BorderRadius.circular(20))),
                             child: Text('policy',
                                 style: lightTextTheme.bodyLarge)),
+                        const SizedBox(height: 30.0),
+                        ElevatedButton(
+                            onPressed: () {
+                              context.go('/license');
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: MyColor.greenLight,
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20))),
+                            child: Text('License',
+                                style: lightTextTheme.bodyLarge)),
                         const SizedBox(height: 100.0),
                       ],
                     ),

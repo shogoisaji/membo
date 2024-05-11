@@ -513,103 +513,22 @@ class EditToolBar extends HookConsumerWidget {
         ? const SizedBox.shrink()
         : Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  IconButton(
-                    onPressed: () {
-                      ref
-                          .read(editPageViewModelProvider.notifier)
-                          .selectObject(null, null);
-                      clearState();
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      ref
-                          .read(editPageViewModelProvider.notifier)
-                          .insertSelectedObject();
-                      clearState();
-                    },
-                    icon: const Icon(Icons.add),
-                  ),
-                ],
-              ),
-              SizedBox(
-                width: width,
-                height: height,
-                // decoration: BoxDecoration(
-                //   color: Colors.green,
-                //   border: Border.all(color: Colors.black),
-                // ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onPanUpdate: (details) {
-                            final scaleDelta = -details.delta.dy * 0.003;
-                            scaleSelectedObject(scaleDelta);
-                          },
-                          child: Container(
-                            width: width / 4 > 100 ? 100 : width / 4,
-                            height: double.infinity,
-                            decoration: BoxDecoration(
-                              color: MyColor.greenSuperLight,
-                              borderRadius: BorderRadius.circular(99),
-                              border: Border.all(
-                                  width: 6, color: MyColor.greenDark),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.3),
-                                  offset: const Offset(1, 1),
-                                  blurRadius: 2,
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.zoom_out_map,
-                              size: 36,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        GestureDetector(
-                          onPanUpdate: (details) {
-                            rotateSelectedObject(details.delta.dy * 0.01);
-                          },
-                          child: Container(
-                            width: width / 4 > 100 ? 100 : width / 4,
-                            height: double.infinity,
-                            decoration: BoxDecoration(
-                              color: MyColor.greenSuperLight,
-                              borderRadius: BorderRadius.circular(99),
-                              border: Border.all(
-                                  width: 6, color: MyColor.greenDark),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.3),
-                                  offset: const Offset(1, 1),
-                                  blurRadius: 2,
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.refresh,
-                              size: 36,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: width / 3 > 170 ? 170 : width / 3,
-                      height: width / 3 > 170 ? 170 : width / 3,
-                      child: Joystick(
-                        base: Container(
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onPanUpdate: (details) {
+                          final scaleDelta = -details.delta.dy * 0.003;
+                          scaleSelectedObject(scaleDelta);
+                        },
+                        child: Container(
+                          width: width / 4 > 100 ? 100 : width / 4,
+                          height: height,
                           decoration: BoxDecoration(
                             color: MyColor.greenSuperLight,
                             borderRadius: BorderRadius.circular(99),
@@ -623,13 +542,26 @@ class EditToolBar extends HookConsumerWidget {
                               ),
                             ],
                           ),
+                          child: const Icon(
+                            Icons.zoom_out_map,
+                            size: 36,
+                            color: MyColor.blue,
+                          ),
                         ),
-                        stick: Container(
-                          width: 50,
-                          height: 50,
+                      ),
+                      const SizedBox(width: 20),
+                      GestureDetector(
+                        onPanUpdate: (details) {
+                          rotateSelectedObject(details.delta.dy * 0.01);
+                        },
+                        child: Container(
+                          width: width / 4 > 100 ? 100 : width / 4,
+                          height: height,
                           decoration: BoxDecoration(
-                            color: MyColor.pink,
-                            shape: BoxShape.circle,
+                            color: MyColor.greenSuperLight,
+                            borderRadius: BorderRadius.circular(99),
+                            border:
+                                Border.all(width: 6, color: MyColor.greenDark),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.3),
@@ -639,20 +571,113 @@ class EditToolBar extends HookConsumerWidget {
                             ],
                           ),
                           child: const Icon(
-                            Icons.open_with,
+                            Icons.refresh,
                             size: 36,
+                            color: MyColor.blue,
                           ),
                         ),
-                        period: const Duration(milliseconds: 5),
-                        listener: (details) {
-                          moveSelectedObject(Offset(
-                              details.x * joyStickStrength,
-                              details.y * joyStickStrength));
-                        },
                       ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: height,
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                ref
+                                    .read(editPageViewModelProvider.notifier)
+                                    .selectObject(null, null);
+                                clearState();
+                              },
+                              child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: MyColor.greenSuperLight,
+                                    borderRadius: BorderRadius.circular(99),
+                                    border: Border.all(
+                                        width: 5, color: MyColor.greenDark),
+                                  ),
+                                  child: const Icon(Icons.clear,
+                                      color: MyColor.blue)),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                ref
+                                    .read(editPageViewModelProvider.notifier)
+                                    .insertSelectedObject();
+                                clearState();
+                              },
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: MyColor.greenSuperLight,
+                                  borderRadius: BorderRadius.circular(99),
+                                  border: Border.all(
+                                      width: 5, color: MyColor.greenDark),
+                                ),
+                                child: const Icon(Icons.done),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: height,
+                          height: height,
+                          child: Joystick(
+                            base: Container(
+                              decoration: BoxDecoration(
+                                color: MyColor.greenSuperLight,
+                                shape: BoxShape.circle,
+                                // borderRadius: BorderRadius.circular(99),
+                                border: Border.all(
+                                    width: 6, color: MyColor.greenDark),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    offset: const Offset(1, 1),
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            stick: Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: MyColor.pink,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    offset: const Offset(1, 1),
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.games,
+                                color: MyColor.blue,
+                                size: 36,
+                              ),
+                            ),
+                            period: const Duration(milliseconds: 5),
+                            listener: (details) {
+                              moveSelectedObject(Offset(
+                                  details.x * joyStickStrength,
+                                  details.y * joyStickStrength));
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           );
@@ -684,12 +709,13 @@ class CustomFloatingButton extends HookConsumerWidget {
     }
 
     Future<void> handleImageSelect() async {
+      const imageMaxSize = 1000.0;
       final picker = ImagePicker();
       try {
         final XFile? image = await picker.pickImage(
           source: ImageSource.gallery,
-          maxWidth: 1000,
-          maxHeight: 1000,
+          maxWidth: imageMaxSize,
+          maxHeight: imageMaxSize,
           imageQuality: 85,
         );
 
@@ -716,6 +742,18 @@ class CustomFloatingButton extends HookConsumerWidget {
         /// 画像サイズを取得
         final imageSize =
             await ImageUtils().getImageSize(image) ?? const Size(0, 0);
+
+        var resizeRate = 1.0;
+
+        /// 画像サイズが大きい場合はリサイズ
+        if (imageSize.width > imageMaxSize || imageSize.height > imageMaxSize) {
+          if (imageSize.width > imageSize.height) {
+            resizeRate = imageMaxSize / imageSize.width;
+          } else {
+            resizeRate = imageMaxSize / imageSize.height;
+          }
+        }
+
         final selectedObject = ObjectModel(
             objectId: const Uuid().v4(),
             type: ObjectType.localImage,
@@ -724,8 +762,8 @@ class CustomFloatingButton extends HookConsumerWidget {
             angle: 0.0,
             scale: 1.0,
             imageUrl: image.path,
-            imageWidth: imageSize.width,
-            imageHeight: imageSize.height,
+            imageWidth: imageSize.width * resizeRate,
+            imageHeight: imageSize.height * resizeRate,
             creatorId: ref.read(userStateProvider)!.id,
             createdAt: DateTime.now(),
             bgColor: '0xFF000000');

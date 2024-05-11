@@ -42,7 +42,8 @@ class EditListPageViewModel extends _$EditListPageViewModel {
         print('error: $e');
       }
     }
-    state = state.copyWith(boardModels: newBoards);
+    await Future.delayed(const Duration(seconds: 1));
+    state = state.copyWith(isLoading: false, boardModels: newBoards);
   }
 
   Future<String?> createNewBoard() async {

@@ -16,6 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$EditListPageState {
+  bool get isLoading => throw _privateConstructorUsedError;
   List<BoardModel> get boardModels => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -29,7 +30,7 @@ abstract class $EditListPageStateCopyWith<$Res> {
           EditListPageState value, $Res Function(EditListPageState) then) =
       _$EditListPageStateCopyWithImpl<$Res, EditListPageState>;
   @useResult
-  $Res call({List<BoardModel> boardModels});
+  $Res call({bool isLoading, List<BoardModel> boardModels});
 }
 
 /// @nodoc
@@ -45,9 +46,14 @@ class _$EditListPageStateCopyWithImpl<$Res, $Val extends EditListPageState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? isLoading = null,
     Object? boardModels = null,
   }) {
     return _then(_value.copyWith(
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
       boardModels: null == boardModels
           ? _value.boardModels
           : boardModels // ignore: cast_nullable_to_non_nullable
@@ -64,7 +70,7 @@ abstract class _$$EditListPageStateImplCopyWith<$Res>
       __$$EditListPageStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<BoardModel> boardModels});
+  $Res call({bool isLoading, List<BoardModel> boardModels});
 }
 
 /// @nodoc
@@ -78,9 +84,14 @@ class __$$EditListPageStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? isLoading = null,
     Object? boardModels = null,
   }) {
     return _then(_$EditListPageStateImpl(
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
       boardModels: null == boardModels
           ? _value._boardModels
           : boardModels // ignore: cast_nullable_to_non_nullable
@@ -92,9 +103,13 @@ class __$$EditListPageStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$EditListPageStateImpl implements _EditListPageState {
-  _$EditListPageStateImpl({final List<BoardModel> boardModels = const []})
+  _$EditListPageStateImpl(
+      {this.isLoading = true, final List<BoardModel> boardModels = const []})
       : _boardModels = boardModels;
 
+  @override
+  @JsonKey()
+  final bool isLoading;
   final List<BoardModel> _boardModels;
   @override
   @JsonKey()
@@ -106,7 +121,7 @@ class _$EditListPageStateImpl implements _EditListPageState {
 
   @override
   String toString() {
-    return 'EditListPageState(boardModels: $boardModels)';
+    return 'EditListPageState(isLoading: $isLoading, boardModels: $boardModels)';
   }
 
   @override
@@ -114,13 +129,15 @@ class _$EditListPageStateImpl implements _EditListPageState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EditListPageStateImpl &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
             const DeepCollectionEquality()
                 .equals(other._boardModels, _boardModels));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_boardModels));
+  int get hashCode => Object.hash(runtimeType, isLoading,
+      const DeepCollectionEquality().hash(_boardModels));
 
   @JsonKey(ignore: true)
   @override
@@ -131,9 +148,12 @@ class _$EditListPageStateImpl implements _EditListPageState {
 }
 
 abstract class _EditListPageState implements EditListPageState {
-  factory _EditListPageState({final List<BoardModel> boardModels}) =
-      _$EditListPageStateImpl;
+  factory _EditListPageState(
+      {final bool isLoading,
+      final List<BoardModel> boardModels}) = _$EditListPageStateImpl;
 
+  @override
+  bool get isLoading;
   @override
   List<BoardModel> get boardModels;
   @override

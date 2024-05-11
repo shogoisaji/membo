@@ -95,6 +95,17 @@ class BoardViewPage extends HookConsumerWidget {
               context.go('/');
             },
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  print('add link board ids');
+                },
+                child: const Text('このボードを登録'),
+              ),
+            ),
+          ],
         ),
         body: isLoading.value
             ? const Center(child: CircularProgressIndicator())

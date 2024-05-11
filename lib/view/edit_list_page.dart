@@ -55,66 +55,93 @@ class EditListPage extends HookConsumerWidget {
       body: Stack(
         children: [
           BgPaint(width: w, height: h),
-          Column(
-            children: [
-              const SizedBox(height: 100),
-              CustomButton(
-                width: 200,
-                height: 50,
-                color: Colors.blue,
-                child: Center(
-                    child: Text('New Board', style: lightTextTheme.bodyLarge)),
-                onTap: () {
-                  createNewBoard();
-                },
+          SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: [
+                  const SizedBox(height: 150),
+                  CustomButton(
+                    width: 200,
+                    height: 50,
+                    color: Colors.blue,
+                    child: Center(
+                        child: Text(
+                      'New Board',
+                      style: lightTextTheme.bodyLarge,
+                    )),
+                    // Text('New Board', style: lightTextTheme.bodyLarge)),
+                    onTap: () {
+                      createNewBoard();
+                    },
+                  ),
+                  const SizedBox(height: 30),
+                  editListPageState.isLoading
+                      ? const Column(
+                          children: [
+                            SizedBox(height: 150),
+                            Center(child: CircularProgressIndicator()),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            ...editListPageState.boardModels.map((e) => Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    CustomButton(
+                                      width: 300,
+                                      height: 50,
+                                      color: Colors.orange,
+                                      child: Center(
+                                          child: Text(e.boardName,
+                                              style: lightTextTheme.bodyLarge)),
+                                      onTap: () async {
+                                        try {
+                                          context.go('/edit', extra: e.boardId);
+                                        } catch (e) {
+                                          ErrorDialog.show(
+                                              context, e.toString());
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(height: 24),
+                                  ],
+                                )),
+                          ],
+                        )
+
+                  // Expanded(
+                  //   child: ListView.builder(
+                  //       itemCount: editListPageState.boardModels.length,
+                  //       itemBuilder: (context, index) {
+                  //         return Column(
+                  //           mainAxisSize: MainAxisSize.min,
+                  //           children: [
+                  //             CustomButton(
+                  //               width: 300,
+                  //               height: 50,
+                  //               color: Colors.orange,
+                  //               child: Center(
+                  //                   child: Text(
+                  //                       editListPageState
+                  //                           .boardModels[index].boardName,
+                  //                       style: lightTextTheme.bodyLarge)),
+                  //               onTap: () async {
+                  //                 try {
+                  //                   context.go('/edit',
+                  //                       extra: editListPageState
+                  //                           .boardModels[index].boardId);
+                  //                 } catch (e) {
+                  //                   ErrorDialog.show(context, e.toString());
+                  //                 }
+                  //               },
+                  //             ),
+                  //             const SizedBox(height: 24),
+                  //           ],
+                  //         );
+                  //       }),
+                ],
               ),
-              // CustomButton(
-              //   width: 300,
-              //   height: 50,
-              //   color: Colors.orange,
-              //   child: Center(
-              //       child: Text('sasa', style: lightTextTheme.bodyLarge)),
-              //   onTap: () async {
-              //     try {
-              //       context.go('/edit',
-              //           extra: '0996ec38-d300-4dd4-9e8b-1a887954c275');
-              //     } catch (e) {
-              //       ErrorDialog.show(context, e.toString());
-              //     }
-              //   },
-              // ),
-              Expanded(
-                child: ListView.builder(
-                    itemCount: editListPageState.boardModels.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CustomButton(
-                            width: 300,
-                            height: 50,
-                            color: Colors.orange,
-                            child: Center(
-                                child: Text(
-                                    editListPageState
-                                        .boardModels[index].boardName,
-                                    style: lightTextTheme.bodyLarge)),
-                            onTap: () async {
-                              try {
-                                context.go('/edit',
-                                    extra: editListPageState
-                                        .boardModels[index].boardId);
-                              } catch (e) {
-                                ErrorDialog.show(context, e.toString());
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                        ],
-                      );
-                    }),
-              )
-            ],
+            ),
           ),
         ],
       ),

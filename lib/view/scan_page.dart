@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:membo/settings/color.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -21,6 +22,12 @@ class _QrScanPageState extends State<QrScanPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     controller.start();
 
     barcodeSubscription = controller.barcodes.listen((barcodeCapture) {
@@ -73,6 +80,13 @@ class _QrScanPageState extends State<QrScanPage> with WidgetsBindingObserver {
 
   @override
   Future<void> dispose() async {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
     // Stop listening to lifecycle changes.
     WidgetsBinding.instance.removeObserver(this);
     // Stop listening to the barcode events.
@@ -213,28 +227,33 @@ class ScannedBarcodeLabel extends StatelessWidget {
     return StreamBuilder(
       stream: barcodes,
       builder: (context, snapshot) {
-        final scannedBarcodes = snapshot.data?.barcodes ?? [];
-
-        if (scannedBarcodes.isEmpty) {
-          return const Text(
-            'Scanning...',
-            overflow: TextOverflow.fade,
-            style: TextStyle(color: Colors.white, fontSize: 20.0),
-          );
-        }
-
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-          decoration: BoxDecoration(
-            color: MyColor.pink,
-            borderRadius: BorderRadius.circular(99.0),
-          ),
-          child: Text(
-            scannedBarcodes.first.displayValue ?? 'No display value.',
-            overflow: TextOverflow.fade,
-            style: const TextStyle(color: Colors.white),
-          ),
+        return const Text(
+          'Scanning...',
+          overflow: TextOverflow.fade,
+          style: TextStyle(color: Colors.white, fontSize: 24.0),
         );
+        // final scannedBarcodes = snapshot.data?.barcodes ?? [];
+
+        // if (scannedBarcodes.isEmpty) {
+        //   return const Text(
+        //     'Scanning...',
+        //     overflow: TextOverflow.fade,
+        //     style: TextStyle(color: Colors.white, fontSize: 20.0),
+        //   );
+        // }
+
+        // return Container(
+        //   padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+        //   decoration: BoxDecoration(
+        //     color: MyColor.pink,
+        //     borderRadius: BorderRadius.circular(99.0),
+        //   ),
+        //   child: Text(
+        //     scannedBarcodes.first.displayValue ?? 'No display value.',
+        //     overflow: TextOverflow.fade,
+        //     style: const TextStyle(color: Colors.white),
+        //   ),
+        // );
       },
     );
   }

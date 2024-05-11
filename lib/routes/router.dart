@@ -5,6 +5,7 @@ import 'package:membo/state/navigation_state.dart';
 import 'package:membo/view/account_page.dart';
 import 'package:membo/view/board_settings_page.dart';
 import 'package:membo/view/connect_page.dart';
+import 'package:membo/view/custom_license_page.dart';
 import 'package:membo/view/edit_list_page.dart';
 import 'package:membo/view/edit_page.dart';
 import 'package:membo/view/board_view_page.dart';
@@ -32,6 +33,7 @@ class PagePath {
   static const policy = '/policy';
   static const publicPolicy = '/public-policy';
   static const qrScan = '/qr-scan';
+  static const license = '/license';
 }
 
 CustomTransitionPage buildPageWithDefaultTransition<T>({
@@ -174,6 +176,14 @@ GoRouter router(RouterRef ref) {
             context: context,
             state: state,
             child: const PolicyPage(),
+          ),
+        ),
+        GoRoute(
+          path: PagePath.license,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const CustomLicensePage(),
           ),
         ),
       ],

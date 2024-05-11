@@ -26,8 +26,22 @@ class HomePageViewModel extends _$HomePageViewModel {
       print('userData is null');
       return;
     }
+    final linkedBoards = <BoardModel>[];
+    final ownedBoards = <BoardModel>[];
 
-    final newBoards = <BoardModel>[];
+    for (String id in userData.linkBoardIds) {
+      try {
+        final board =
+            await ref.read(supabaseRepositoryProvider).getBoardById(id);
+        if (board == null) {
+          continue;
+        }
+        linkedBoards.add(board);
+      } catch (e) {
+        print('error: $e');
+      }
+    }
+
     for (String id in userData.ownedBoardIds) {
       try {
         final board =
@@ -35,11 +49,16 @@ class HomePageViewModel extends _$HomePageViewModel {
         if (board == null) {
           continue;
         }
-        newBoards.add(board);
+        ownedBoards.add(board);
       } catch (e) {
         print('error: $e');
       }
     }
-    state = state.copyWith(userModel: userData, boardModel: newBoards);
+    await Future.delayed(const Duration(milliseconds: 500));
+    state = state.copyWith(
+        isLoading: false,
+        userModel: userData,
+        linkedBoardModel: linkedBoards,
+        ownedBoardModel: ownedBoards);
   }
 }
