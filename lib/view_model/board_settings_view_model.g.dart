@@ -7,12 +7,12 @@ part of 'board_settings_view_model.dart';
 // **************************************************************************
 
 String _$boardSettingsViewModelHash() =>
-    r'e506d95eb0e127ea0cacf85adefcac0fe2ec5fcc';
+    r'edbcceeb80a4979cf3c31dbf4492f50f326ed34a';
 
 /// See also [BoardSettingsViewModel].
 @ProviderFor(BoardSettingsViewModel)
-final boardSettingsViewModelProvider =
-    NotifierProvider<BoardSettingsViewModel, BoardSettingsState>.internal(
+final boardSettingsViewModelProvider = AutoDisposeNotifierProvider<
+    BoardSettingsViewModel, BoardSettingsState>.internal(
   BoardSettingsViewModel.new,
   name: r'boardSettingsViewModelProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,6 +22,6 @@ final boardSettingsViewModelProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$BoardSettingsViewModel = Notifier<BoardSettingsState>;
+typedef _$BoardSettingsViewModel = AutoDisposeNotifier<BoardSettingsState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

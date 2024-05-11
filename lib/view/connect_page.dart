@@ -7,7 +7,6 @@ import 'package:membo/view_model/connect_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/thumbnail_card.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 class ConnectPage extends HookConsumerWidget {
   final String? uuid;

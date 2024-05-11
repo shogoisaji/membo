@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
-import 'package:membo/models/board/board_settings_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/models/view_model_state/edit_page_state.dart';
-import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
 import 'package:membo/state/stream_board_state.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'edit_page_view_model.g.dart';
@@ -24,15 +20,15 @@ class EditPageViewModel extends _$EditPageViewModel {
   // }
 
   Matrix4 calcInitialTransform(BoardModel board, double w, double h) {
-    final scaleW = w / board.settings.width;
-    final scaleH = h / board.settings.height;
+    final scaleW = w / board.width;
+    final scaleH = h / board.height;
     final scale = scaleW < scaleH ? scaleW : scaleH;
 
     /// 横長の画面の場合
     if (scaleW > scaleH) {
-      final addX = (w - board.settings.width * scale) / 2 / scale;
-      final translateX = (board.settings.width - w) / 2 * 1 + addX;
-      final translateY = (board.settings.height - h) / 2 * 1;
+      final addX = (w - board.width * scale) / 2 / scale;
+      final translateX = (board.width - w) / 2 * 1 + addX;
+      final translateY = (board.height - h) / 2 * 1;
       final matrix = Matrix4.identity()
         ..scale(scale)
         ..translate(translateX, translateY, 0);
@@ -40,9 +36,9 @@ class EditPageViewModel extends _$EditPageViewModel {
 
       /// 縦長の画面の場合
     } else {
-      final addY = (h - board.settings.height * scale) / 2 / scale;
-      final translateX = (board.settings.width - w) / 2 * 1;
-      final translateY = (board.settings.height - h) / 2 * 1 + addY;
+      final addY = (h - board.height * scale) / 2 / scale;
+      final translateX = (board.width - w) / 2 * 1;
+      final translateY = (board.height - h) / 2 * 1 + addY;
       final matrix = Matrix4.identity()
         ..scale(scale)
         ..translate(translateX, translateY, 0);
@@ -178,14 +174,14 @@ class EditPageViewModel extends _$EditPageViewModel {
     state = state.copyWith(showTextInput: false);
   }
 
-  void updateBoardSettings(BoardSettingsModel settings) {
-    if (state.boardModel == null) {
-      throw Exception('Board is not set');
-    }
-    state = state.copyWith(
-        boardModel: state.boardModel!.copyWith(settings: settings));
-    ref.read(supabaseRepositoryProvider).updateBoard(state.boardModel!);
-  }
+  // void updateBoardSettings(BoardSettingsModel settings) {
+  //   if (state.boardModel == null) {
+  //     throw Exception('Board is not set');
+  //   }
+  //   state = state.copyWith(
+  //       boardModel: state.boardModel!.copyWith(settings: settings));
+  //   ref.read(supabaseRepositoryProvider).updateBoard(state.boardModel!);
+  // }
 
   Future<String> getObjectCreatorName(String id) async {
     try {

@@ -1,10 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/sharing_widget.dart';

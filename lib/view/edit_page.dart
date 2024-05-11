@@ -715,9 +715,8 @@ class CustomFloatingButton extends HookConsumerWidget {
 
     Offset initialPosition() {
       if (editPageState.boardModel == null) return const Offset(0, 0);
-      final boardSettings = editPageState.boardModel!.settings;
-      final initialPositionX = boardSettings.width / 2;
-      final initialPositionY = boardSettings.height / 2;
+      final initialPositionX = editPageState.boardModel!.width / 2;
+      final initialPositionY = editPageState.boardModel!.height / 2;
       return Offset(initialPositionX, initialPositionY);
     }
 
@@ -899,9 +898,8 @@ class TextInputModal extends HookConsumerWidget {
 
     Offset initialTextPosition() {
       if (editPageState.boardModel == null) return const Offset(0, 0);
-      final boardSettings = editPageState.boardModel!.settings;
-      final initialPositionX = boardSettings.width / 2;
-      final initialPositionY = boardSettings.height / 2;
+      final initialPositionX = editPageState.boardModel!.width / 2;
+      final initialPositionY = editPageState.boardModel!.height / 2;
       return Offset(initialPositionX, initialPositionY);
     }
 

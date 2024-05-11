@@ -7,7 +7,7 @@ part of 'board_view_page_view_model.dart';
 // **************************************************************************
 
 String _$boardViewPageViewModelHash() =>
-    r'd0271fea458864a9da112f2027fa49d514e02601';
+    r'66cf17fc81cf6930ec2d12febb966a9570dd34d2';
 
 /// See also [BoardViewPageViewModel].
 @ProviderFor(BoardViewPageViewModel)

@@ -1,4 +1,3 @@
-import 'package:membo/models/board/board_settings_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -13,18 +12,16 @@ class BoardModel with _$BoardModel {
     @JsonKey(name: 'board_id') required String boardId,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'board_name') @Default('-') String boardName,
-    // ignore: invalid_annotation_target
-    @JsonKey(name: 'password') required String password,
-    // ignore: invalid_annotation_target
-    @JsonKey(name: 'objects') required List<ObjectModel> objects,
+    required String password,
+    required List<ObjectModel> objects,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'owner_id') required String ownerId,
+    required int width,
+    required int height,
+    // ignore: invalid_annotation_target
+    @JsonKey(name: 'bg_color') required String bgColor,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'is_public') @Default(false) bool isPublic,
-    // ignore: invalid_annotation_target
-    @JsonKey(name: 'settings')
-    @Default(BoardSettingsModel())
-    BoardSettingsModel settings,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'created_at') required DateTime createdAt,
   }) = _BoardModel;

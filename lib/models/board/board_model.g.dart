@@ -15,11 +15,10 @@ _$BoardModelImpl _$$BoardModelImplFromJson(Map<String, dynamic> json) =>
           .map((e) => ObjectModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       ownerId: json['owner_id'] as String,
+      width: json['width'] as int,
+      height: json['height'] as int,
+      bgColor: json['bg_color'] as String,
       isPublic: json['is_public'] as bool? ?? false,
-      settings: json['settings'] == null
-          ? const BoardSettingsModel()
-          : BoardSettingsModel.fromJson(
-              json['settings'] as Map<String, dynamic>),
       createdAt: DateTime.parse(json['created_at'] as String),
     );
 
@@ -30,7 +29,9 @@ Map<String, dynamic> _$$BoardModelImplToJson(_$BoardModelImpl instance) =>
       'password': instance.password,
       'objects': instance.objects,
       'owner_id': instance.ownerId,
+      'width': instance.width,
+      'height': instance.height,
+      'bg_color': instance.bgColor,
       'is_public': instance.isPublic,
-      'settings': instance.settings,
       'created_at': instance.createdAt.toIso8601String(),
     };

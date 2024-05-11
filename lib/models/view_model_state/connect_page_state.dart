@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:membo/models/board/board_model.dart';
 

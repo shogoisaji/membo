@@ -15,15 +15,15 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
   BoardViewPageState build() => BoardViewPageState();
 
   Matrix4 calcInitialTransform(BoardModel board, double w, double h) {
-    final scaleW = w / board.settings.width;
-    final scaleH = h / board.settings.height;
+    final scaleW = w / board.width;
+    final scaleH = h / board.height;
     final scale = scaleW < scaleH ? scaleW : scaleH;
 
     /// 横長の画面の場合
     if (scaleW > scaleH) {
-      final addX = (w - board.settings.width * scale) / 2 / scale;
-      final translateX = (board.settings.width - w) / 2 * 1 + addX;
-      final translateY = (board.settings.height - h) / 2 * 1;
+      final addX = (w - board.width * scale) / 2 / scale;
+      final translateX = (board.width - w) / 2 * 1 + addX;
+      final translateY = (board.height - h) / 2 * 1;
       final matrix = Matrix4.identity()
         ..scale(scale)
         ..translate(translateX, translateY, 0);
@@ -31,9 +31,9 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
 
       /// 縦長の画面の場合
     } else {
-      final addY = (h - board.settings.height * scale) / 2 / scale;
-      final translateX = (board.settings.width - w) / 2 * 1;
-      final translateY = (board.settings.height - h) / 2 * 1 + addY;
+      final addY = (h - board.height * scale) / 2 / scale;
+      final translateX = (board.width - w) / 2 * 1;
+      final translateY = (board.height - h) / 2 * 1 + addY;
       final matrix = Matrix4.identity()
         ..scale(scale)
         ..translate(translateX, translateY, 0);

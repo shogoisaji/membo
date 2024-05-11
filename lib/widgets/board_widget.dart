@@ -17,10 +17,10 @@ class BoardWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: board.settings.width,
-        height: board.settings.height,
+        width: board.width.toDouble(),
+        height: board.height.toDouble(),
         decoration: BoxDecoration(
-          color: Color(int.parse(board.settings.bgColor)),
+          color: Color(int.parse(board.bgColor)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.4),
@@ -35,9 +35,9 @@ class BoardWidget extends HookWidget {
           children: [
             CustomPaint(
               painter: BoardCanvasPainter(
-                  canvasColor: Color(int.parse(board.settings.bgColor)),
+                  canvasColor: Color(int.parse(board.bgColor)),
                   objects: board.objects),
-              size: Size(board.settings.width, board.settings.height),
+              size: Size(board.width.toDouble(), board.height.toDouble()),
             ),
             ...board.objects.map((object) => ClipRect(
                 clipper: MyCustomClipper(),

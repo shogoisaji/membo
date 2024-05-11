@@ -16,31 +16,34 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     if (board == null) {
       throw Exception('Board is not loaded');
     }
-    final user = ref.read(userStateProvider);
-    if (user == null) {
+    final currentUser = ref.read(userStateProvider);
+    if (currentUser == null) {
       throw Exception('User is not loaded');
     }
     final ownerData = await ref
         .read(supabaseRepositoryProvider)
-        .fetchUserData(user.id)
+        .fetchUserData(board.ownerId)
         .catchError((e) {
-      print('error: $e');
-      return null;
+      throw Exception('Owner data is not loaded');
     });
     state = state.copyWith(
         currentBoard: board,
+        tempBoard: board,
         ownerName: ownerData?.userName ?? '-',
-        tempBoardName: board.boardName,
-        tempBoardSettings: board.settings,
-        isOwner: user.id == board.ownerId);
+        isOwner: currentUser.id == board.ownerId);
   }
 
+  ///
+  /// 変更があればtrueを返す
+  ///
   bool isChangeCheck() {
     if (state.currentBoard == null) {
       return false;
     }
-    return state.currentBoard!.boardName != state.tempBoardName ||
-        state.currentBoard!.settings != state.tempBoardSettings;
+    if (state.tempBoard == null) {
+      return false;
+    }
+    return state.currentBoard! != state.tempBoard;
   }
 
   /// テスト用
@@ -48,73 +51,40 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     state = state.copyWith(isOwner: state.isOwner ? false : true);
   }
 
-  void updateBoardName(String boardName) {
-    state = state.copyWith(tempBoardName: boardName);
-  }
-
-  void updateWidth(double width) {
-    if (state.tempBoardSettings == null) {
-      throw Exception('tempBoardSettings is not set');
+  void updateBoardSettings(
+      {String? boardName,
+      int? width,
+      int? height,
+      String? color,
+      String? password,
+      bool? isPublic}) {
+    if (state.tempBoard == null) {
+      throw Exception('temp board is not set');
     }
-    final newBoardSettings = state.tempBoardSettings!.copyWith(width: width);
-    state = state.copyWith(tempBoardSettings: newBoardSettings);
-  }
-
-  void updateHeight(double height) {
-    if (state.tempBoardSettings == null) {
-      throw Exception('tempBoardSettings is not set');
-    }
-    final newBoardSettings = state.tempBoardSettings!.copyWith(height: height);
-    state = state.copyWith(tempBoardSettings: newBoardSettings);
-  }
-
-  void updateColor(String color) {
-    if (state.currentBoard == null) {
-      throw Exception('current board is not set');
-    }
-    final newBoardSettings =
-        state.currentBoard!.settings.copyWith(bgColor: color);
-    state = state.copyWith(tempBoardSettings: newBoardSettings);
-  }
-
-  Future<void> updatePublicState(bool isPublic) async {
-    if (state.currentBoard == null) {
-      throw Exception('current board is not set');
-    }
-    final newBoard = state.currentBoard!.copyWith(isPublic: isPublic);
-    try {
-      await ref.read(supabaseRepositoryProvider).updateBoard(newBoard);
-    } catch (e) {
-      throw Exception('error saving temp board settings: $e');
-    }
+    final newBoard = state.tempBoard!.copyWith(
+      boardName: boardName ?? state.tempBoard!.boardName,
+      width: width ?? state.tempBoard!.width,
+      height: height ?? state.tempBoard!.height,
+      bgColor: color ?? state.tempBoard!.bgColor,
+      password: password ?? state.tempBoard!.password,
+      isPublic: isPublic ?? state.tempBoard!.isPublic,
+    );
+    state = state.copyWith(tempBoard: newBoard);
   }
 
   Future<void> saveTempBoardSettings() async {
     if (state.currentBoard == null) {
       throw Exception('current board is not set');
     }
-    if (state.tempBoardSettings == null && state.tempBoardName == null) {
+    if (state.tempBoard == null) {
       throw Exception('Temp board settings is not set');
     }
 
-    final newBoard = state.currentBoard!.copyWith(
-        password: state.tempPassword ?? state.currentBoard!.password,
-        settings: state.tempBoardSettings ?? state.currentBoard!.settings,
-        boardName: state.tempBoardName ?? state.currentBoard!.boardName);
     try {
-      await ref.read(supabaseRepositoryProvider).updateBoard(newBoard);
+      await ref.read(supabaseRepositoryProvider).updateBoard(state.tempBoard!);
     } catch (e) {
       throw Exception('error saving temp board settings: $e');
     }
-    clear();
-  }
-
-  void clear() {
-    state = BoardSettingsState();
-  }
-
-  bool isUpdatable() {
-    return (state.tempBoardSettings != null || state.tempBoardName != null);
   }
 
   Future<void> deleteBoard() async {
@@ -127,12 +97,21 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     if (userData == null) {
       throw Exception('User data is not loaded');
     }
+
+    /// Boardの削除はOwnerのみ
+    if (!state.isOwner) {
+      throw Exception('You are not owner');
+    }
+
     if (state.currentBoard == null) {
       throw Exception('current board is not set');
     }
     final board = state.currentBoard!;
+
     try {
       await ref.read(supabaseRepositoryProvider).deleteBoard(board.boardId);
+
+      /// TODO:修正
       await ref.read(supabaseRepositoryProvider).removeBoardIdFromUser(
           user.id, userData.ownedBoardIds, board.boardId);
     } catch (e) {

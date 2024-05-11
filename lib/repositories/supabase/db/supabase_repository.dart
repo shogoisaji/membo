@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
-import 'package:membo/models/board/board_settings_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'supabase_repository.g.dart';
@@ -78,6 +76,16 @@ class SupabaseRepository {
 
   Future<void> deleteBoard(String boardId) async {
     try {
+      /// storage imageを削除する
+      final board = await getBoardById(boardId);
+      final storage = SupabaseStorage(_client);
+      for (final object in board!.objects) {
+        if (object.type == ObjectType.networkImage) {
+          await storage.deleteImage(object.imageUrl!);
+        }
+      }
+
+      /// db boardを削除する
       await _client.from('boards').delete().eq('board_id', boardId).single();
     } catch (err) {
       throw Exception('Error deleting board: $err');
@@ -85,20 +93,20 @@ class SupabaseRepository {
   }
 
   /// maybe no use
-  Future<void> updateBoardSettings(
-      String boardId, BoardSettingsModel updatedBoardSettings) async {
-    final newSettings = updatedBoardSettings.toJson();
-    try {
-      await _client
-          .from('boards')
-          .update({'settings': newSettings})
-          .eq('board_id', boardId)
-          .single();
-    } catch (err) {
-      /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
-      print('Error updating board: $err');
-    }
-  }
+  // Future<void> updateBoardSettings(
+  //     String boardId, BoardSettingsModel updatedBoardSettings) async {
+  //   final newSettings = updatedBoardSettings.toJson();
+  //   try {
+  //     await _client
+  //         .from('boards')
+  //         .update({'settings': newSettings})
+  //         .eq('board_id', boardId)
+  //         .single();
+  //   } catch (err) {
+  //     /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
+  //     print('Error updating board: $err');
+  //   }
+  // }
 
   Stream<BoardModel?> boardStream(String boardId) {
     final StreamController<BoardModel?> controller =
