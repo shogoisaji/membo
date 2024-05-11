@@ -559,7 +559,8 @@ class BoardSettingsPage extends HookConsumerWidget {
                                     boardSettingsState.currentBoard!.isPublic
                                         ? 'Unpublish'
                                         : 'Publish',
-                                    style: lightTextTheme.bodyLarge)),
+                                    style: lightTextTheme.bodyLarge!.copyWith(
+                                        color: MyColor.greenSuperLight))),
                           ),
                           const SizedBox(height: 32.0),
                           CustomButton(

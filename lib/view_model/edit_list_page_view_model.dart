@@ -71,8 +71,9 @@ class EditListPageViewModel extends _$EditListPageViewModel {
 
       /// user ownedBoardIdsに新しいボードを追加
       try {
-        await ref.read(supabaseRepositoryProvider).addBoardIdToUser(
-            user.id, userData.ownedBoardIds, insertedBoardId!);
+        await ref
+            .read(supabaseRepositoryProvider)
+            .addOwnedBoardId(user.id, userData.ownedBoardIds, insertedBoardId!);
       } catch (e) {
         print('error: $e');
       }

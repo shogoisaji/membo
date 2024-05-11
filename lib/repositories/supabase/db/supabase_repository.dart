@@ -167,13 +167,27 @@ class SupabaseRepository {
     await _client.from('profiles').delete().eq('user_id', userId).single();
   }
 
-  Future<void> addBoardIdToUser(String userId,
-      List<String> currentOwnedBoardIds, String addBoardId) async {
+  Future<void> addOwnedBoardId(String userId, List<String> currentOwnedBoardIds,
+      String addBoardId) async {
     final newOwnedBoardIds = [...currentOwnedBoardIds, addBoardId];
     try {
       await _client
           .from('profiles')
           .update({'owned_board_ids': newOwnedBoardIds})
+          .eq('user_id', userId)
+          .single();
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  Future<void> addLinkBoardId(String userId, List<String> currentLinkBoardIds,
+      String addBoardId) async {
+    final newLinkBoardIds = [...currentLinkBoardIds, addBoardId];
+    try {
+      await _client
+          .from('profiles')
+          .update({'link_board_ids': newLinkBoardIds})
           .eq('user_id', userId)
           .single();
     } catch (err) {
