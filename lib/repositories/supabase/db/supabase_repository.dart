@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/models/user/linked_board_model.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -198,28 +199,26 @@ class SupabaseRepository {
     }
   }
 
-  Future<void> addLinkBoardId(String userId, List<String> currentLinkBoardIds,
-      String addBoardId) async {
-    final newLinkBoardIds = [...currentLinkBoardIds, addBoardId];
-    try {
-      await _client
-          .from('profiles')
-          .update({'link_board_ids': newLinkBoardIds})
-          .eq('user_id', userId)
-          .single();
-    } catch (err) {
-      rethrow;
-    }
-  }
+  // Future<void> addLinkBoardId(String userId, List<String> currentLinkBoardIds,
+  //     String addBoardId) async {
+  //   final newLinkBoardIds = [...currentLinkBoardIds, addBoardId];
+  //   try {
+  //     await _client
+  //         .from('profiles')
+  //         .update({'link_board_ids': newLinkBoardIds})
+  //         .eq('user_id', userId)
+  //         .single();
+  //   } catch (err) {
+  //     rethrow;
+  //   }
+  // }
 
-  Future<void> removeBoardIdFromUser(String userId,
-      List<String> currentOwnedBoardIds, String removeBoardId) async {
-    final newOwnedBoardIds =
-        currentOwnedBoardIds.where((id) => id != removeBoardId).toList();
+  Future<void> updateLinkedBoards(
+      String userId, List<LinkedBoard> newLinkedBoards) async {
     try {
       await _client
           .from('profiles')
-          .update({'owned_board_ids': newOwnedBoardIds})
+          .update({'linked_boards': newLinkedBoards})
           .eq('user_id', userId)
           .single();
     } catch (err) {

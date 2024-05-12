@@ -109,11 +109,18 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     final board = state.currentBoard!;
 
     try {
+      /// Board削除
       await ref.read(supabaseRepositoryProvider).deleteBoard(board.boardId);
 
-      /// TODO:修正
-      await ref.read(supabaseRepositoryProvider).removeBoardIdFromUser(
-          user.id, userData.ownedBoardIds, board.boardId);
+      final removedLinkedBoards = userData.linkedBoards
+          .where((element) => element.boardId != board.boardId)
+          .toList();
+      userData;
+
+      /// userのlinkedBoardsからBoardを削除
+      await ref
+          .read(supabaseRepositoryProvider)
+          .updateLinkedBoards(user.id, removedLinkedBoards);
     } catch (e) {
       throw Exception('error deleting board: $e');
     }

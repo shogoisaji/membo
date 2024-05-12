@@ -1,4 +1,5 @@
 import 'package:membo/models/board/board_model.dart';
+import 'package:membo/models/user/linked_board_model.dart';
 import 'package:membo/models/user/user_model.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -10,7 +11,16 @@ class HomePageState with _$HomePageState {
   const factory HomePageState({
     @Default(true) bool isLoading,
     UserModel? userModel,
-    @Default([]) List<BoardModel> ownedBoardModel,
-    @Default([]) List<BoardModel> linkedBoardModel,
+    @Default([]) List<ShowBoardModel> showBoardModels,
   }) = _HomePageState;
+}
+
+class ShowBoardModel {
+  final LinkedBoardType boardType;
+  final BoardModel boardModel;
+
+  ShowBoardModel({
+    required this.boardType,
+    required this.boardModel,
+  });
 }

@@ -1,3 +1,4 @@
+import 'package:membo/models/user/linked_board_model.dart';
 import 'package:membo/models/user/user_type.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -13,9 +14,7 @@ class UserModel with _$UserModel {
     // ignore: invalid_annotation_target
     @JsonKey(name: 'user_name') required String userName,
     // ignore: invalid_annotation_target
-    @JsonKey(name: 'owned_board_ids') required List<String> ownedBoardIds,
-    // ignore: invalid_annotation_target
-    @JsonKey(name: 'link_board_ids') required List<String> linkBoardIds,
+    @JsonKey(name: 'linked_boards') required List<LinkedBoard> linkedBoards,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'avatar_url') String? avatarUrl,
     // ignore: invalid_annotation_target

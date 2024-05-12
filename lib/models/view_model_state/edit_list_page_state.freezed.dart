@@ -17,7 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$EditListPageState {
   bool get isLoading => throw _privateConstructorUsedError;
-  List<BoardModel> get boardModels => throw _privateConstructorUsedError;
+  List<BoardModel> get editableBoards => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $EditListPageStateCopyWith<EditListPageState> get copyWith =>
@@ -30,7 +30,7 @@ abstract class $EditListPageStateCopyWith<$Res> {
           EditListPageState value, $Res Function(EditListPageState) then) =
       _$EditListPageStateCopyWithImpl<$Res, EditListPageState>;
   @useResult
-  $Res call({bool isLoading, List<BoardModel> boardModels});
+  $Res call({bool isLoading, List<BoardModel> editableBoards});
 }
 
 /// @nodoc
@@ -47,16 +47,16 @@ class _$EditListPageStateCopyWithImpl<$Res, $Val extends EditListPageState>
   @override
   $Res call({
     Object? isLoading = null,
-    Object? boardModels = null,
+    Object? editableBoards = null,
   }) {
     return _then(_value.copyWith(
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
-      boardModels: null == boardModels
-          ? _value.boardModels
-          : boardModels // ignore: cast_nullable_to_non_nullable
+      editableBoards: null == editableBoards
+          ? _value.editableBoards
+          : editableBoards // ignore: cast_nullable_to_non_nullable
               as List<BoardModel>,
     ) as $Val);
   }
@@ -70,7 +70,7 @@ abstract class _$$EditListPageStateImplCopyWith<$Res>
       __$$EditListPageStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isLoading, List<BoardModel> boardModels});
+  $Res call({bool isLoading, List<BoardModel> editableBoards});
 }
 
 /// @nodoc
@@ -85,16 +85,16 @@ class __$$EditListPageStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? isLoading = null,
-    Object? boardModels = null,
+    Object? editableBoards = null,
   }) {
     return _then(_$EditListPageStateImpl(
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
-      boardModels: null == boardModels
-          ? _value._boardModels
-          : boardModels // ignore: cast_nullable_to_non_nullable
+      editableBoards: null == editableBoards
+          ? _value._editableBoards
+          : editableBoards // ignore: cast_nullable_to_non_nullable
               as List<BoardModel>,
     ));
   }
@@ -104,24 +104,24 @@ class __$$EditListPageStateImplCopyWithImpl<$Res>
 
 class _$EditListPageStateImpl implements _EditListPageState {
   _$EditListPageStateImpl(
-      {this.isLoading = true, final List<BoardModel> boardModels = const []})
-      : _boardModels = boardModels;
+      {this.isLoading = true, final List<BoardModel> editableBoards = const []})
+      : _editableBoards = editableBoards;
 
   @override
   @JsonKey()
   final bool isLoading;
-  final List<BoardModel> _boardModels;
+  final List<BoardModel> _editableBoards;
   @override
   @JsonKey()
-  List<BoardModel> get boardModels {
-    if (_boardModels is EqualUnmodifiableListView) return _boardModels;
+  List<BoardModel> get editableBoards {
+    if (_editableBoards is EqualUnmodifiableListView) return _editableBoards;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_boardModels);
+    return EqualUnmodifiableListView(_editableBoards);
   }
 
   @override
   String toString() {
-    return 'EditListPageState(isLoading: $isLoading, boardModels: $boardModels)';
+    return 'EditListPageState(isLoading: $isLoading, editableBoards: $editableBoards)';
   }
 
   @override
@@ -132,12 +132,12 @@ class _$EditListPageStateImpl implements _EditListPageState {
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             const DeepCollectionEquality()
-                .equals(other._boardModels, _boardModels));
+                .equals(other._editableBoards, _editableBoards));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, isLoading,
-      const DeepCollectionEquality().hash(_boardModels));
+      const DeepCollectionEquality().hash(_editableBoards));
 
   @JsonKey(ignore: true)
   @override
@@ -150,12 +150,12 @@ class _$EditListPageStateImpl implements _EditListPageState {
 abstract class _EditListPageState implements EditListPageState {
   factory _EditListPageState(
       {final bool isLoading,
-      final List<BoardModel> boardModels}) = _$EditListPageStateImpl;
+      final List<BoardModel> editableBoards}) = _$EditListPageStateImpl;
 
   @override
   bool get isLoading;
   @override
-  List<BoardModel> get boardModels;
+  List<BoardModel> get editableBoards;
   @override
   @JsonKey(ignore: true)
   _$$EditListPageStateImplCopyWith<_$EditListPageStateImpl> get copyWith =>
