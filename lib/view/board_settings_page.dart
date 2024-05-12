@@ -29,6 +29,10 @@ class BoardSettingsPage extends HookConsumerWidget {
 
     final isFirstTextInput = useState(true);
 
+    void initialize() {
+      ref.read(boardSettingsViewModelProvider.notifier).initializeLoad(boardId);
+    }
+
     void handleHideModal() {
       showColorPicker.value = false;
     }
@@ -36,15 +40,27 @@ class BoardSettingsPage extends HookConsumerWidget {
     void handleSelectColor(Color color) {
       ref
           .read(boardSettingsViewModelProvider.notifier)
-          .updateColor(ColorUtils.colorToHexString(color));
+          .updateBoardSettings(color: ColorUtils.colorToHexString(color));
     }
 
-    void handleUpdateWidth(double width) {
-      ref.read(boardSettingsViewModelProvider.notifier).updateWidth(width);
+    void handleUpdateWidth(int width) {
+      ref
+          .read(boardSettingsViewModelProvider.notifier)
+          .updateBoardSettings(width: width);
     }
 
-    void handleUpdateHeight(double height) {
-      ref.read(boardSettingsViewModelProvider.notifier).updateHeight(height);
+    void handleUpdateHeight(int height) {
+      ref
+          .read(boardSettingsViewModelProvider.notifier)
+          .updateBoardSettings(height: height);
+    }
+
+    void handleUpdatePublicState() {
+      final newPublicState = !boardSettingsState.currentBoard!.isPublic;
+      ref
+          .read(boardSettingsViewModelProvider.notifier)
+          .updateBoardSettings(isPublic: newPublicState);
+      context.go('/edit', extra: boardId);
     }
 
     void saveTempBoardSettings() {
@@ -58,6 +74,11 @@ class BoardSettingsPage extends HookConsumerWidget {
       }
     }
 
+    void deleteBoard() {
+      ref.read(boardSettingsViewModelProvider.notifier).deleteBoard();
+      context.go('/');
+    }
+
     bool isSaveable() {
       return ref.read(boardSettingsViewModelProvider.notifier).isChangeCheck();
     }
@@ -69,23 +90,19 @@ class BoardSettingsPage extends HookConsumerWidget {
       return null;
     }, []);
 
-    void init() {
-      ref.read(boardSettingsViewModelProvider.notifier).initializeLoad(boardId);
-    }
-
     useEffect(() {
-      init();
+      initialize();
       return;
     }, []);
 
     /// tempBoardName（Nameの初期値）が1度だけセットされる
     useEffect(() {
       if (!isFirstTextInput.value) return;
-      if (boardSettingsState.tempBoardName == null) return;
-      boardNameTextController.text = boardSettingsState.tempBoardName!;
+      if (boardSettingsState.tempBoard == null) return;
+      boardNameTextController.text = boardSettingsState.tempBoard!.boardName;
       isFirstTextInput.value = false;
       return;
-    }, [boardSettingsState.tempBoardName]);
+    }, [boardSettingsState.tempBoard]);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -123,9 +140,6 @@ class BoardSettingsPage extends HookConsumerWidget {
                         )),
                     ElevatedButton(
                       onPressed: () {
-                        ref
-                            .read(boardSettingsViewModelProvider.notifier)
-                            .clear();
                         Navigator.of(context).pop();
                         context.go('/edit', extra: boardId);
                       },
@@ -135,15 +149,13 @@ class BoardSettingsPage extends HookConsumerWidget {
                 ),
               );
             } else {
-              ref.read(boardSettingsViewModelProvider.notifier).clear();
               context.go('/edit', extra: boardId);
             }
           },
         ),
       ),
-      body: (boardSettingsState.tempBoardSettings == null ||
-              boardSettingsState.tempBoardName == null)
-          ? const SizedBox.shrink()
+      body: (boardSettingsState.tempBoard == null)
+          ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
                 BgPaint(width: w, height: h),
@@ -213,8 +225,9 @@ class BoardSettingsPage extends HookConsumerWidget {
                                                             .read(
                                                                 boardSettingsViewModelProvider
                                                                     .notifier)
-                                                            .updateBoardName(
-                                                                value);
+                                                            .updateBoardSettings(
+                                                                boardName:
+                                                                    value);
                                                       },
                                                       style: lightTextTheme
                                                           .bodyLarge,
@@ -228,7 +241,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                               )
                                             : Text(
                                                 boardSettingsState
-                                                    .tempBoardName!,
+                                                    .tempBoard!.boardName,
                                                 textAlign: TextAlign.end,
                                                 style: lightTextTheme.bodyLarge!
                                                     .copyWith(
@@ -261,11 +274,10 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           width: 100,
                                           child: SizeDropDown(
                                             initialSize: boardSettingsState
-                                                .tempBoardSettings!.width
+                                                .tempBoard!.width
                                                 .toInt(),
                                             onChanged: (value) {
-                                              handleUpdateWidth(
-                                                  value.toDouble());
+                                              handleUpdateWidth(value);
                                             },
                                             minSize: 100,
                                             maxSize: 2000,
@@ -275,8 +287,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8.0),
                                           child: Text(
-                                            boardSettingsState
-                                                .tempBoardSettings!.width
+                                            boardSettingsState.tempBoard!.width
                                                 .toStringAsFixed(0),
                                             style: lightTextTheme.bodyLarge,
                                           ),
@@ -297,11 +308,10 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           width: 100,
                                           child: SizeDropDown(
                                             initialSize: boardSettingsState
-                                                .tempBoardSettings!.height
+                                                .tempBoard!.height
                                                 .toInt(),
                                             onChanged: (value) {
-                                              handleUpdateHeight(
-                                                  value.toDouble());
+                                              handleUpdateHeight(value);
                                             },
                                             minSize: 100,
                                             maxSize: 2000,
@@ -311,8 +321,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8.0),
                                           child: Text(
-                                            boardSettingsState
-                                                .tempBoardSettings!.height
+                                            boardSettingsState.tempBoard!.height
                                                 .toStringAsFixed(0),
                                             style: lightTextTheme.bodyLarge,
                                           ),
@@ -362,15 +371,14 @@ class BoardSettingsPage extends HookConsumerWidget {
                                                 BorderRadius.circular(2.0),
                                             color: Color(int.parse(
                                                 boardSettingsState
-                                                    .tempBoardSettings!
-                                                    .bgColor)),
+                                                    .tempBoard!.bgColor)),
                                           ),
                                         ),
                                         const SizedBox(width: 4.0),
                                         Text(
                                           ColorUtils.colorToString(
                                             Color(int.parse(boardSettingsState
-                                                .tempBoardSettings!.bgColor)),
+                                                .tempBoard!.bgColor)),
                                           ),
                                           style: lightTextTheme.bodyLarge,
                                         ),
@@ -416,7 +424,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           const SizedBox(height: 20.0),
                           CustomListContent(
                             titleIcon: const Icon(Icons.language),
-                            title: 'Share Settings',
+                            title: 'Share Setting',
                             titleStyle: lightTextTheme.bodyLarge!,
                             backgroundColor: MyColor.greenLight,
                             contentWidgets: [
@@ -424,24 +432,24 @@ class BoardSettingsPage extends HookConsumerWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Public State',
+                                  Text('PublicState',
                                       style: lightTextTheme.bodyLarge),
                                   Row(
                                     children: [
-                                      Text(
-                                          boardSettingsState.tempBoardSettings!
-                                                      .isPublished ==
-                                                  true
-                                              ? 'Public'
-                                              : 'Private',
-                                          style: lightTextTheme.bodyLarge),
+                                      boardSettingsState.currentBoard!.isPublic
+                                          ? Text(
+                                              'Public',
+                                              style: lightTextTheme.bodyLarge!
+                                                  .copyWith(color: MyColor.red),
+                                            )
+                                          : Text('Private',
+                                              style: lightTextTheme.bodyLarge),
                                     ],
                                   ),
                                 ],
                               ),
                               // TODO: 仮に反転している
-                              boardSettingsState
-                                              .tempBoardSettings!.isPublished !=
+                              boardSettingsState.currentBoard!.isPublic !=
                                           true &&
                                       boardSettingsState.isOwner
                                   ? Column(
@@ -487,7 +495,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                   : const SizedBox.shrink(),
                             ],
                           ),
-                          const SizedBox(height: 24.0),
+                          const SizedBox(height: 32.0),
                           boardSettingsState.isOwner
                               ? CustomButton(
                                   width: double.infinity,
@@ -510,6 +518,72 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           style: lightTextTheme.bodyLarge)),
                                 )
                               : const SizedBox.shrink(),
+                          const SizedBox(height: 32.0),
+                          CustomButton(
+                            width: double.infinity,
+                            height: 50,
+                            color: MyColor.blue,
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(boardSettingsState
+                                          .currentBoard!.isPublic
+                                      ? 'Would you like to keep this board private?'
+                                      : 'Would you like to make this board public?'),
+                                  actions: [
+                                    ElevatedButton(
+                                        onPressed: () => {
+                                              handleUpdatePublicState(),
+                                              Navigator.of(context).pop(),
+                                            },
+                                        child: Text(boardSettingsState
+                                                .currentBoard!.isPublic
+                                            ? 'Unpublish'
+                                            : 'Publish')),
+                                    ElevatedButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('Cancel')),
+                                  ],
+                                ),
+                              );
+                            },
+                            child: Center(
+                                child: Text(
+                                    boardSettingsState.currentBoard!.isPublic
+                                        ? 'Unpublish'
+                                        : 'Publish',
+                                    style: lightTextTheme.bodyLarge!.copyWith(
+                                        color: MyColor.greenSuperLight))),
+                          ),
+                          const SizedBox(height: 32.0),
+                          CustomButton(
+                            width: double.infinity,
+                            height: 50,
+                            color: MyColor.pink,
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text(
+                                      'Are you sure you want to delete this board?'),
+                                  actions: [
+                                    ElevatedButton(
+                                        onPressed: () => deleteBoard(),
+                                        child: const Text('Delete')),
+                                    ElevatedButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('Cancel')),
+                                  ],
+                                ),
+                              );
+                            },
+                            child: Center(
+                                child: Text('Delete',
+                                    style: lightTextTheme.bodyLarge)),
+                          ),
                           const SizedBox(height: 100.0),
                         ],
                       ),
@@ -530,7 +604,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                       )
                     : const SizedBox.shrink(),
                 showColorPicker.value
-                    ? BoardColorChangeModal(
+                    ? BoardColorPicker(
                         hideModal: handleHideModal,
                         selectColor: handleSelectColor,
                       )
@@ -588,20 +662,19 @@ class SizeDropDown extends HookConsumerWidget {
   }
 }
 
-class BoardColorChangeModal extends HookConsumerWidget {
+class BoardColorPicker extends HookConsumerWidget {
   final Function hideModal;
   final Function selectColor;
-  const BoardColorChangeModal(
+  const BoardColorPicker(
       {super.key, required this.hideModal, required this.selectColor});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final boardSettings =
-        ref.watch(boardSettingsViewModelProvider).tempBoardSettings;
+    final board = ref.watch(boardSettingsViewModelProvider).tempBoard;
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
-    final selectedColor = useState<Color>(boardSettings?.bgColor != null
-        ? Color(int.parse(boardSettings!.bgColor))
+    final selectedColor = useState<Color>(board?.bgColor != null
+        ? Color(int.parse(board!.bgColor))
         : Colors.black);
 
     void handleChangeColor(Color color) {
@@ -609,6 +682,7 @@ class BoardColorChangeModal extends HookConsumerWidget {
     }
 
     return Stack(
+      fit: StackFit.expand,
       children: [
         GestureDetector(
           onTap: () {
@@ -620,20 +694,21 @@ class BoardColorChangeModal extends HookConsumerWidget {
             color: Colors.black.withOpacity(0.5),
           ),
         ),
-        Align(
-          alignment: Alignment.center,
+        Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                  height: 400.0,
-                  child: _colorPicker(selectedColor.value, handleChangeColor)),
+              _colorPicker(selectedColor.value, handleChangeColor, h * 0.3),
+              const SizedBox(height: 20.0),
               ElevatedButton(
                 onPressed: () {
                   selectColor(selectedColor.value);
                   hideModal();
                 },
-                child: const Text('OK'),
+                child: Text(
+                  'OK',
+                  style: lightTextTheme.bodyLarge,
+                ),
               )
             ],
           ),
@@ -642,8 +717,10 @@ class BoardColorChangeModal extends HookConsumerWidget {
     );
   }
 
-  Widget _colorPicker(Color selectedColor, Function(Color) onColorChanged) {
+  Widget _colorPicker(
+      Color selectedColor, Function(Color) onColorChanged, double height) {
     return HueRingCustomPicker(
+      colorPickerHeight: height,
       pickerColor: selectedColor, //default color
       onColorChanged: (Color color) {
         onColorChanged(color);

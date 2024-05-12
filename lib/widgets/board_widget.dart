@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/settings/color.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
 
@@ -16,46 +17,85 @@ class BoardWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final boardRadius = board.height / 50;
+
     return Container(
-        width: board.settings.width,
-        height: board.settings.height,
-        color: Color(int.parse(board.settings.bgColor)),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            CustomPaint(
-              painter: BoardCanvasPainter(
-                  canvasColor: Color(int.parse(board.settings.bgColor)),
-                  objects: board.objects),
-              size: Size(board.settings.width, board.settings.height),
-            ),
-            ...board.objects
-                .map((object) => ObjectWidget(object: object, opacity: 1.0)),
-            if (selectedObject != null)
-              SelectedObject(object: selectedObject!)
-            else
-              const SizedBox.shrink(),
+      padding: EdgeInsets.all(board.height / 30),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MyColor.brown,
+            ColorUtils.moreDark(MyColor.brown),
           ],
-        ));
+        ),
+        borderRadius:
+            BorderRadius.circular(board.height / 50 + board.height / 30 / 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.35),
+            blurRadius: board.height / 30,
+            spreadRadius: board.height / 200,
+            offset: Offset(board.height / 200, board.height / 150),
+          ),
+        ],
+      ),
+      child: Container(
+          width: board.width.toDouble(),
+          height: board.height.toDouble(),
+          decoration: BoxDecoration(
+            color: Color(int.parse(board.bgColor)),
+            borderRadius: BorderRadius.circular(boardRadius),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.25),
+                blurRadius: board.height / 80,
+                spreadRadius: board.height / 300,
+                offset: Offset(board.height / 350, board.height / 300),
+              ),
+            ],
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              ...board.objects.map((object) => ClipRRect(
+                  clipper: MyCustomClipper(radius: boardRadius),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ObjectWidget(object: object, opacity: 1.0),
+                    ],
+                  ))),
+              if (selectedObject != null)
+                ClipRRect(
+                  clipper: MyCustomClipper(radius: boardRadius),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      SelectedObject(object: selectedObject!),
+                    ],
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
+            ],
+          )),
+    );
   }
 }
 
-class BoardCanvasPainter extends CustomPainter {
-  final Color canvasColor;
-  final List<ObjectModel> objects;
-
-  BoardCanvasPainter({
-    required this.canvasColor,
-    required this.objects,
-  });
-
+class MyCustomClipper extends CustomClipper<RRect> {
+  final double radius;
+  MyCustomClipper({required this.radius});
   @override
-  void paint(Canvas canvas, Size size) async {}
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+  RRect getClip(Size size) {
+    return RRect.fromLTRBR(
+        0, 0, size.width, size.height, Radius.circular(radius));
   }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<RRect> oldClipper) => false;
 }
 
 class SelectedObject extends HookConsumerWidget {
@@ -122,7 +162,7 @@ class ObjectWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final child = objectCheck();
+    final checkedObjectWidget = objectCheck();
     final centerX =
         object.positionX - (object.imageWidth ?? 0.0) * object.scale / 2;
     final centerY =
@@ -131,20 +171,14 @@ class ObjectWidget extends StatelessWidget {
     return Positioned(
       top: centerY,
       left: centerX,
-      child: Transform.scale(
+      child: Transform.rotate(
         alignment: object.type == ObjectType.text
             ? Alignment.topLeft
             : Alignment.center,
-        scale: object.scale,
-        child: Transform.rotate(
-          alignment: object.type == ObjectType.text
-              ? Alignment.topLeft
-              : Alignment.center,
-          angle: object.angle, // angle: object.angle,
-          child: Opacity(
-            opacity: opacity,
-            child: child,
-          ),
+        angle: object.angle, // angle: object.angle,
+        child: Opacity(
+          opacity: opacity,
+          child: checkedObjectWidget,
         ),
       ),
     );
@@ -152,18 +186,17 @@ class ObjectWidget extends StatelessWidget {
 
   Widget _networkImageWidget() {
     if (object.imageUrl == null) {
+      print('object.imageUrl is null');
+      return _errorImageWidget();
+    }
+    if (object.imageWidth == null || object.imageHeight == null) {
+      print('object.imageWidth or object.imageHeight is null');
       return _errorImageWidget();
     }
     return CachedNetworkImage(
         imageUrl: object.imageUrl!,
-        // width: object.imageWidth != null
-        //     ? object.imageWidth! * object.scale
-        //     : null,
-        // height: object.imageHeight != null
-        //     ? object.imageHeight! * object.scale
-        //     : null,
-        width: object.imageWidth,
-        height: object.imageHeight,
+        width: object.imageWidth! * object.scale,
+        height: object.imageHeight! * object.scale,
         imageBuilder: (context, imageProvider) => Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -172,20 +205,22 @@ class ObjectWidget extends StatelessWidget {
                 ),
               ),
             ),
-        placeholder: (context, url) => const ColoredBox(color: Colors.white),
+        placeholder: (context, url) => ColoredBox(color: Colors.grey.shade200),
         errorWidget: (context, url, error) => _errorImageWidget());
   }
 
   Widget _localImageWidget() {
     if (object.imageUrl == null) {
+      print('object.imageUrl is null');
+      return _errorImageWidget();
+    }
+    if (object.imageWidth == null || object.imageHeight == null) {
+      print('object.imageWidth or object.imageHeight is null');
       return _errorImageWidget();
     }
     return Image.file(
-      width:
-          object.imageWidth != null ? object.imageWidth! * object.scale : null,
-      height: object.imageHeight != null
-          ? object.imageHeight! * object.scale
-          : null,
+      width: object.imageWidth! * object.scale,
+      height: object.imageHeight! * object.scale,
       File(object.imageUrl!),
       errorBuilder: (context, error, stackTrace) {
         return _errorImageWidget();

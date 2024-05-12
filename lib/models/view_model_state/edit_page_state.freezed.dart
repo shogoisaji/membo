@@ -18,10 +18,6 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$EditPageState {
   ObjectModel? get selectedObject => throw _privateConstructorUsedError;
   BoardModel? get boardModel => throw _privateConstructorUsedError;
-  String? get selectedBoardId => throw _privateConstructorUsedError;
-  double get viewScale => throw _privateConstructorUsedError;
-  double get viewTranslateX => throw _privateConstructorUsedError;
-  double get viewTranslateY => throw _privateConstructorUsedError;
   XFile? get selectedImageFile => throw _privateConstructorUsedError;
   bool get showTextInput => throw _privateConstructorUsedError;
   bool get showInputMenu => throw _privateConstructorUsedError;
@@ -41,10 +37,6 @@ abstract class $EditPageStateCopyWith<$Res> {
   $Res call(
       {ObjectModel? selectedObject,
       BoardModel? boardModel,
-      String? selectedBoardId,
-      double viewScale,
-      double viewTranslateX,
-      double viewTranslateY,
       XFile? selectedImageFile,
       bool showTextInput,
       bool showInputMenu,
@@ -69,10 +61,6 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
   $Res call({
     Object? selectedObject = freezed,
     Object? boardModel = freezed,
-    Object? selectedBoardId = freezed,
-    Object? viewScale = null,
-    Object? viewTranslateX = null,
-    Object? viewTranslateY = null,
     Object? selectedImageFile = freezed,
     Object? showTextInput = null,
     Object? showInputMenu = null,
@@ -87,22 +75,6 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
           ? _value.boardModel
           : boardModel // ignore: cast_nullable_to_non_nullable
               as BoardModel?,
-      selectedBoardId: freezed == selectedBoardId
-          ? _value.selectedBoardId
-          : selectedBoardId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      viewScale: null == viewScale
-          ? _value.viewScale
-          : viewScale // ignore: cast_nullable_to_non_nullable
-              as double,
-      viewTranslateX: null == viewTranslateX
-          ? _value.viewTranslateX
-          : viewTranslateX // ignore: cast_nullable_to_non_nullable
-              as double,
-      viewTranslateY: null == viewTranslateY
-          ? _value.viewTranslateY
-          : viewTranslateY // ignore: cast_nullable_to_non_nullable
-              as double,
       selectedImageFile: freezed == selectedImageFile
           ? _value.selectedImageFile
           : selectedImageFile // ignore: cast_nullable_to_non_nullable
@@ -158,10 +130,6 @@ abstract class _$$EditPageStateImplCopyWith<$Res>
   $Res call(
       {ObjectModel? selectedObject,
       BoardModel? boardModel,
-      String? selectedBoardId,
-      double viewScale,
-      double viewTranslateX,
-      double viewTranslateY,
       XFile? selectedImageFile,
       bool showTextInput,
       bool showInputMenu,
@@ -186,10 +154,6 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
   $Res call({
     Object? selectedObject = freezed,
     Object? boardModel = freezed,
-    Object? selectedBoardId = freezed,
-    Object? viewScale = null,
-    Object? viewTranslateX = null,
-    Object? viewTranslateY = null,
     Object? selectedImageFile = freezed,
     Object? showTextInput = null,
     Object? showInputMenu = null,
@@ -204,22 +168,6 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
           ? _value.boardModel
           : boardModel // ignore: cast_nullable_to_non_nullable
               as BoardModel?,
-      selectedBoardId: freezed == selectedBoardId
-          ? _value.selectedBoardId
-          : selectedBoardId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      viewScale: null == viewScale
-          ? _value.viewScale
-          : viewScale // ignore: cast_nullable_to_non_nullable
-              as double,
-      viewTranslateX: null == viewTranslateX
-          ? _value.viewTranslateX
-          : viewTranslateX // ignore: cast_nullable_to_non_nullable
-              as double,
-      viewTranslateY: null == viewTranslateY
-          ? _value.viewTranslateY
-          : viewTranslateY // ignore: cast_nullable_to_non_nullable
-              as double,
       selectedImageFile: freezed == selectedImageFile
           ? _value.selectedImageFile
           : selectedImageFile // ignore: cast_nullable_to_non_nullable
@@ -246,10 +194,6 @@ class _$EditPageStateImpl implements _EditPageState {
   _$EditPageStateImpl(
       {this.selectedObject,
       this.boardModel,
-      this.selectedBoardId,
-      this.viewScale = 1.0,
-      this.viewTranslateX = 0.0,
-      this.viewTranslateY = 0.0,
       this.selectedImageFile,
       this.showTextInput = false,
       this.showInputMenu = false,
@@ -259,17 +203,6 @@ class _$EditPageStateImpl implements _EditPageState {
   final ObjectModel? selectedObject;
   @override
   final BoardModel? boardModel;
-  @override
-  final String? selectedBoardId;
-  @override
-  @JsonKey()
-  final double viewScale;
-  @override
-  @JsonKey()
-  final double viewTranslateX;
-  @override
-  @JsonKey()
-  final double viewTranslateY;
   @override
   final XFile? selectedImageFile;
   @override
@@ -283,7 +216,7 @@ class _$EditPageStateImpl implements _EditPageState {
 
   @override
   String toString() {
-    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, selectedBoardId: $selectedBoardId, viewScale: $viewScale, viewTranslateX: $viewTranslateX, viewTranslateY: $viewTranslateY, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu, transformationMatrix: $transformationMatrix)';
+    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu, transformationMatrix: $transformationMatrix)';
   }
 
   @override
@@ -295,14 +228,6 @@ class _$EditPageStateImpl implements _EditPageState {
                 other.selectedObject == selectedObject) &&
             (identical(other.boardModel, boardModel) ||
                 other.boardModel == boardModel) &&
-            (identical(other.selectedBoardId, selectedBoardId) ||
-                other.selectedBoardId == selectedBoardId) &&
-            (identical(other.viewScale, viewScale) ||
-                other.viewScale == viewScale) &&
-            (identical(other.viewTranslateX, viewTranslateX) ||
-                other.viewTranslateX == viewTranslateX) &&
-            (identical(other.viewTranslateY, viewTranslateY) ||
-                other.viewTranslateY == viewTranslateY) &&
             (identical(other.selectedImageFile, selectedImageFile) ||
                 other.selectedImageFile == selectedImageFile) &&
             (identical(other.showTextInput, showTextInput) ||
@@ -314,18 +239,8 @@ class _$EditPageStateImpl implements _EditPageState {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      selectedObject,
-      boardModel,
-      selectedBoardId,
-      viewScale,
-      viewTranslateX,
-      viewTranslateY,
-      selectedImageFile,
-      showTextInput,
-      showInputMenu,
-      transformationMatrix);
+  int get hashCode => Object.hash(runtimeType, selectedObject, boardModel,
+      selectedImageFile, showTextInput, showInputMenu, transformationMatrix);
 
   @JsonKey(ignore: true)
   @override
@@ -338,10 +253,6 @@ abstract class _EditPageState implements EditPageState {
   factory _EditPageState(
       {final ObjectModel? selectedObject,
       final BoardModel? boardModel,
-      final String? selectedBoardId,
-      final double viewScale,
-      final double viewTranslateX,
-      final double viewTranslateY,
       final XFile? selectedImageFile,
       final bool showTextInput,
       final bool showInputMenu,
@@ -351,14 +262,6 @@ abstract class _EditPageState implements EditPageState {
   ObjectModel? get selectedObject;
   @override
   BoardModel? get boardModel;
-  @override
-  String? get selectedBoardId;
-  @override
-  double get viewScale;
-  @override
-  double get viewTranslateX;
-  @override
-  double get viewTranslateY;
   @override
   XFile? get selectedImageFile;
   @override

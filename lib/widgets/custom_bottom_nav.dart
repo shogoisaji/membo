@@ -21,8 +21,11 @@ class CustomBottomNav extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final navState = ref.watch(bottomNavigationStateProvider);
     final currentRoute = navState.currentRoute;
+    final isHorizontal =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final w = MediaQuery.sizeOf(context).width;
-    final navSize = Size(w, 70);
+    final h = MediaQuery.sizeOf(context).height;
+    final navSize = isHorizontal ? Size(70, h) : Size(w, 70);
 
     /// Listen to route & change the current route
     void routeListener() {
@@ -43,90 +46,168 @@ class CustomBottomNav extends HookConsumerWidget {
 
     return navState.visible
         ? SafeArea(
-            child: Container(
-              width: navSize.width,
-              height: navSize.height,
-              margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: MyColor.greenLight,
-                border: Border.all(width: 4, color: MyColor.greenDark),
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 3,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: navItems
-                    .map((item) => Expanded(
-                          child: InkWell(
-                              onTap: () {
-                                context.go(item['route'] as String);
-                              },
-                              child:
-                                  // ItemIcon(
-                                  //   asset: Assets.lotties.hello,
-                                  //   isMove: currentRoute.value == item['route'] as String,
-                                  // )
-                                  Container(
-                                padding: const EdgeInsets.all(7),
-                                decoration: BoxDecoration(
-                                  color: currentRoute == item['route']
-                                      ? MyColor.greenSuperLight
-                                          .withOpacity(0.08)
-                                      : Colors.transparent,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    width: 0.5,
-                                    color: currentRoute == item['route']
-                                        ? MyColor.greenSuperLight
-                                            .withOpacity(0.2)
-                                        : Colors.transparent,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: currentRoute == item['route']
-                                          ? MyColor.green.withOpacity(0.6)
-                                          : Colors.transparent,
-                                      blurRadius: 0.5,
-                                      spreadRadius: 0,
-                                      offset: const Offset(-2, -2),
-                                    ),
-                                  ],
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: currentRoute == item['route']
-                                        ? MyColor.greenLight
-                                        : Colors.transparent,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: currentRoute == item['route']
-                                            ? MyColor.greenLight
-                                            : Colors.transparent,
-                                        blurRadius: 5,
-                                        spreadRadius: 7,
-                                        offset: const Offset(-1.5, -2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    item['icon'] as IconData,
-                                    color: currentRoute == item['route']
-                                        ? MyColor.pink
-                                        : MyColor.greenSuperLight,
-                                    size: 36,
-                                  ),
-                                ),
-                              )),
-                        ))
-                    .toList(),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                width: navSize.width,
+                height: navSize.height,
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: MyColor.greenLight,
+                  border: Border.all(width: 4, color: MyColor.greenDark),
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 3,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: !isHorizontal
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: navItems
+                            .map((item) => Expanded(
+                                  child: InkWell(
+                                      onTap: () {
+                                        context.go(item['route'] as String);
+                                      },
+                                      child:
+                                          // ItemIcon(
+                                          //   asset: Assets.lotties.hello,
+                                          //   isMove: currentRoute.value == item['route'] as String,
+                                          // )
+                                          Container(
+                                        padding: const EdgeInsets.all(7),
+                                        decoration: BoxDecoration(
+                                          color: currentRoute == item['route']
+                                              ? MyColor.greenSuperLight
+                                                  .withOpacity(0.08)
+                                              : Colors.transparent,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            width: 0.5,
+                                            color: currentRoute == item['route']
+                                                ? MyColor.greenSuperLight
+                                                    .withOpacity(0.2)
+                                                : Colors.transparent,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  currentRoute == item['route']
+                                                      ? MyColor.green
+                                                          .withOpacity(0.6)
+                                                      : Colors.transparent,
+                                              blurRadius: 0.5,
+                                              spreadRadius: 0,
+                                              offset: const Offset(-2, -2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: currentRoute == item['route']
+                                                ? MyColor.greenLight
+                                                : Colors.transparent,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: currentRoute ==
+                                                        item['route']
+                                                    ? MyColor.greenLight
+                                                    : Colors.transparent,
+                                                blurRadius: 5,
+                                                spreadRadius: 7,
+                                                offset: const Offset(-1.5, -2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Icon(
+                                            item['icon'] as IconData,
+                                            color: currentRoute == item['route']
+                                                ? MyColor.pink
+                                                : MyColor.greenSuperLight,
+                                            size: 36,
+                                          ),
+                                        ),
+                                      )),
+                                ))
+                            .toList(),
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: navItems
+                            .map((item) => Expanded(
+                                  child: InkWell(
+                                      onTap: () {
+                                        context.go(item['route'] as String);
+                                      },
+                                      child:
+                                          // ItemIcon(
+                                          //   asset: Assets.lotties.hello,
+                                          //   isMove: currentRoute.value == item['route'] as String,
+                                          // )
+                                          Container(
+                                        padding: const EdgeInsets.all(7),
+                                        decoration: BoxDecoration(
+                                          color: currentRoute == item['route']
+                                              ? MyColor.greenSuperLight
+                                                  .withOpacity(0.08)
+                                              : Colors.transparent,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            width: 0.5,
+                                            color: currentRoute == item['route']
+                                                ? MyColor.greenSuperLight
+                                                    .withOpacity(0.2)
+                                                : Colors.transparent,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  currentRoute == item['route']
+                                                      ? MyColor.green
+                                                          .withOpacity(0.6)
+                                                      : Colors.transparent,
+                                              blurRadius: 0.5,
+                                              spreadRadius: 0,
+                                              offset: const Offset(-2, -2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: currentRoute == item['route']
+                                                ? MyColor.greenLight
+                                                : Colors.transparent,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: currentRoute ==
+                                                        item['route']
+                                                    ? MyColor.greenLight
+                                                    : Colors.transparent,
+                                                blurRadius: 5,
+                                                spreadRadius: 7,
+                                                offset: const Offset(-1.5, -2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Icon(
+                                            item['icon'] as IconData,
+                                            color: currentRoute == item['route']
+                                                ? MyColor.pink
+                                                : MyColor.greenSuperLight,
+                                            size: 36,
+                                          ),
+                                        ),
+                                      )),
+                                ))
+                            .toList(),
+                      ),
               ),
             ),
           )

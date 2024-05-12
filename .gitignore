@@ -46,4 +46,5 @@ app.*.map.json
 .fvm/
 
 .env
+.env.local
 env.g.dart

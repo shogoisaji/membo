@@ -12,7 +12,21 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/icon.png
+  AssetGenImage get icon => const AssetGenImage('assets/images/icon.png');
+
   $AssetsImagesIconsGen get icons => const $AssetsImagesIconsGen();
+
+  /// File path: assets/images/sky.jpg
+  AssetGenImage get sky => const AssetGenImage('assets/images/sky.jpg');
+
+  $AssetsImagesSvgGen get svg => const $AssetsImagesSvgGen();
+
+  /// File path: assets/images/title.png
+  AssetGenImage get title => const AssetGenImage('assets/images/title.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [icon, sky, title];
 }
 
 class $AssetsLottiesGen {
@@ -49,6 +63,22 @@ class $AssetsImagesIconsGen {
         googleOfficialPng,
         googleOfficialSvg
       ];
+}
+
+class $AssetsImagesSvgGen {
+  const $AssetsImagesSvgGen();
+
+  /// File path: assets/images/svg/elephant.svg
+  String get elephant => 'assets/images/svg/elephant.svg';
+
+  /// File path: assets/images/svg/rabbit.svg
+  String get rabbit => 'assets/images/svg/rabbit.svg';
+
+  /// File path: assets/images/svg/turtle.svg
+  String get turtle => 'assets/images/svg/turtle.svg';
+
+  /// List of all assets
+  List<String> get values => [elephant, rabbit, turtle];
 }
 
 class Assets {

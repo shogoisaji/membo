@@ -1,6 +1,10 @@
-enum UserTypes { admin, free, premium }
+import 'package:json_annotation/json_annotation.dart';
 
+part 'user_type.g.dart'; // JSON シリアライズのコードを生成するためのパートファイル
+
+@JsonSerializable()
 class UserType {
+  @JsonKey(name: 'user_type')
   final UserTypes type;
   final int _maxImageCount;
   final int _maxBoardCount;
@@ -22,18 +26,19 @@ class UserType {
   get maxBoardCount => _maxBoardCount;
   get string => type.toString();
 
-  Map<String, dynamic> toJson() => {
-        'type': type.toString(),
-        'maxImageCount': _maxImageCount,
-        'maxBoardCount': _maxBoardCount,
-      };
+  Map<String, dynamic> toJson() => _$UserTypeToJson(this);
 
-  factory UserType.fromJson(Map<String, dynamic> json) {
-    return UserType(
-      type: UserTypes.values.firstWhere(
-        (e) => e.toString().split('.')[1] == json['type'],
-        orElse: () => UserTypes.free,
-      ),
-    );
-  }
+  factory UserType.fromJson(Map<String, dynamic> json) =>
+      _$UserTypeFromJson(json);
+}
+
+// UserTypeのenum定義
+enum UserTypes { admin, free, premium }
+
+// JSON キーのカスタムデシリアライズロジック
+UserTypes _userTypeFromJson(String type) {
+  return UserTypes.values.firstWhere(
+    (e) => e.toString().split('.')[1] == type,
+    orElse: () => UserTypes.free,
+  );
 }

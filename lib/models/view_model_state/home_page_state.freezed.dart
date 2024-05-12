@@ -16,8 +16,10 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$HomePageState {
+  bool get isLoading => throw _privateConstructorUsedError;
   UserModel? get userModel => throw _privateConstructorUsedError;
-  List<BoardModel> get boardModel => throw _privateConstructorUsedError;
+  List<BoardModel> get ownedBoardModel => throw _privateConstructorUsedError;
+  List<BoardModel> get linkedBoardModel => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomePageStateCopyWith<HomePageState> get copyWith =>
@@ -30,7 +32,11 @@ abstract class $HomePageStateCopyWith<$Res> {
           HomePageState value, $Res Function(HomePageState) then) =
       _$HomePageStateCopyWithImpl<$Res, HomePageState>;
   @useResult
-  $Res call({UserModel? userModel, List<BoardModel> boardModel});
+  $Res call(
+      {bool isLoading,
+      UserModel? userModel,
+      List<BoardModel> ownedBoardModel,
+      List<BoardModel> linkedBoardModel});
 
   $UserModelCopyWith<$Res>? get userModel;
 }
@@ -48,17 +54,27 @@ class _$HomePageStateCopyWithImpl<$Res, $Val extends HomePageState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? isLoading = null,
     Object? userModel = freezed,
-    Object? boardModel = null,
+    Object? ownedBoardModel = null,
+    Object? linkedBoardModel = null,
   }) {
     return _then(_value.copyWith(
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
       userModel: freezed == userModel
           ? _value.userModel
           : userModel // ignore: cast_nullable_to_non_nullable
               as UserModel?,
-      boardModel: null == boardModel
-          ? _value.boardModel
-          : boardModel // ignore: cast_nullable_to_non_nullable
+      ownedBoardModel: null == ownedBoardModel
+          ? _value.ownedBoardModel
+          : ownedBoardModel // ignore: cast_nullable_to_non_nullable
+              as List<BoardModel>,
+      linkedBoardModel: null == linkedBoardModel
+          ? _value.linkedBoardModel
+          : linkedBoardModel // ignore: cast_nullable_to_non_nullable
               as List<BoardModel>,
     ) as $Val);
   }
@@ -84,7 +100,11 @@ abstract class _$$HomePageStateImplCopyWith<$Res>
       __$$HomePageStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({UserModel? userModel, List<BoardModel> boardModel});
+  $Res call(
+      {bool isLoading,
+      UserModel? userModel,
+      List<BoardModel> ownedBoardModel,
+      List<BoardModel> linkedBoardModel});
 
   @override
   $UserModelCopyWith<$Res>? get userModel;
@@ -101,17 +121,27 @@ class __$$HomePageStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? isLoading = null,
     Object? userModel = freezed,
-    Object? boardModel = null,
+    Object? ownedBoardModel = null,
+    Object? linkedBoardModel = null,
   }) {
     return _then(_$HomePageStateImpl(
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
       userModel: freezed == userModel
           ? _value.userModel
           : userModel // ignore: cast_nullable_to_non_nullable
               as UserModel?,
-      boardModel: null == boardModel
-          ? _value._boardModel
-          : boardModel // ignore: cast_nullable_to_non_nullable
+      ownedBoardModel: null == ownedBoardModel
+          ? _value._ownedBoardModel
+          : ownedBoardModel // ignore: cast_nullable_to_non_nullable
+              as List<BoardModel>,
+      linkedBoardModel: null == linkedBoardModel
+          ? _value._linkedBoardModel
+          : linkedBoardModel // ignore: cast_nullable_to_non_nullable
               as List<BoardModel>,
     ));
   }
@@ -121,23 +151,40 @@ class __$$HomePageStateImplCopyWithImpl<$Res>
 
 class _$HomePageStateImpl implements _HomePageState {
   const _$HomePageStateImpl(
-      {this.userModel, final List<BoardModel> boardModel = const []})
-      : _boardModel = boardModel;
+      {this.isLoading = true,
+      this.userModel,
+      final List<BoardModel> ownedBoardModel = const [],
+      final List<BoardModel> linkedBoardModel = const []})
+      : _ownedBoardModel = ownedBoardModel,
+        _linkedBoardModel = linkedBoardModel;
 
   @override
+  @JsonKey()
+  final bool isLoading;
+  @override
   final UserModel? userModel;
-  final List<BoardModel> _boardModel;
+  final List<BoardModel> _ownedBoardModel;
   @override
   @JsonKey()
-  List<BoardModel> get boardModel {
-    if (_boardModel is EqualUnmodifiableListView) return _boardModel;
+  List<BoardModel> get ownedBoardModel {
+    if (_ownedBoardModel is EqualUnmodifiableListView) return _ownedBoardModel;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_boardModel);
+    return EqualUnmodifiableListView(_ownedBoardModel);
+  }
+
+  final List<BoardModel> _linkedBoardModel;
+  @override
+  @JsonKey()
+  List<BoardModel> get linkedBoardModel {
+    if (_linkedBoardModel is EqualUnmodifiableListView)
+      return _linkedBoardModel;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_linkedBoardModel);
   }
 
   @override
   String toString() {
-    return 'HomePageState(userModel: $userModel, boardModel: $boardModel)';
+    return 'HomePageState(isLoading: $isLoading, userModel: $userModel, ownedBoardModel: $ownedBoardModel, linkedBoardModel: $linkedBoardModel)';
   }
 
   @override
@@ -145,15 +192,23 @@ class _$HomePageStateImpl implements _HomePageState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$HomePageStateImpl &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
             (identical(other.userModel, userModel) ||
                 other.userModel == userModel) &&
             const DeepCollectionEquality()
-                .equals(other._boardModel, _boardModel));
+                .equals(other._ownedBoardModel, _ownedBoardModel) &&
+            const DeepCollectionEquality()
+                .equals(other._linkedBoardModel, _linkedBoardModel));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, userModel, const DeepCollectionEquality().hash(_boardModel));
+      runtimeType,
+      isLoading,
+      userModel,
+      const DeepCollectionEquality().hash(_ownedBoardModel),
+      const DeepCollectionEquality().hash(_linkedBoardModel));
 
   @JsonKey(ignore: true)
   @override
@@ -164,13 +219,19 @@ class _$HomePageStateImpl implements _HomePageState {
 
 abstract class _HomePageState implements HomePageState {
   const factory _HomePageState(
-      {final UserModel? userModel,
-      final List<BoardModel> boardModel}) = _$HomePageStateImpl;
+      {final bool isLoading,
+      final UserModel? userModel,
+      final List<BoardModel> ownedBoardModel,
+      final List<BoardModel> linkedBoardModel}) = _$HomePageStateImpl;
 
+  @override
+  bool get isLoading;
   @override
   UserModel? get userModel;
   @override
-  List<BoardModel> get boardModel;
+  List<BoardModel> get ownedBoardModel;
+  @override
+  List<BoardModel> get linkedBoardModel;
   @override
   @JsonKey(ignore: true)
   _$$HomePageStateImplCopyWith<_$HomePageStateImpl> get copyWith =>

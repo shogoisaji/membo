@@ -20,12 +20,27 @@ BoardModel _$BoardModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$BoardModel {
-  String get boardId => throw _privateConstructorUsedError;
+// ignore: invalid_annotation_target
+  @JsonKey(name: 'board_id')
+  String get boardId =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'board_name')
   String get boardName => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
-  List<ObjectModel> get objects => throw _privateConstructorUsedError;
+  List<ObjectModel> get objects =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'owner_id')
   String get ownerId => throw _privateConstructorUsedError;
-  BoardSettingsModel get settings => throw _privateConstructorUsedError;
+  int get width => throw _privateConstructorUsedError;
+  int get height =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'bg_color')
+  String get bgColor =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'is_public')
+  bool get isPublic =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,15 +56,16 @@ abstract class $BoardModelCopyWith<$Res> {
       _$BoardModelCopyWithImpl<$Res, BoardModel>;
   @useResult
   $Res call(
-      {String boardId,
-      String boardName,
+      {@JsonKey(name: 'board_id') String boardId,
+      @JsonKey(name: 'board_name') String boardName,
       String password,
       List<ObjectModel> objects,
-      String ownerId,
-      BoardSettingsModel settings,
-      DateTime createdAt});
-
-  $BoardSettingsModelCopyWith<$Res> get settings;
+      @JsonKey(name: 'owner_id') String ownerId,
+      int width,
+      int height,
+      @JsonKey(name: 'bg_color') String bgColor,
+      @JsonKey(name: 'is_public') bool isPublic,
+      @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
 /// @nodoc
@@ -70,7 +86,10 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
-    Object? settings = null,
+    Object? width = null,
+    Object? height = null,
+    Object? bgColor = null,
+    Object? isPublic = null,
     Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
@@ -94,23 +113,27 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
               as String,
-      settings: null == settings
-          ? _value.settings
-          : settings // ignore: cast_nullable_to_non_nullable
-              as BoardSettingsModel,
+      width: null == width
+          ? _value.width
+          : width // ignore: cast_nullable_to_non_nullable
+              as int,
+      height: null == height
+          ? _value.height
+          : height // ignore: cast_nullable_to_non_nullable
+              as int,
+      bgColor: null == bgColor
+          ? _value.bgColor
+          : bgColor // ignore: cast_nullable_to_non_nullable
+              as String,
+      isPublic: null == isPublic
+          ? _value.isPublic
+          : isPublic // ignore: cast_nullable_to_non_nullable
+              as bool,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $BoardSettingsModelCopyWith<$Res> get settings {
-    return $BoardSettingsModelCopyWith<$Res>(_value.settings, (value) {
-      return _then(_value.copyWith(settings: value) as $Val);
-    });
   }
 }
 
@@ -123,16 +146,16 @@ abstract class _$$BoardModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String boardId,
-      String boardName,
+      {@JsonKey(name: 'board_id') String boardId,
+      @JsonKey(name: 'board_name') String boardName,
       String password,
       List<ObjectModel> objects,
-      String ownerId,
-      BoardSettingsModel settings,
-      DateTime createdAt});
-
-  @override
-  $BoardSettingsModelCopyWith<$Res> get settings;
+      @JsonKey(name: 'owner_id') String ownerId,
+      int width,
+      int height,
+      @JsonKey(name: 'bg_color') String bgColor,
+      @JsonKey(name: 'is_public') bool isPublic,
+      @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
 /// @nodoc
@@ -151,7 +174,10 @@ class __$$BoardModelImplCopyWithImpl<$Res>
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
-    Object? settings = null,
+    Object? width = null,
+    Object? height = null,
+    Object? bgColor = null,
+    Object? isPublic = null,
     Object? createdAt = null,
   }) {
     return _then(_$BoardModelImpl(
@@ -175,10 +201,22 @@ class __$$BoardModelImplCopyWithImpl<$Res>
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
               as String,
-      settings: null == settings
-          ? _value.settings
-          : settings // ignore: cast_nullable_to_non_nullable
-              as BoardSettingsModel,
+      width: null == width
+          ? _value.width
+          : width // ignore: cast_nullable_to_non_nullable
+              as int,
+      height: null == height
+          ? _value.height
+          : height // ignore: cast_nullable_to_non_nullable
+              as int,
+      bgColor: null == bgColor
+          ? _value.bgColor
+          : bgColor // ignore: cast_nullable_to_non_nullable
+              as String,
+      isPublic: null == isPublic
+          ? _value.isPublic
+          : isPublic // ignore: cast_nullable_to_non_nullable
+              as bool,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -191,22 +229,28 @@ class __$$BoardModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$BoardModelImpl implements _BoardModel {
   const _$BoardModelImpl(
-      {required this.boardId,
-      this.boardName = '-',
+      {@JsonKey(name: 'board_id') required this.boardId,
+      @JsonKey(name: 'board_name') this.boardName = '-',
       required this.password,
       required final List<ObjectModel> objects,
-      required this.ownerId,
-      this.settings = const BoardSettingsModel(),
-      required this.createdAt})
+      @JsonKey(name: 'owner_id') required this.ownerId,
+      required this.width,
+      required this.height,
+      @JsonKey(name: 'bg_color') required this.bgColor,
+      @JsonKey(name: 'is_public') this.isPublic = false,
+      @JsonKey(name: 'created_at') required this.createdAt})
       : _objects = objects;
 
   factory _$BoardModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$BoardModelImplFromJson(json);
 
+// ignore: invalid_annotation_target
   @override
+  @JsonKey(name: 'board_id')
   final String boardId;
+// ignore: invalid_annotation_target
   @override
-  @JsonKey()
+  @JsonKey(name: 'board_name')
   final String boardName;
   @override
   final String password;
@@ -218,17 +262,30 @@ class _$BoardModelImpl implements _BoardModel {
     return EqualUnmodifiableListView(_objects);
   }
 
+// ignore: invalid_annotation_target
   @override
+  @JsonKey(name: 'owner_id')
   final String ownerId;
   @override
-  @JsonKey()
-  final BoardSettingsModel settings;
+  final int width;
   @override
+  final int height;
+// ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'bg_color')
+  final String bgColor;
+// ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'is_public')
+  final bool isPublic;
+// ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   @override
   String toString() {
-    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, settings: $settings, createdAt: $createdAt)';
+    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, width: $width, height: $height, bgColor: $bgColor, isPublic: $isPublic, createdAt: $createdAt)';
   }
 
   @override
@@ -243,8 +300,11 @@ class _$BoardModelImpl implements _BoardModel {
                 other.password == password) &&
             const DeepCollectionEquality().equals(other._objects, _objects) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
-            (identical(other.settings, settings) ||
-                other.settings == settings) &&
+            (identical(other.width, width) || other.width == width) &&
+            (identical(other.height, height) || other.height == height) &&
+            (identical(other.bgColor, bgColor) || other.bgColor == bgColor) &&
+            (identical(other.isPublic, isPublic) ||
+                other.isPublic == isPublic) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -258,7 +318,10 @@ class _$BoardModelImpl implements _BoardModel {
       password,
       const DeepCollectionEquality().hash(_objects),
       ownerId,
-      settings,
+      width,
+      height,
+      bgColor,
+      isPublic,
       createdAt);
 
   @JsonKey(ignore: true)
@@ -277,30 +340,46 @@ class _$BoardModelImpl implements _BoardModel {
 
 abstract class _BoardModel implements BoardModel {
   const factory _BoardModel(
-      {required final String boardId,
-      final String boardName,
-      required final String password,
-      required final List<ObjectModel> objects,
-      required final String ownerId,
-      final BoardSettingsModel settings,
-      required final DateTime createdAt}) = _$BoardModelImpl;
+          {@JsonKey(name: 'board_id') required final String boardId,
+          @JsonKey(name: 'board_name') final String boardName,
+          required final String password,
+          required final List<ObjectModel> objects,
+          @JsonKey(name: 'owner_id') required final String ownerId,
+          required final int width,
+          required final int height,
+          @JsonKey(name: 'bg_color') required final String bgColor,
+          @JsonKey(name: 'is_public') final bool isPublic,
+          @JsonKey(name: 'created_at') required final DateTime createdAt}) =
+      _$BoardModelImpl;
 
   factory _BoardModel.fromJson(Map<String, dynamic> json) =
       _$BoardModelImpl.fromJson;
 
-  @override
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'board_id')
   String get boardId;
-  @override
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'board_name')
   String get boardName;
   @override
   String get password;
   @override
   List<ObjectModel> get objects;
-  @override
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'owner_id')
   String get ownerId;
   @override
-  BoardSettingsModel get settings;
+  int get width;
   @override
+  int get height;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'bg_color')
+  String get bgColor;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'is_public')
+  bool get isPublic;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override
   @JsonKey(ignore: true)

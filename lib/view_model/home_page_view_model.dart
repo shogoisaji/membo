@@ -16,26 +16,49 @@ class HomePageViewModel extends _$HomePageViewModel {
 
     final userData = await ref
         .read(supabaseRepositoryProvider)
-        .fetchUserData(user?.id ?? '');
+        .fetchUserData(user?.id ?? '')
+        .catchError((e) {
+      print('error: $e');
+      return null;
+    });
 
     if (userData == null) {
       print('userData is null');
       return;
     }
+    final linkedBoards = <BoardModel>[];
+    final ownedBoards = <BoardModel>[];
 
-    final newBoards = <BoardModel>[];
-    for (String id in userData.ownedBoardsId) {
+    for (String id in userData.linkBoardIds) {
       try {
         final board =
             await ref.read(supabaseRepositoryProvider).getBoardById(id);
         if (board == null) {
           continue;
         }
-        newBoards.add(board);
+        linkedBoards.add(board);
       } catch (e) {
         print('error: $e');
       }
     }
-    state = state.copyWith(userModel: userData, boardModel: newBoards);
+
+    for (String id in userData.ownedBoardIds) {
+      try {
+        final board =
+            await ref.read(supabaseRepositoryProvider).getBoardById(id);
+        if (board == null) {
+          continue;
+        }
+        ownedBoards.add(board);
+      } catch (e) {
+        print('error: $e');
+      }
+    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    state = state.copyWith(
+        isLoading: false,
+        userModel: userData,
+        linkedBoardModel: linkedBoards,
+        ownedBoardModel: ownedBoards);
   }
 }

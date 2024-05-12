@@ -19,10 +19,8 @@ mixin _$BoardSettingsState {
   bool get isOwner => throw _privateConstructorUsedError;
   String get ownerName => throw _privateConstructorUsedError;
   BoardModel? get currentBoard => throw _privateConstructorUsedError;
+  BoardModel? get tempBoard => throw _privateConstructorUsedError;
   String? get tempPassword => throw _privateConstructorUsedError;
-  BoardSettingsModel? get tempBoardSettings =>
-      throw _privateConstructorUsedError;
-  String? get tempBoardName => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $BoardSettingsStateCopyWith<BoardSettingsState> get copyWith =>
@@ -39,12 +37,11 @@ abstract class $BoardSettingsStateCopyWith<$Res> {
       {bool isOwner,
       String ownerName,
       BoardModel? currentBoard,
-      String? tempPassword,
-      BoardSettingsModel? tempBoardSettings,
-      String? tempBoardName});
+      BoardModel? tempBoard,
+      String? tempPassword});
 
   $BoardModelCopyWith<$Res>? get currentBoard;
-  $BoardSettingsModelCopyWith<$Res>? get tempBoardSettings;
+  $BoardModelCopyWith<$Res>? get tempBoard;
 }
 
 /// @nodoc
@@ -63,9 +60,8 @@ class _$BoardSettingsStateCopyWithImpl<$Res, $Val extends BoardSettingsState>
     Object? isOwner = null,
     Object? ownerName = null,
     Object? currentBoard = freezed,
+    Object? tempBoard = freezed,
     Object? tempPassword = freezed,
-    Object? tempBoardSettings = freezed,
-    Object? tempBoardName = freezed,
   }) {
     return _then(_value.copyWith(
       isOwner: null == isOwner
@@ -80,17 +76,13 @@ class _$BoardSettingsStateCopyWithImpl<$Res, $Val extends BoardSettingsState>
           ? _value.currentBoard
           : currentBoard // ignore: cast_nullable_to_non_nullable
               as BoardModel?,
+      tempBoard: freezed == tempBoard
+          ? _value.tempBoard
+          : tempBoard // ignore: cast_nullable_to_non_nullable
+              as BoardModel?,
       tempPassword: freezed == tempPassword
           ? _value.tempPassword
           : tempPassword // ignore: cast_nullable_to_non_nullable
-              as String?,
-      tempBoardSettings: freezed == tempBoardSettings
-          ? _value.tempBoardSettings
-          : tempBoardSettings // ignore: cast_nullable_to_non_nullable
-              as BoardSettingsModel?,
-      tempBoardName: freezed == tempBoardName
-          ? _value.tempBoardName
-          : tempBoardName // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -109,14 +101,13 @@ class _$BoardSettingsStateCopyWithImpl<$Res, $Val extends BoardSettingsState>
 
   @override
   @pragma('vm:prefer-inline')
-  $BoardSettingsModelCopyWith<$Res>? get tempBoardSettings {
-    if (_value.tempBoardSettings == null) {
+  $BoardModelCopyWith<$Res>? get tempBoard {
+    if (_value.tempBoard == null) {
       return null;
     }
 
-    return $BoardSettingsModelCopyWith<$Res>(_value.tempBoardSettings!,
-        (value) {
-      return _then(_value.copyWith(tempBoardSettings: value) as $Val);
+    return $BoardModelCopyWith<$Res>(_value.tempBoard!, (value) {
+      return _then(_value.copyWith(tempBoard: value) as $Val);
     });
   }
 }
@@ -133,14 +124,13 @@ abstract class _$$BoardSettingsStateImplCopyWith<$Res>
       {bool isOwner,
       String ownerName,
       BoardModel? currentBoard,
-      String? tempPassword,
-      BoardSettingsModel? tempBoardSettings,
-      String? tempBoardName});
+      BoardModel? tempBoard,
+      String? tempPassword});
 
   @override
   $BoardModelCopyWith<$Res>? get currentBoard;
   @override
-  $BoardSettingsModelCopyWith<$Res>? get tempBoardSettings;
+  $BoardModelCopyWith<$Res>? get tempBoard;
 }
 
 /// @nodoc
@@ -157,9 +147,8 @@ class __$$BoardSettingsStateImplCopyWithImpl<$Res>
     Object? isOwner = null,
     Object? ownerName = null,
     Object? currentBoard = freezed,
+    Object? tempBoard = freezed,
     Object? tempPassword = freezed,
-    Object? tempBoardSettings = freezed,
-    Object? tempBoardName = freezed,
   }) {
     return _then(_$BoardSettingsStateImpl(
       isOwner: null == isOwner
@@ -174,17 +163,13 @@ class __$$BoardSettingsStateImplCopyWithImpl<$Res>
           ? _value.currentBoard
           : currentBoard // ignore: cast_nullable_to_non_nullable
               as BoardModel?,
+      tempBoard: freezed == tempBoard
+          ? _value.tempBoard
+          : tempBoard // ignore: cast_nullable_to_non_nullable
+              as BoardModel?,
       tempPassword: freezed == tempPassword
           ? _value.tempPassword
           : tempPassword // ignore: cast_nullable_to_non_nullable
-              as String?,
-      tempBoardSettings: freezed == tempBoardSettings
-          ? _value.tempBoardSettings
-          : tempBoardSettings // ignore: cast_nullable_to_non_nullable
-              as BoardSettingsModel?,
-      tempBoardName: freezed == tempBoardName
-          ? _value.tempBoardName
-          : tempBoardName // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -197,9 +182,8 @@ class _$BoardSettingsStateImpl implements _BoardSettingsState {
       {this.isOwner = false,
       this.ownerName = '-',
       this.currentBoard,
-      this.tempPassword,
-      this.tempBoardSettings,
-      this.tempBoardName});
+      this.tempBoard,
+      this.tempPassword});
 
   @override
   @JsonKey()
@@ -210,15 +194,13 @@ class _$BoardSettingsStateImpl implements _BoardSettingsState {
   @override
   final BoardModel? currentBoard;
   @override
+  final BoardModel? tempBoard;
+  @override
   final String? tempPassword;
-  @override
-  final BoardSettingsModel? tempBoardSettings;
-  @override
-  final String? tempBoardName;
 
   @override
   String toString() {
-    return 'BoardSettingsState(isOwner: $isOwner, ownerName: $ownerName, currentBoard: $currentBoard, tempPassword: $tempPassword, tempBoardSettings: $tempBoardSettings, tempBoardName: $tempBoardName)';
+    return 'BoardSettingsState(isOwner: $isOwner, ownerName: $ownerName, currentBoard: $currentBoard, tempBoard: $tempBoard, tempPassword: $tempPassword)';
   }
 
   @override
@@ -231,17 +213,15 @@ class _$BoardSettingsStateImpl implements _BoardSettingsState {
                 other.ownerName == ownerName) &&
             (identical(other.currentBoard, currentBoard) ||
                 other.currentBoard == currentBoard) &&
+            (identical(other.tempBoard, tempBoard) ||
+                other.tempBoard == tempBoard) &&
             (identical(other.tempPassword, tempPassword) ||
-                other.tempPassword == tempPassword) &&
-            (identical(other.tempBoardSettings, tempBoardSettings) ||
-                other.tempBoardSettings == tempBoardSettings) &&
-            (identical(other.tempBoardName, tempBoardName) ||
-                other.tempBoardName == tempBoardName));
+                other.tempPassword == tempPassword));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, isOwner, ownerName, currentBoard,
-      tempPassword, tempBoardSettings, tempBoardName);
+  int get hashCode => Object.hash(
+      runtimeType, isOwner, ownerName, currentBoard, tempBoard, tempPassword);
 
   @JsonKey(ignore: true)
   @override
@@ -256,9 +236,8 @@ abstract class _BoardSettingsState implements BoardSettingsState {
       {final bool isOwner,
       final String ownerName,
       final BoardModel? currentBoard,
-      final String? tempPassword,
-      final BoardSettingsModel? tempBoardSettings,
-      final String? tempBoardName}) = _$BoardSettingsStateImpl;
+      final BoardModel? tempBoard,
+      final String? tempPassword}) = _$BoardSettingsStateImpl;
 
   @override
   bool get isOwner;
@@ -267,11 +246,9 @@ abstract class _BoardSettingsState implements BoardSettingsState {
   @override
   BoardModel? get currentBoard;
   @override
+  BoardModel? get tempBoard;
+  @override
   String? get tempPassword;
-  @override
-  BoardSettingsModel? get tempBoardSettings;
-  @override
-  String? get tempBoardName;
   @override
   @JsonKey(ignore: true)
   _$$BoardSettingsStateImplCopyWith<_$BoardSettingsStateImpl> get copyWith =>

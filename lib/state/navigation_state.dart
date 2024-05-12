@@ -19,7 +19,8 @@ const invisibleList = [
   '/board-settings',
   '/account',
   '/policy',
-  '/public-policy'
+  '/public-policy',
+  '/qr-scan'
 ];
 
 @Riverpod(keepAlive: true)

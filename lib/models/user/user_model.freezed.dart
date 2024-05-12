@@ -14,15 +14,35 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+UserModel _$UserModelFromJson(Map<String, dynamic> json) {
+  return _UserModel.fromJson(json);
+}
+
 /// @nodoc
 mixin _$UserModel {
-  String get userId => throw _privateConstructorUsedError;
-  String get userName => throw _privateConstructorUsedError;
-  List<String> get ownedBoardsId => throw _privateConstructorUsedError;
-  String? get avatarUrl => throw _privateConstructorUsedError;
-  UserType get userType => throw _privateConstructorUsedError;
+// ignore: invalid_annotation_target
+  @JsonKey(name: 'user_id')
+  String get userId =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'user_name')
+  String get userName =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'owned_board_ids')
+  List<String> get ownedBoardIds =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'link_board_ids')
+  List<String> get linkBoardIds =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'avatar_url')
+  String? get avatarUrl =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'user_type')
+  UserType get userType =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $UserModelCopyWith<UserModel> get copyWith =>
       throw _privateConstructorUsedError;
@@ -34,12 +54,13 @@ abstract class $UserModelCopyWith<$Res> {
       _$UserModelCopyWithImpl<$Res, UserModel>;
   @useResult
   $Res call(
-      {String userId,
-      String userName,
-      List<String> ownedBoardsId,
-      String? avatarUrl,
-      UserType userType,
-      DateTime createdAt});
+      {@JsonKey(name: 'user_id') String userId,
+      @JsonKey(name: 'user_name') String userName,
+      @JsonKey(name: 'owned_board_ids') List<String> ownedBoardIds,
+      @JsonKey(name: 'link_board_ids') List<String> linkBoardIds,
+      @JsonKey(name: 'avatar_url') String? avatarUrl,
+      @JsonKey(name: 'user_type') UserType userType,
+      @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
 /// @nodoc
@@ -57,7 +78,8 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   $Res call({
     Object? userId = null,
     Object? userName = null,
-    Object? ownedBoardsId = null,
+    Object? ownedBoardIds = null,
+    Object? linkBoardIds = null,
     Object? avatarUrl = freezed,
     Object? userType = null,
     Object? createdAt = null,
@@ -71,9 +93,13 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.userName
           : userName // ignore: cast_nullable_to_non_nullable
               as String,
-      ownedBoardsId: null == ownedBoardsId
-          ? _value.ownedBoardsId
-          : ownedBoardsId // ignore: cast_nullable_to_non_nullable
+      ownedBoardIds: null == ownedBoardIds
+          ? _value.ownedBoardIds
+          : ownedBoardIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      linkBoardIds: null == linkBoardIds
+          ? _value.linkBoardIds
+          : linkBoardIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
       avatarUrl: freezed == avatarUrl
           ? _value.avatarUrl
@@ -100,12 +126,13 @@ abstract class _$$UserModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String userId,
-      String userName,
-      List<String> ownedBoardsId,
-      String? avatarUrl,
-      UserType userType,
-      DateTime createdAt});
+      {@JsonKey(name: 'user_id') String userId,
+      @JsonKey(name: 'user_name') String userName,
+      @JsonKey(name: 'owned_board_ids') List<String> ownedBoardIds,
+      @JsonKey(name: 'link_board_ids') List<String> linkBoardIds,
+      @JsonKey(name: 'avatar_url') String? avatarUrl,
+      @JsonKey(name: 'user_type') UserType userType,
+      @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
 /// @nodoc
@@ -121,7 +148,8 @@ class __$$UserModelImplCopyWithImpl<$Res>
   $Res call({
     Object? userId = null,
     Object? userName = null,
-    Object? ownedBoardsId = null,
+    Object? ownedBoardIds = null,
+    Object? linkBoardIds = null,
     Object? avatarUrl = freezed,
     Object? userType = null,
     Object? createdAt = null,
@@ -135,9 +163,13 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.userName
           : userName // ignore: cast_nullable_to_non_nullable
               as String,
-      ownedBoardsId: null == ownedBoardsId
-          ? _value._ownedBoardsId
-          : ownedBoardsId // ignore: cast_nullable_to_non_nullable
+      ownedBoardIds: null == ownedBoardIds
+          ? _value._ownedBoardIds
+          : ownedBoardIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      linkBoardIds: null == linkBoardIds
+          ? _value._linkBoardIds
+          : linkBoardIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
       avatarUrl: freezed == avatarUrl
           ? _value.avatarUrl
@@ -156,39 +188,69 @@ class __$$UserModelImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$UserModelImpl implements _UserModel {
   _$UserModelImpl(
-      {required this.userId,
-      required this.userName,
-      required final List<String> ownedBoardsId,
-      this.avatarUrl,
-      required this.userType,
-      required this.createdAt})
-      : _ownedBoardsId = ownedBoardsId;
+      {@JsonKey(name: 'user_id') required this.userId,
+      @JsonKey(name: 'user_name') required this.userName,
+      @JsonKey(name: 'owned_board_ids')
+      required final List<String> ownedBoardIds,
+      @JsonKey(name: 'link_board_ids') required final List<String> linkBoardIds,
+      @JsonKey(name: 'avatar_url') this.avatarUrl,
+      @JsonKey(name: 'user_type') required this.userType,
+      @JsonKey(name: 'created_at') required this.createdAt})
+      : _ownedBoardIds = ownedBoardIds,
+        _linkBoardIds = linkBoardIds;
 
+  factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UserModelImplFromJson(json);
+
+// ignore: invalid_annotation_target
   @override
+  @JsonKey(name: 'user_id')
   final String userId;
+// ignore: invalid_annotation_target
   @override
+  @JsonKey(name: 'user_name')
   final String userName;
-  final List<String> _ownedBoardsId;
+// ignore: invalid_annotation_target
+  final List<String> _ownedBoardIds;
+// ignore: invalid_annotation_target
   @override
-  List<String> get ownedBoardsId {
-    if (_ownedBoardsId is EqualUnmodifiableListView) return _ownedBoardsId;
+  @JsonKey(name: 'owned_board_ids')
+  List<String> get ownedBoardIds {
+    if (_ownedBoardIds is EqualUnmodifiableListView) return _ownedBoardIds;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_ownedBoardsId);
+    return EqualUnmodifiableListView(_ownedBoardIds);
   }
 
+// ignore: invalid_annotation_target
+  final List<String> _linkBoardIds;
+// ignore: invalid_annotation_target
   @override
+  @JsonKey(name: 'link_board_ids')
+  List<String> get linkBoardIds {
+    if (_linkBoardIds is EqualUnmodifiableListView) return _linkBoardIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_linkBoardIds);
+  }
+
+// ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'avatar_url')
   final String? avatarUrl;
+// ignore: invalid_annotation_target
   @override
+  @JsonKey(name: 'user_type')
   final UserType userType;
+// ignore: invalid_annotation_target
   @override
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   @override
   String toString() {
-    return 'UserModel(userId: $userId, userName: $userName, ownedBoardsId: $ownedBoardsId, avatarUrl: $avatarUrl, userType: $userType, createdAt: $createdAt)';
+    return 'UserModel(userId: $userId, userName: $userName, ownedBoardIds: $ownedBoardIds, linkBoardIds: $linkBoardIds, avatarUrl: $avatarUrl, userType: $userType, createdAt: $createdAt)';
   }
 
   @override
@@ -200,7 +262,9 @@ class _$UserModelImpl implements _UserModel {
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
             const DeepCollectionEquality()
-                .equals(other._ownedBoardsId, _ownedBoardsId) &&
+                .equals(other._ownedBoardIds, _ownedBoardIds) &&
+            const DeepCollectionEquality()
+                .equals(other._linkBoardIds, _linkBoardIds) &&
             (identical(other.avatarUrl, avatarUrl) ||
                 other.avatarUrl == avatarUrl) &&
             (identical(other.userType, userType) ||
@@ -209,12 +273,14 @@ class _$UserModelImpl implements _UserModel {
                 other.createdAt == createdAt));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
       userId,
       userName,
-      const DeepCollectionEquality().hash(_ownedBoardsId),
+      const DeepCollectionEquality().hash(_ownedBoardIds),
+      const DeepCollectionEquality().hash(_linkBoardIds),
       avatarUrl,
       userType,
       createdAt);
@@ -224,28 +290,50 @@ class _$UserModelImpl implements _UserModel {
   @pragma('vm:prefer-inline')
   _$$UserModelImplCopyWith<_$UserModelImpl> get copyWith =>
       __$$UserModelImplCopyWithImpl<_$UserModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UserModelImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _UserModel implements UserModel {
   factory _UserModel(
-      {required final String userId,
-      required final String userName,
-      required final List<String> ownedBoardsId,
-      final String? avatarUrl,
-      required final UserType userType,
+      {@JsonKey(name: 'user_id') required final String userId,
+      @JsonKey(name: 'user_name') required final String userName,
+      @JsonKey(name: 'owned_board_ids')
+      required final List<String> ownedBoardIds,
+      @JsonKey(name: 'link_board_ids') required final List<String> linkBoardIds,
+      @JsonKey(name: 'avatar_url') final String? avatarUrl,
+      @JsonKey(name: 'user_type') required final UserType userType,
+      @JsonKey(name: 'created_at')
       required final DateTime createdAt}) = _$UserModelImpl;
 
-  @override
+  factory _UserModel.fromJson(Map<String, dynamic> json) =
+      _$UserModelImpl.fromJson;
+
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'user_id')
   String get userId;
-  @override
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'user_name')
   String get userName;
-  @override
-  List<String> get ownedBoardsId;
-  @override
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'owned_board_ids')
+  List<String> get ownedBoardIds;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'link_board_ids')
+  List<String> get linkBoardIds;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'avatar_url')
   String? get avatarUrl;
-  @override
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'user_type')
   UserType get userType;
-  @override
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override
   @JsonKey(ignore: true)
