@@ -579,7 +579,7 @@ class EditToolBar extends HookConsumerWidget {
                       const SizedBox(width: 20),
                       GestureDetector(
                         onPanUpdate: (details) {
-                          rotateSelectedObject(details.delta.dy * 0.01);
+                          rotateSelectedObject(details.delta.dy * 0.005);
                         },
                         child: Container(
                           width: width / 4 > 100 ? 100 : width / 4,

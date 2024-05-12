@@ -105,17 +105,17 @@ class SelectedObject extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final initialAnimationController = useAnimationController(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 700),
     )..forward();
     final initialAnimation = Tween<double>(begin: 5.0, end: 1.0).animate(
         CurvedAnimation(
             parent: initialAnimationController,
             curve: const Cubic(0.175, 0.885, 0.32, 1.03)));
     final opacityAnimationController = useAnimationController(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 500),
     )..repeat(reverse: true);
 
-    final opacityAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+    final opacityAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
         CurvedAnimation(
             parent: opacityAnimationController, curve: Curves.easeOut));
 
@@ -222,6 +222,7 @@ class ObjectWidget extends StatelessWidget {
       width: object.imageWidth! * object.scale,
       height: object.imageHeight! * object.scale,
       File(object.imageUrl!),
+      fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) {
         return _errorImageWidget();
       },
