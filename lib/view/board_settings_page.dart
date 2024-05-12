@@ -56,10 +56,7 @@ class BoardSettingsPage extends HookConsumerWidget {
     }
 
     void handleUpdatePublicState() {
-      final newPublicState = !boardSettingsState.currentBoard!.isPublic;
-      ref
-          .read(boardSettingsViewModelProvider.notifier)
-          .updateBoardSettings(isPublic: newPublicState);
+      ref.read(boardSettingsViewModelProvider.notifier).switchPublic();
       context.go('/edit', extra: boardId);
     }
 

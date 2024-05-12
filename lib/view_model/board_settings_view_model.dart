@@ -72,6 +72,26 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     state = state.copyWith(tempBoard: newBoard);
   }
 
+  void switchPublic() async {
+    if (state.tempBoard == null) {
+      throw Exception('temp board is not set');
+    }
+    if (state.currentBoard == null) {
+      throw Exception('current board is not set');
+    }
+
+    /// public を反転
+    final newBoard = state.tempBoard!.copyWith(
+      isPublic: !state.currentBoard!.isPublic,
+    );
+    state = state.copyWith(tempBoard: newBoard);
+    try {
+      await ref.read(supabaseRepositoryProvider).updateBoard(state.tempBoard!);
+    } catch (e) {
+      throw Exception('error update public: $e');
+    }
+  }
+
   Future<void> saveTempBoardSettings() async {
     if (state.currentBoard == null) {
       throw Exception('current board is not set');
