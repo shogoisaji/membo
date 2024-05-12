@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
-import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/view_model/account_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
@@ -25,26 +24,26 @@ class AccountPage extends HookConsumerWidget {
     final h = MediaQuery.sizeOf(context).height;
     final accountPageState = ref.watch(accountPageViewModelProvider);
 
-    void fetchUser() async {
-      final signedInUser = ref.read(userStateProvider);
-      if (signedInUser == null) return;
-      final user = await ref
-          .read(supabaseRepositoryProvider)
-          .fetchUserData(signedInUser.id)
-          .catchError((e) {
-        return null;
-      });
-      if (user == null) {
-        if (context.mounted) {
-          ErrorDialog.show(context, 'Error fetching user data', onTap: () {
-            // context.go('/');
-            // ref.read(supabaseAuthRepositoryProvider).signOut();
-          });
-        }
-        return;
-      }
-      ref.read(accountPageViewModelProvider.notifier).getUser(user);
-    }
+    // void fetchUser() async {
+    //   final signedInUser = ref.read(userStateProvider);
+    //   if (signedInUser == null) return;
+    //   final user = await ref
+    //       .read(supabaseRepositoryProvider)
+    //       .fetchUserData(signedInUser.id)
+    //       .catchError((e) {
+    //     return null;
+    //   });
+    //   if (user == null) {
+    //     if (context.mounted) {
+    //       ErrorDialog.show(context, 'Error fetching user data', onTap: () {
+    //         // context.go('/');
+    //         // ref.read(supabaseAuthRepositoryProvider).signOut();
+    //       });
+    //     }
+    //     return;
+    //   }
+    //   ref.read(accountPageViewModelProvider.notifier).getUser(user);
+    // }
 
     Future<String> handleSubmitName(String name) async {
       try {
@@ -124,8 +123,12 @@ class AccountPage extends HookConsumerWidget {
       }
     }
 
+    void initialize() {
+      ref.read(accountPageViewModelProvider.notifier).initializeLoad();
+    }
+
     useEffect(() {
-      fetchUser();
+      initialize();
       return null;
     }, []);
 
@@ -152,7 +155,7 @@ class AccountPage extends HookConsumerWidget {
                           horizontal: 20.0, vertical: 16.0),
                       child: Column(
                         children: [
-                          accountPageState.user == null
+                          accountPageState.isLoading
                               ? const Column(
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -214,8 +217,7 @@ class AccountPage extends HookConsumerWidget {
                                       backgroundColor: MyColor.greenLight,
                                       contentWidgets: [
                                         Text(
-                                          accountPageState
-                                              .user!.ownedBoardIds.length
+                                          accountPageState.ownBoardCount
                                               .toString(),
                                           style: lightTextTheme.bodyLarge,
                                         ),
@@ -228,8 +230,9 @@ class AccountPage extends HookConsumerWidget {
                                       backgroundColor: MyColor.greenLight,
                                       contentWidgets: [
                                         Text(
-                                          accountPageState
-                                              .user!.linkBoardIds.length
+                                          (accountPageState.viewBoardCount +
+                                                  accountPageState
+                                                      .createBoardCount)
                                               .toString(),
                                           style: lightTextTheme.bodyLarge,
                                         ),

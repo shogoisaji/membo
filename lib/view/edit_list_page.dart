@@ -84,7 +84,8 @@ class EditListPage extends HookConsumerWidget {
                         )
                       : Column(
                           children: [
-                            ...editListPageState.boardModels.map((e) => Column(
+                            ...editListPageState.editableBoards.map((e) =>
+                                Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     CustomButton(

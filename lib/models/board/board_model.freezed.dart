@@ -231,12 +231,12 @@ class _$BoardModelImpl implements _BoardModel {
   const _$BoardModelImpl(
       {@JsonKey(name: 'board_id') required this.boardId,
       @JsonKey(name: 'board_name') this.boardName = '-',
-      required this.password,
-      required final List<ObjectModel> objects,
+      this.password = '',
+      final List<ObjectModel> objects = const [],
       @JsonKey(name: 'owner_id') required this.ownerId,
-      required this.width,
-      required this.height,
-      @JsonKey(name: 'bg_color') required this.bgColor,
+      this.width = 1000,
+      this.height = 1000,
+      @JsonKey(name: 'bg_color') this.bgColor = '0xffffffff',
       @JsonKey(name: 'is_public') this.isPublic = false,
       @JsonKey(name: 'created_at') required this.createdAt})
       : _objects = objects;
@@ -253,9 +253,11 @@ class _$BoardModelImpl implements _BoardModel {
   @JsonKey(name: 'board_name')
   final String boardName;
   @override
+  @JsonKey()
   final String password;
   final List<ObjectModel> _objects;
   @override
+  @JsonKey()
   List<ObjectModel> get objects {
     if (_objects is EqualUnmodifiableListView) return _objects;
     // ignore: implicit_dynamic_type
@@ -267,8 +269,10 @@ class _$BoardModelImpl implements _BoardModel {
   @JsonKey(name: 'owner_id')
   final String ownerId;
   @override
+  @JsonKey()
   final int width;
   @override
+  @JsonKey()
   final int height;
 // ignore: invalid_annotation_target
   @override
@@ -342,12 +346,12 @@ abstract class _BoardModel implements BoardModel {
   const factory _BoardModel(
           {@JsonKey(name: 'board_id') required final String boardId,
           @JsonKey(name: 'board_name') final String boardName,
-          required final String password,
-          required final List<ObjectModel> objects,
+          final String password,
+          final List<ObjectModel> objects,
           @JsonKey(name: 'owner_id') required final String ownerId,
-          required final int width,
-          required final int height,
-          @JsonKey(name: 'bg_color') required final String bgColor,
+          final int width,
+          final int height,
+          @JsonKey(name: 'bg_color') final String bgColor,
           @JsonKey(name: 'is_public') final bool isPublic,
           @JsonKey(name: 'created_at') required final DateTime createdAt}) =
       _$BoardModelImpl;

@@ -12,14 +12,14 @@ class BoardModel with _$BoardModel {
     @JsonKey(name: 'board_id') required String boardId,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'board_name') @Default('-') String boardName,
-    required String password,
-    required List<ObjectModel> objects,
+    @Default('') String password,
+    @Default([]) List<ObjectModel> objects,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'owner_id') required String ownerId,
-    required int width,
-    required int height,
+    @Default(1000) int width,
+    @Default(1000) int height,
     // ignore: invalid_annotation_target
-    @JsonKey(name: 'bg_color') required String bgColor,
+    @JsonKey(name: 'bg_color') @Default('0xffffffff') String bgColor,
     // ignore: invalid_annotation_target
     @JsonKey(name: 'is_public') @Default(false) bool isPublic,
     // ignore: invalid_annotation_target

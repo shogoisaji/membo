@@ -49,11 +49,11 @@ class BoardViewPage extends HookConsumerWidget {
       });
     }
 
-    void handleAddLinkBoardIds() async {
-      ref.read(boardViewPageViewModelProvider.notifier).addLinkBoardIds(
-            boardId,
-          );
-    }
+    // void handleAddLinkBoardIds() async {
+    //   ref.read(boardViewPageViewModelProvider.notifier).addLinkBoardIds(
+    //         boardId,
+    //       );
+    // }
 
     useEffect(() {
       initialize();

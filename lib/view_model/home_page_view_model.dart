@@ -1,4 +1,4 @@
-import 'package:membo/models/board/board_model.dart';
+import 'package:membo/models/user/linked_board_model.dart';
 import 'package:membo/models/view_model_state/home_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_page_view_model.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class HomePageViewModel extends _$HomePageViewModel {
   @override
   HomePageState build() => const HomePageState();
@@ -26,30 +26,22 @@ class HomePageViewModel extends _$HomePageViewModel {
       print('userData is null');
       return;
     }
-    final linkedBoards = <BoardModel>[];
-    final ownedBoards = <BoardModel>[];
 
-    for (String id in userData.linkBoardIds) {
+    final tempShowBoardModels = <ShowBoardModel>[];
+
+    for (LinkedBoard linkedBoard in userData.linkedBoards) {
       try {
-        final board =
-            await ref.read(supabaseRepositoryProvider).getBoardById(id);
+        final board = await ref
+            .read(supabaseRepositoryProvider)
+            .getBoardById(linkedBoard.boardId);
         if (board == null) {
           continue;
         }
-        linkedBoards.add(board);
-      } catch (e) {
-        print('error: $e');
-      }
-    }
-
-    for (String id in userData.ownedBoardIds) {
-      try {
-        final board =
-            await ref.read(supabaseRepositoryProvider).getBoardById(id);
-        if (board == null) {
-          continue;
-        }
-        ownedBoards.add(board);
+        final showBoardModel = ShowBoardModel(
+          boardType: linkedBoard.type,
+          boardModel: board,
+        );
+        tempShowBoardModels.add(showBoardModel);
       } catch (e) {
         print('error: $e');
       }
@@ -58,7 +50,6 @@ class HomePageViewModel extends _$HomePageViewModel {
     state = state.copyWith(
         isLoading: false,
         userModel: userData,
-        linkedBoardModel: linkedBoards,
-        ownedBoardModel: ownedBoards);
+        showBoardModels: tempShowBoardModels);
   }
 }

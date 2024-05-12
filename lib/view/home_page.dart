@@ -29,15 +29,15 @@ class HomePage extends HookConsumerWidget {
       return null;
     }, []);
 
-    final List<Widget> imageSliders = homePageState.ownedBoardModel
+    final List<Widget> imageSliders = homePageState.showBoardModels
         .map((board) => GestureDetector(
             onTap: () {
-              context.go('/view', extra: board.boardId);
+              context.go('/view', extra: board.boardModel.boardId);
             },
             onLongPress: () {
-              tappedBoardId.value = board.boardId;
+              tappedBoardId.value = board.boardModel.boardId;
             },
-            child: ThumbnailCard(boardModel: board)))
+            child: ThumbnailCard(boardModel: board.boardModel)))
         .toList();
 
     return Scaffold(

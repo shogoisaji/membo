@@ -10,14 +10,15 @@ _$BoardModelImpl _$$BoardModelImplFromJson(Map<String, dynamic> json) =>
     _$BoardModelImpl(
       boardId: json['board_id'] as String,
       boardName: json['board_name'] as String? ?? '-',
-      password: json['password'] as String,
-      objects: (json['objects'] as List<dynamic>)
-          .map((e) => ObjectModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      password: json['password'] as String? ?? '',
+      objects: (json['objects'] as List<dynamic>?)
+              ?.map((e) => ObjectModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       ownerId: json['owner_id'] as String,
-      width: json['width'] as int,
-      height: json['height'] as int,
-      bgColor: json['bg_color'] as String,
+      width: json['width'] as int? ?? 1000,
+      height: json['height'] as int? ?? 1000,
+      bgColor: json['bg_color'] as String? ?? '0xffffffff',
       isPublic: json['is_public'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
