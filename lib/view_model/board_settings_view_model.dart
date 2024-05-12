@@ -1,6 +1,7 @@
 import 'package:membo/models/view_model_state/board_settings_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
+import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'board_settings_view_model.g.dart';
@@ -129,20 +130,26 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     final board = state.currentBoard!;
 
     try {
+      /// 画像の削除
+      await ref.read(supabaseStorageProvider).deleteImageFolder(board);
+
       /// Board削除
       await ref.read(supabaseRepositoryProvider).deleteBoard(board.boardId);
 
       final removedLinkedBoards = userData.linkedBoards
           .where((element) => element.boardId != board.boardId)
           .toList();
-      userData;
 
       /// userのlinkedBoardsからBoardを削除
       await ref
           .read(supabaseRepositoryProvider)
           .updateLinkedBoards(user.id, removedLinkedBoards);
     } catch (e) {
-      throw Exception('error deleting board: $e');
+      if (e.toString() ==
+          "Exception: Error deleting board: type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'") {
+        return;
+      }
+      throw Exception('Board delete error : $e');
     }
   }
 }

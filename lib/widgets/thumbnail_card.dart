@@ -6,8 +6,10 @@ import 'package:membo/settings/text_theme.dart';
 
 class ThumbnailCard extends StatelessWidget {
   final BoardModel boardModel;
+  final String? thumbnailImageUrl;
 
-  const ThumbnailCard({super.key, required this.boardModel});
+  const ThumbnailCard(
+      {super.key, required this.boardModel, this.thumbnailImageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -46,23 +48,30 @@ class ThumbnailCard extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                    child: CachedNetworkImage(
-                        imageUrl:
-                            'https://mawzoznhibuhrvxxyvtt.supabase.co/storage/v1/object/public/public_image/0996ec38-d300-4dd4-9e8b-1a887954c275/c7151efe-1fde-4dfd-ad80-269ae09b5daf.png',
-                        width: double.infinity,
-                        height: double.infinity,
-                        imageBuilder: (context, imageProvider) => Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.contain,
+                    child: thumbnailImageUrl == null
+                        ? Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: Colors.white,
+                            child: const Center(child: Icon(Icons.error)))
+                        : CachedNetworkImage(
+                            imageUrl: boardModel.objects.first.imageUrl ?? '',
+                            width: double.infinity,
+                            height: double.infinity,
+                            imageBuilder: (context, imageProvider) => Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                        placeholder: (context, url) =>
-                            const ColoredBox(color: Colors.white),
-                        errorWidget: (context, url, error) => const ColoredBox(
-                            color: Colors.white, child: Icon(Icons.error)))),
+                            placeholder: (context, url) =>
+                                const ColoredBox(color: Colors.white),
+                            errorWidget: (context, url, error) =>
+                                const ColoredBox(
+                                    color: Colors.white,
+                                    child: Icon(Icons.error)))),
                 Container(
                   height: 50,
                   color: Colors.transparent,

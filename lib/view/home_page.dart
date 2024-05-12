@@ -37,7 +37,10 @@ class HomePage extends HookConsumerWidget {
             onLongPress: () {
               tappedBoardId.value = board.boardModel.boardId;
             },
-            child: ThumbnailCard(boardModel: board.boardModel)))
+            child: ThumbnailCard(
+              boardModel: board.boardModel,
+              thumbnailImageUrl: null,
+            )))
         .toList();
 
     return Scaffold(

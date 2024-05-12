@@ -150,7 +150,7 @@ Session? sessionState(SessionStateRef ref) {
   return sessionStreamData.when(
     loading: () => null,
     error: (e, __) {
-      debugPrint("error: $e");
+      debugPrint("session error: $e");
       return null;
     },
     data: (d) {

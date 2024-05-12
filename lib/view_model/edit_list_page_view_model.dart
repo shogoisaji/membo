@@ -46,7 +46,7 @@ class EditListPageViewModel extends _$EditListPageViewModel {
         print('error: $e');
       }
     }
-    await Future.delayed(const Duration(milliseconds: 500));
+    // await Future.delayed(const Duration(milliseconds: 500));
     state = state.copyWith(isLoading: false, editableBoards: tempBoards);
   }
 

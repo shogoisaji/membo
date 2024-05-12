@@ -24,8 +24,8 @@ class BoardViewPage extends HookConsumerWidget {
     final isMatrixSet = useState(false);
     final timer = useState<Timer?>(null);
 
-    const scaleMin = 0.1;
-    const scaleMax = 20.0;
+    const scaleMin = 0.07;
+    const scaleMax = 0.8;
 
     /// interactive viewerのコントローラー
     final TransformationController transformController =
@@ -73,9 +73,9 @@ class BoardViewPage extends HookConsumerWidget {
       if (isMatrixSet.value == false) return;
 
       /// 故意的に遅延させている
-      Future.delayed(const Duration(milliseconds: 500), () {
-        isLoading.value = false;
-      });
+      // Future.delayed(const Duration(milliseconds: 100), () {
+      // });
+      isLoading.value = false;
     }
 
     useEffect(() {
