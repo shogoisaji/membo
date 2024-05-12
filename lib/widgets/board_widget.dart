@@ -17,10 +17,11 @@ class BoardWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final boardRadius = board.height / 50;
+    final boardBasePadding = board.width * board.height / 200000 + 80;
+    final boardRadius = boardBasePadding / 2;
 
     return Container(
-      padding: EdgeInsets.all(board.height / 30),
+      padding: EdgeInsets.all(boardBasePadding),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -31,7 +32,7 @@ class BoardWidget extends HookWidget {
           ],
         ),
         borderRadius:
-            BorderRadius.circular(board.height / 50 + board.height / 30 / 2),
+            BorderRadius.circular(board.height / 50 + boardBasePadding / 2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.35),

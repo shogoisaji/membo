@@ -87,13 +87,13 @@ class SupabaseRepository {
   Future<void> deleteBoard(String boardId) async {
     try {
       /// storage imageを削除する
-      final board = await getBoardById(boardId);
-      final storage = SupabaseStorage(_client);
-      for (final object in board!.objects) {
-        if (object.type == ObjectType.networkImage) {
-          await storage.deleteImage(object.imageUrl!);
-        }
-      }
+      // final board = await getBoardById(boardId);
+      // final storage = SupabaseStorage(_client);
+      // for (final object in board!.objects) {
+      //   if (object.type == ObjectType.networkImage) {
+      //     await storage.deleteImage(object.imageUrl!);
+      //   }
+      // }
 
       /// db boardを削除する
       await _client.from('boards').delete().eq('board_id', boardId).single();
@@ -146,8 +146,9 @@ class SupabaseRepository {
       final board = BoardModel.fromJson(response);
       return board;
     } catch (err) {
-      throw Exception('Error getting board: $err');
+      // throw Exception('Error getting board: $err');
     }
+    return null;
   }
 
   ///----------------------------------------

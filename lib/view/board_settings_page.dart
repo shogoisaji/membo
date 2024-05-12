@@ -9,6 +9,7 @@ import 'package:membo/view_model/board_settings_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_list_content.dart';
+import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/hue_ring_custom_picker.dart';
 
@@ -71,9 +72,19 @@ class BoardSettingsPage extends HookConsumerWidget {
       }
     }
 
-    void deleteBoard() {
-      ref.read(boardSettingsViewModelProvider.notifier).deleteBoard();
-      context.go('/');
+    void deleteBoard() async {
+      try {
+        await ref.read(boardSettingsViewModelProvider.notifier).deleteBoard();
+
+        if (context.mounted) {
+          CustomSnackBar.show(context, 'Board deleted', MyColor.blue);
+          context.go('/');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
+      }
     }
 
     bool isSaveable() {
@@ -567,7 +578,10 @@ class BoardSettingsPage extends HookConsumerWidget {
                                       'Are you sure you want to delete this board?'),
                                   actions: [
                                     ElevatedButton(
-                                        onPressed: () => deleteBoard(),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          deleteBoard();
+                                        },
                                         child: const Text('Delete')),
                                     ElevatedButton(
                                         onPressed: () =>

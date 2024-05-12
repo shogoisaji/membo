@@ -30,6 +30,9 @@ class EditPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    const scaleMin = 0.07;
+    const scaleMax = 0.8;
+
     final streamBoard = ref.watch(streamBoardModelProvider);
 
     /// Drawerで使用
@@ -89,9 +92,9 @@ class EditPage extends HookConsumerWidget {
       if (isMatrixSet.value == false) return;
 
       /// 故意的に遅延させている
-      Future.delayed(const Duration(milliseconds: 500), () {
-        isLoading.value = false;
-      });
+      // Future.delayed(const Duration(milliseconds: 100), () {
+      // });
+      isLoading.value = false;
     }
 
     useEffect(() {
@@ -241,8 +244,8 @@ class EditPage extends HookConsumerWidget {
                   InteractiveViewer(
                       transformationController: transformController,
                       boundaryMargin: const EdgeInsets.all(double.infinity),
-                      minScale: 0.1,
-                      maxScale: 20.0,
+                      minScale: scaleMin,
+                      maxScale: scaleMax,
                       child: OverflowBox(
                           minWidth: 0.0,
                           maxWidth: double.infinity,

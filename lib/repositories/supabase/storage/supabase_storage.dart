@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:membo/models/board/board_model.dart';
+import 'package:membo/models/board/object/object_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -9,6 +11,8 @@ part 'supabase_storage.g.dart';
 SupabaseStorage supabaseStorage(SupabaseStorageRef ref) {
   return SupabaseStorage(Supabase.instance.client);
 }
+
+const String bucketNameForBoard = 'public_image';
 
 class SupabaseStorage {
   SupabaseStorage(this._client);
@@ -23,6 +27,7 @@ class SupabaseStorage {
     }
   }
 
+  /// imageをstorage にアップロード path -> public_image/(boardId)/(objectId).拡張子
   Future<String?> uploadXFileImage(XFile file, String insertPath) async {
     final Uint8List bytes = await file.readAsBytes();
     try {
@@ -40,16 +45,33 @@ class SupabaseStorage {
     }
   }
 
-  Future<bool> deleteImage(String path) async {
-    /// TODO:hard code path
-    final imagePath = path.split('public_image/').last;
+  Future<void> deleteImage(String path) async {
+    final imagePath = path.split('$bucketNameForBoard/').last;
     final paths = [imagePath];
     try {
-      final res = await _client.storage.from('public_image').remove(paths);
-      return res.isNotEmpty;
+      final res = await _client.storage.from(bucketNameForBoard).remove(paths);
+      if (res.isEmpty) {
+        throw Exception('image delete failed: $path');
+      }
     } on PostgrestException catch (error) {
-      print(error);
+      print('Error deleting image: ${error.message}');
+    } catch (e) {
+      print('error -: $e');
     }
-    return false;
+  }
+
+  Future<void> deleteImageFolder(BoardModel board) async {
+    try {
+      for (final object in board.objects) {
+        if (object.type == ObjectType.networkImage) {
+          if (object.imageUrl == null) {
+            continue;
+          }
+          await deleteImage(object.imageUrl!);
+        }
+      }
+    } catch (e) {
+      print('image folder delete failed');
+    }
   }
 }
