@@ -134,6 +134,7 @@ class EditPageViewModel extends _$EditPageViewModel {
           if (state.selectedImageFile == null) {
             throw Exception('select local image is null');
           }
+          print('selectedImage: ${state.selectedObject}');
           ref.read(supabaseRepositoryProvider).addImageObject(
               board, state.selectedObject!, state.selectedImageFile!);
 

@@ -36,16 +36,25 @@ class SupabaseRepository {
   Future<void> addImageObject(
       BoardModel board, ObjectModel object, XFile file) async {
     SupabaseStorage storage = SupabaseStorage(_client);
-    final fileType =
-        file.path.split('.').last == 'jpg' ? 'jpeg' : file.path.split('.').last;
+
+    /// 拡張子の確認
+    final fileModifier = switch (file.path.split('.').last) {
+      'jpg' || 'jpeg' => 'jpeg',
+      'png' => 'png',
+      _ =>
+        throw Exception('Unsupported file type: ${file.path.split('.').last}'),
+    };
+
     try {
-      final publicPath = await storage.uploadXFileImage(
-          file, '${board.boardId}/${object.objectId}.$fileType');
-      final newObject = object.copyWith(
+      /// storageに画像をアップロード
+      final storagePath = await storage.uploadXFileImage(
+          file, '${board.boardId}/${object.objectId}.$fileModifier');
+      final insertObject = object.copyWith(
         type: ObjectType.networkImage,
-        imageUrl: publicPath,
+        imageUrl: storagePath,
       );
-      final newBoard = board.copyWith(objects: [...board.objects, newObject]);
+      final newBoard =
+          board.copyWith(objects: [...board.objects, insertObject]);
       updateBoard(newBoard);
     } catch (err) {
       throw Exception('Error uploading image: $err');

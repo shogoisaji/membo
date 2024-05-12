@@ -55,7 +55,7 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/svg/
+    - assets/images/svg/
     - assets/images/icons/
     - assets/lotties/
     # - assets/images/icons/google_official.png

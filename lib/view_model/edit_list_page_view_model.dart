@@ -8,7 +8,7 @@ import 'package:uuid/uuid.dart';
 
 part 'edit_list_page_view_model.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class EditListPageViewModel extends _$EditListPageViewModel {
   @override
   EditListPageState build() => EditListPageState();

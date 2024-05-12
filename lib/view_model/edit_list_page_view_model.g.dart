@@ -7,12 +7,12 @@ part of 'edit_list_page_view_model.dart';
 // **************************************************************************
 
 String _$editListPageViewModelHash() =>
-    r'8886d5a07ab79eae7f9fd1c5a3aed25c3e238cdd';
+    r'0eb889de4e679bfb82d31681661891c323cae838';
 
 /// See also [EditListPageViewModel].
 @ProviderFor(EditListPageViewModel)
-final editListPageViewModelProvider =
-    NotifierProvider<EditListPageViewModel, EditListPageState>.internal(
+final editListPageViewModelProvider = AutoDisposeNotifierProvider<
+    EditListPageViewModel, EditListPageState>.internal(
   EditListPageViewModel.new,
   name: r'editListPageViewModelProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,6 +22,6 @@ final editListPageViewModelProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$EditListPageViewModel = Notifier<EditListPageState>;
+typedef _$EditListPageViewModel = AutoDisposeNotifier<EditListPageState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

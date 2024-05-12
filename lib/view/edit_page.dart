@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
@@ -497,9 +499,15 @@ class EditToolBar extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final List<Map<double, String>> moveRateList = [
+      {1.0: Assets.images.svg.turtle},
+      {4.0: Assets.images.svg.elephant},
+      {10.0: Assets.images.svg.rabbit},
+    ];
     final editPageState = ref.watch(editPageViewModelProvider);
     final scale = useState(1.0);
     final angle = useState(0.0);
+    final moveRate = useState(moveRateList[1].keys.first);
 
     void clearState() {
       scale.value = 1.0;
@@ -524,7 +532,9 @@ class EditToolBar extends HookConsumerWidget {
           .rotateSelectedObject(angle.value);
     }
 
-    const double joyStickStrength = 7.0;
+    /// joystickの入力に対するobjectの移動量のレート（大きい方が多く移動する）
+
+    // const double joyStickStrength = moveRate;
 
     return editPageState.selectedObject == null
         ? const SizedBox.shrink()
@@ -643,6 +653,44 @@ class EditToolBar extends HookConsumerWidget {
                             ),
                           ],
                         ),
+                        Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: MyColor.greenSuperLight,
+                            borderRadius: BorderRadius.circular(99),
+                            border:
+                                Border.all(width: 5, color: MyColor.greenDark),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ...moveRateList.map((rate) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    moveRate.value = rate.keys.first;
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(7),
+                                    decoration: BoxDecoration(
+                                      color: rate.keys.first == moveRate.value
+                                          ? MyColor.pink
+                                          : MyColor.greenSuperLight,
+                                      shape: BoxShape.circle,
+                                      // border: Border.all(
+                                      //     width: 2, color: MyColor.greenDark),
+                                    ),
+                                    child: SvgPicture.asset(
+                                      rate.values.first,
+                                      width: 30,
+                                      height: 30,
+                                      color: MyColor.blue,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
                         SizedBox(
                           width: height,
                           height: height,
@@ -686,8 +734,8 @@ class EditToolBar extends HookConsumerWidget {
                             period: const Duration(milliseconds: 5),
                             listener: (details) {
                               moveSelectedObject(Offset(
-                                  details.x * joyStickStrength,
-                                  details.y * joyStickStrength));
+                                  details.x * moveRate.value,
+                                  details.y * moveRate.value));
                             },
                           ),
                         ),

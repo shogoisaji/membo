@@ -23,4 +23,5 @@ class MyColor {
   static const Color pink = Color(0xFFFFA0A0);
   static const Color blue = Color(0xFF57627E);
   static const Color red = Color(0xFFD24343);
+  static const Color brown = Color(0xFFD39365);
 }
