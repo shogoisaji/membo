@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
+import 'package:membo/widgets/custom_card_widget.dart';
 import 'package:membo/widgets/sharing_widget.dart';
 import 'package:membo/widgets/thumbnail_card.dart';
 
@@ -68,37 +69,19 @@ class HomePage extends HookConsumerWidget {
                                 const Duration(milliseconds: 3500),
                             enlargeCenterPage: true,
                             onPageChanged: (index, _) {
-                              print('index: $index');
+                              // print('index: $index');
                             },
                           ),
                           items: imageSliders,
                         ),
                       ),
-                //  PageView.builder(
-                //     controller: PageController(viewportFraction: 0.8),
-                //     scrollDirection: Axis.horizontal,
-                //     itemCount: homePageState.ownedBoardModel.length,
-                //     itemBuilder: (BuildContext context, int index) {
-                //       return Align(
-                //           alignment: const Alignment(0, 0.2),
-                //           child: GestureDetector(
-                //             child: GestureDetector(
-                //               onTap: () {
-                //                 context.go('/view',
-                //                     extra: homePageState
-                //                         .ownedBoardModel[index].boardId);
-                //               },
-                //               onLongPress: () {
-                //                 tappedBoardId.value =
-                //                     homePageState.ownedBoardModel[index].boardId;
-                //               },
-                //               child: ThumbnailCard(
-                //                   boardModel:
-                //                       homePageState.ownedBoardModel[index]),
-                //             ),
-                //           ));
-                //     },
-                //   ),
+                CustomCardWidget(
+                  board: homePageState.showBoardModels[0].boardModel,
+                  width: 200,
+                  height: 250,
+                  imageUrl:
+                      'https://mawzoznhibuhrvxxyvtt.supabase.co/storage/v1/object/public/avatar_image/07b77fc9-b55e-4734-9a42-e5755d486f35/1715592393818.webp',
+                ),
               ],
             ),
           ),
