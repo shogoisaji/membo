@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
+import 'package:membo/settings/text_theme.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
 
@@ -17,71 +18,114 @@ class BoardWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final boardBasePadding = board.width * board.height / 200000 + 80;
+    final boardBasePadding = board.width * board.height / 500000 + 80;
     final boardRadius = boardBasePadding / 2;
 
-    return Container(
-      padding: EdgeInsets.all(boardBasePadding),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            MyColor.brown,
-            ColorUtils.moreDark(MyColor.brown),
-          ],
-        ),
-        borderRadius:
-            BorderRadius.circular(board.height / 50 + boardBasePadding / 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.35),
-            blurRadius: board.height / 30,
-            spreadRadius: board.height / 200,
-            offset: Offset(board.height / 200, board.height / 150),
-          ),
-        ],
-      ),
-      child: Container(
-          width: board.width.toDouble(),
-          height: board.height.toDouble(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: EdgeInsets.only(left: boardBasePadding),
+          padding:
+              const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 0),
           decoration: BoxDecoration(
-            color: Color(int.parse(board.bgColor)),
-            borderRadius: BorderRadius.circular(boardRadius),
+              color: MyColor.lightRed,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  blurRadius: 8,
+                  spreadRadius: 5,
+                  offset: const Offset(5, 10),
+                ),
+              ],
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            decoration: BoxDecoration(
+              color: MyColor.lightBrown,
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(22), topRight: Radius.circular(22)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  blurRadius: 5,
+                  spreadRadius: 3,
+                  offset: const Offset(5, 5),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                board.boardName,
+                style: lightTextTheme.bodyLarge!.copyWith(fontSize: 54),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.all(boardBasePadding),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                MyColor.brown,
+                ColorUtils.moreDark(MyColor.brown),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(boardBasePadding),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: board.height / 80,
-                spreadRadius: board.height / 300,
-                offset: Offset(board.height / 350, board.height / 300),
+                color: Colors.black.withOpacity(0.35),
+                blurRadius: board.height / 30,
+                spreadRadius: board.height / 200,
+                offset: Offset(board.height / 200, board.height / 150),
               ),
             ],
           ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              ...board.objects.map((object) => ClipRRect(
-                  clipper: MyCustomClipper(radius: boardRadius),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      ObjectWidget(object: object, opacity: 1.0),
-                    ],
-                  ))),
-              if (selectedObject != null)
-                ClipRRect(
-                  clipper: MyCustomClipper(radius: boardRadius),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      SelectedObject(object: selectedObject!),
-                    ],
+          child: Container(
+              width: board.width.toDouble(),
+              height: board.height.toDouble(),
+              decoration: BoxDecoration(
+                color: Color(int.parse(board.bgColor)),
+                borderRadius: BorderRadius.circular(boardRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.25),
+                    blurRadius: board.height / 80,
+                    spreadRadius: board.height / 300,
+                    offset: Offset(board.height / 350, board.height / 300),
                   ),
-                )
-              else
-                const SizedBox.shrink(),
-            ],
-          )),
+                ],
+              ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ...board.objects.map((object) => ClipRRect(
+                      clipper: MyCustomClipper(radius: boardRadius),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          ObjectWidget(object: object, opacity: 1.0),
+                        ],
+                      ))),
+                  if (selectedObject != null)
+                    ClipRRect(
+                      clipper: MyCustomClipper(radius: boardRadius),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          SelectedObject(object: selectedObject!),
+                        ],
+                      ),
+                    )
+                  else
+                    const SizedBox.shrink(),
+                ],
+              )),
+        ),
+      ],
     );
   }
 }

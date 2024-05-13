@@ -1,5 +1,6 @@
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+
 import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -13,6 +14,7 @@ SupabaseStorage supabaseStorage(SupabaseStorageRef ref) {
 }
 
 const String bucketNameForBoard = 'public_image';
+const String bucketNameForAvatar = 'avatar_image';
 
 class SupabaseStorage {
   SupabaseStorage(this._client);
@@ -28,24 +30,57 @@ class SupabaseStorage {
   }
 
   /// imageをstorage にアップロード path -> public_image/(boardId)/(objectId).拡張子
-  Future<String?> uploadXFileImage(XFile file, String insertPath) async {
+  Future<String?> uploadXFileImage(
+      XFile file, String bucketName, String filePath) async {
     final Uint8List bytes = await file.readAsBytes();
+
+    final convertedBytes = await FlutterImageCompress.compressWithList(
+      bytes,
+      minHeight: 1080,
+      minWidth: 1080,
+      quality: 50,
+      autoCorrectionAngle: false,
+      format: CompressFormat.webp,
+    );
+
+    final insertFilePath = '$filePath.webp';
+
     try {
-      await _client.storage.from('public_image').uploadBinary(
-            insertPath,
-            bytes,
-            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+      await _client.storage.from(bucketName).uploadBinary(
+            insertFilePath,
+            convertedBytes,
           );
-      final fileUrl = _client.storage.from('public_image').getPublicUrl(
-            insertPath,
+      final fileUrl = _client.storage.from(bucketName).getPublicUrl(
+            insertFilePath,
           );
       return fileUrl;
-    } on StorageException catch (error) {
-      throw Exception('Error uploading image: ${error.message}');
+    } on StorageException catch (e) {
+      throw Exception('Error StorageException: ${e.message}');
+    } catch (e) {
+      if (e.toString() ==
+          "Exception: Error deleting board: type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'") {
+        return null;
+      }
+      throw Exception('Error uploading XFile image: $e');
     }
   }
 
-  Future<void> deleteImage(String path) async {
+  Future<void> deleteAvatarImage(String path) async {
+    final imagePath = path.split('$bucketNameForAvatar/').last;
+    final paths = [imagePath];
+    try {
+      final res = await _client.storage.from(bucketNameForAvatar).remove(paths);
+      if (res.isEmpty) {
+        throw Exception('image delete failed: $path');
+      }
+    } on PostgrestException catch (error) {
+      print('Error deleting image: ${error.message}');
+    } catch (e) {
+      print('error -: $e');
+    }
+  }
+
+  Future<void> deleteObjectImage(String path) async {
     final imagePath = path.split('$bucketNameForBoard/').last;
     final paths = [imagePath];
     try {
@@ -67,7 +102,7 @@ class SupabaseStorage {
           if (object.imageUrl == null) {
             continue;
           }
-          await deleteImage(object.imageUrl!);
+          await deleteObjectImage(object.imageUrl!);
         }
       }
     } catch (e) {

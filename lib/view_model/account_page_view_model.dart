@@ -1,8 +1,10 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/user/linked_board_model.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/models/view_model_state/account_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
+import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'account_page_view_model.g.dart';
@@ -37,7 +39,7 @@ class AccountPageViewModel extends _$AccountPageViewModel {
           break;
       }
     }
-
+    print('userData: ${userData.avatarUrl}');
     state = state.copyWith(user: userData, isLoading: false);
   }
 
@@ -59,5 +61,63 @@ class AccountPageViewModel extends _$AccountPageViewModel {
 
     final newUserData = state.user!.copyWith(userName: userName);
     state = state.copyWith(user: newUserData);
+  }
+
+  Future<void> updateAvatar() async {
+    const imageMaxSize = 500.0;
+    const pickImageMaxDataSize = 1.0; //  MB
+    final picker = ImagePicker();
+
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+    final userData =
+        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    if (userData == null) {
+      throw Exception('User is not loaded');
+    }
+
+    try {
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: imageMaxSize,
+        maxHeight: imageMaxSize,
+        imageQuality: 100,
+      );
+
+      if (image == null) {
+        return;
+      }
+
+      /// 画像のデータサイズチェック
+      final uint8List = await image.readAsBytes();
+      final imageSizeInBytes = uint8List.lengthInBytes;
+
+      double imageSizeInMB = imageSizeInBytes / (1024 * 1024);
+
+      if (imageSizeInMB > pickImageMaxDataSize) {
+        throw Exception('Image size is too large');
+      }
+
+      /// すでにアバター画像がある場合は削除
+      if (userData.avatarUrl != null) {
+        await ref
+            .read(supabaseStorageProvider)
+            .deleteAvatarImage(userData.avatarUrl!);
+      }
+
+      final storagePath = await ref
+          .read(supabaseRepositoryProvider)
+          .updateAvatarImage(userData, image);
+
+      if (storagePath == null) {
+        throw Exception('Error updateAvatar(): storagePath is null');
+      }
+
+      state = state.copyWith(user: userData.copyWith(avatarUrl: storagePath));
+    } catch (e) {
+      throw Exception('Error updateAvatar(): $e');
+    }
   }
 }
