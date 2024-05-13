@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -57,7 +58,15 @@ class BoardViewPage extends HookConsumerWidget {
 
     useEffect(() {
       initialize();
-      return null;
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+      return () => SystemChrome.setPreferredOrientations([
+            DeviceOrientation.portraitUp,
+          ]);
     }, []);
 
     /// マトリックスの更新（基本的には初期化時）

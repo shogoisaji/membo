@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:membo/gen/fonts.gen.dart';
 import 'package:membo/repositories/shared_preferences/shared_preferences_repository.dart';
@@ -20,6 +21,11 @@ void main() async {
       sharedPreferences = await SharedPreferences.getInstance();
     })
   ).wait;
+
+  /// 画面の向きを固定.
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   const app = MyApp();
   final scope = ProviderScope(overrides: [
     sharedPreferencesRepositoryProvider
