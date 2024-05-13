@@ -38,18 +38,16 @@ class SupabaseRepository {
       BoardModel board, ObjectModel object, XFile file) async {
     SupabaseStorage storage = SupabaseStorage(_client);
 
-    /// 拡張子の確認
-    final fileModifier = switch (file.path.split('.').last) {
-      'jpg' || 'jpeg' => 'jpeg',
-      'png' => 'png',
-      _ =>
-        throw Exception('Unsupported file type: ${file.path.split('.').last}'),
-    };
+    /// 拡張子の確認（現在は不要）
+    // final fileModifier = file.path.split('.').last;
+    // print('このFileの拡張子は $fileModifier です');
 
     try {
       /// storageに画像をアップロード
       final storagePath = await storage.uploadXFileImage(
-          file, '${board.boardId}/${object.objectId}.$fileModifier');
+          file, '${board.boardId}/${object.objectId}'
+          // file, '${board.boardId}/${object.objectId}.$fileModifier'
+          );
       final insertObject = object.copyWith(
         type: ObjectType.networkImage,
         imageUrl: storagePath,

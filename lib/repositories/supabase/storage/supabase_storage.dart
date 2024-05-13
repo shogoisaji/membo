@@ -1,4 +1,8 @@
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image/image.dart' as img;
+
 import 'package:flutter/foundation.dart';
+import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
@@ -28,16 +32,28 @@ class SupabaseStorage {
   }
 
   /// imageをstorage にアップロード path -> public_image/(boardId)/(objectId).拡張子
-  Future<String?> uploadXFileImage(XFile file, String insertPath) async {
+  Future<String?> uploadXFileImage(XFile file, String filePath) async {
     final Uint8List bytes = await file.readAsBytes();
+
+    final convertedBytes = await FlutterImageCompress.compressWithList(
+      bytes,
+      minHeight: 1080,
+      minWidth: 1080,
+      quality: 50,
+      autoCorrectionAngle: false,
+      format: CompressFormat.webp,
+    );
+
+    final insertFilePath = '$filePath.webp';
+
     try {
       await _client.storage.from('public_image').uploadBinary(
-            insertPath,
-            bytes,
+            insertFilePath,
+            convertedBytes,
             fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
           );
       final fileUrl = _client.storage.from('public_image').getPublicUrl(
-            insertPath,
+            insertFilePath,
           );
       return fileUrl;
     } on StorageException catch (error) {

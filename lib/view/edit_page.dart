@@ -639,7 +639,7 @@ class EditToolBar extends HookConsumerWidget {
                               onTap: () {
                                 ref
                                     .read(editPageViewModelProvider.notifier)
-                                    .insertSelectedObject();
+                                    .saveSelectedObject();
                                 clearState();
                               },
                               child: Container(
@@ -776,14 +776,15 @@ class CustomFloatingButton extends HookConsumerWidget {
     }
 
     Future<void> handleImageSelect() async {
-      const imageMaxSize = 1000.0;
+      const imageMaxSize = 1980.0;
+      const pickImageMaxDataSize = 3.0; //  MB
       final picker = ImagePicker();
       try {
         final XFile? image = await picker.pickImage(
           source: ImageSource.gallery,
           maxWidth: imageMaxSize,
           maxHeight: imageMaxSize,
-          imageQuality: 85,
+          imageQuality: 100,
         );
 
         if (image == null) {
@@ -797,9 +798,7 @@ class CustomFloatingButton extends HookConsumerWidget {
 
         double imageSizeInMB = imageSizeInBytes / (1024 * 1024);
 
-        // print('Image size: $imageSizeInMB MB');
-
-        if (imageSizeInMB > 1.0) {
+        if (imageSizeInMB > pickImageMaxDataSize) {
           if (context.mounted) {
             ErrorDialog.show(context, 'Image size is too large.');
           }

@@ -20,6 +20,7 @@ dependencies:
   json_annotation:
   shared_preferences:
   image_picker:
+  image:
   supabase_flutter:
   flutter_svg:
   google_sign_in:
@@ -35,6 +36,7 @@ dependencies:
   mobile_scanner:
   qr_flutter:
   carousel_slider:
+  flutter_image_compress:
 
   cupertino_icons: ^1.0.6
 

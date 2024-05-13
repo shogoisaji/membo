@@ -116,7 +116,7 @@ class EditPageViewModel extends _$EditPageViewModel {
     });
   }
 
-  void insertSelectedObject() {
+  void saveSelectedObject() {
     if (state.selectedObject == null) {
       return;
     }
