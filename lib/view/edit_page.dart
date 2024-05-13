@@ -764,12 +764,14 @@ class CustomFloatingButton extends HookConsumerWidget {
 
     final isShowMenu = useState(false);
 
-    Offset initialPosition() {
-      if (editPageState.boardModel == null) return const Offset(0, 0);
-      final initialPositionX = editPageState.boardModel!.width / 2;
-      final initialPositionY = editPageState.boardModel!.height / 2;
-      return Offset(initialPositionX, initialPositionY);
-    }
+    /// 基点を中央に設定したので不調となった
+    /// オブジェクトの初期値を計算（基点が左上の場合）
+    // Offset initialPosition() {
+    // if (editPageState.boardModel == null) return const Offset(0, 0);
+    // final initialPositionX = editPageState.boardModel!.width / 2;
+    // final initialPositionY = editPageState.boardModel!.height / 2;
+    // return Offset(initialPositionX, initialPositionY);
+    // }
 
     void handleTextSelect() {
       ref.read(editPageViewModelProvider.notifier).showTextInput();
@@ -823,8 +825,8 @@ class CustomFloatingButton extends HookConsumerWidget {
         final selectedObject = ObjectModel(
             objectId: const Uuid().v4(),
             type: ObjectType.localImage,
-            positionX: initialPosition().dx,
-            positionY: initialPosition().dy,
+            positionX: 0.0,
+            positionY: 0.0,
             angle: 0.0,
             scale: 1.0,
             imageUrl: image.path,
@@ -946,13 +948,6 @@ class TextInputModal extends HookConsumerWidget {
       return;
     }, [editPageState.showTextInput]);
 
-    Offset initialTextPosition() {
-      if (editPageState.boardModel == null) return const Offset(0, 0);
-      final initialPositionX = editPageState.boardModel!.width / 2;
-      final initialPositionY = editPageState.boardModel!.height / 2;
-      return Offset(initialPositionX, initialPositionY);
-    }
-
     void handleChangeTextColor(Color color) {
       selectedTextColor.value = color;
     }
@@ -1001,10 +996,8 @@ class TextInputModal extends HookConsumerWidget {
                                           ObjectModel(
                                               objectId: const Uuid().v4(),
                                               type: ObjectType.text,
-                                              positionX:
-                                                  initialTextPosition().dx,
-                                              positionY:
-                                                  initialTextPosition().dy,
+                                              positionX: 0.0,
+                                              positionY: 0.0,
                                               angle: 0.0,
                                               scale: 1.0,
                                               text: textController.text,
