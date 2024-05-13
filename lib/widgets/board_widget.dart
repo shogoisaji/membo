@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/gen/fonts.gen.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
@@ -302,6 +303,24 @@ class ObjectWidget extends StatelessWidget {
     final textStyle = TextStyle(
       color: Color(int.parse(object.bgColor)),
       fontSize: 100,
+      fontFamily: FontFamily.mPlusRounded1c,
+      fontWeight: FontWeight.w700,
+    );
+    final textBgStyle = TextStyle(
+      fontSize: 100,
+      fontFamily: FontFamily.mPlusRounded1c,
+      fontWeight: FontWeight.w700,
+      foreground: Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 11.0
+        ..color = Colors.grey.shade200,
+      shadows: const [
+        Shadow(
+          blurRadius: 8.0,
+          color: Colors.black,
+          offset: Offset(4.0, 5.0),
+        ),
+      ],
     );
 
     Size textSize({
@@ -323,16 +342,16 @@ class ObjectWidget extends StatelessWidget {
       return textPainter.size;
     }
 
-    final size = textSize(text: text, textStyle: textStyle, maxWidth: 1000);
+    final size = textSize(text: text, textStyle: textStyle, maxWidth: 10000);
 
-    return CustomPaint(
-      painter: TextObjectPainter(
-          text: text,
-          textStyle: TextStyle(
-            fontSize: 100,
-            color: Color(int.parse(object.bgColor)),
-          )),
-      size: Size(size.width, size.height),
+    return Transform.scale(
+      alignment: Alignment.topLeft,
+      scale: object.scale,
+      child: CustomPaint(
+        painter: TextObjectPainter(
+            text: text, textStyle: textStyle, textBgStyle: textBgStyle),
+        size: Size(size.width, size.height),
+      ),
     );
   }
 }
@@ -340,21 +359,34 @@ class ObjectWidget extends StatelessWidget {
 class TextObjectPainter extends CustomPainter {
   final String text;
   final TextStyle textStyle;
+  final TextStyle textBgStyle;
 
-  TextObjectPainter({required this.text, required this.textStyle});
+  TextObjectPainter(
+      {required this.text, required this.textStyle, required this.textBgStyle});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final textSpan = TextSpan(
-      text: text,
-      style: textStyle,
-    );
     final textPainter = TextPainter(
-      text: textSpan,
+      text: TextSpan(
+        text: text,
+        style: textStyle,
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    final textBgPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: textBgStyle,
+      ),
       textDirection: TextDirection.ltr,
     );
 
+    /// textPainterはlayoutを呼ぶ必要がある
     textPainter.layout(
+      minWidth: 0,
+      maxWidth: size.width,
+    );
+    textBgPainter.layout(
       minWidth: 0,
       maxWidth: size.width,
     );
@@ -362,6 +394,7 @@ class TextObjectPainter extends CustomPainter {
     final xCenter = -textPainter.width / 2;
     final yCenter = -textPainter.height / 2;
     final offset = Offset(xCenter, yCenter);
+    textBgPainter.paint(canvas, offset);
     textPainter.paint(canvas, offset);
   }
 
