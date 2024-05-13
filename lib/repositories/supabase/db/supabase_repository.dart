@@ -38,14 +38,10 @@ class SupabaseRepository {
       BoardModel board, ObjectModel object, XFile file) async {
     SupabaseStorage storage = SupabaseStorage(_client);
 
-    /// 拡張子の確認（現在は不要）
-    // final fileModifier = file.path.split('.').last;
-    // print('このFileの拡張子は $fileModifier です');
-
     try {
       /// storageに画像をアップロード
       final storagePath = await storage.uploadXFileImage(
-          file, '${board.boardId}/${object.objectId}'
+          file, 'public_image', '${board.boardId}/${object.objectId}'
           // file, '${board.boardId}/${object.objectId}.$fileModifier'
           );
       final insertObject = object.copyWith(
@@ -55,8 +51,8 @@ class SupabaseRepository {
       final newBoard =
           board.copyWith(objects: [...board.objects, insertObject]);
       updateBoard(newBoard);
-    } catch (err) {
-      throw Exception('Error uploading image: $err');
+    } catch (e) {
+      throw Exception('addImageObjectでexceptionが発生しました :$e');
     }
   }
 
@@ -198,19 +194,24 @@ class SupabaseRepository {
     }
   }
 
-  // Future<void> addLinkBoardId(String userId, List<String> currentLinkBoardIds,
-  //     String addBoardId) async {
-  //   final newLinkBoardIds = [...currentLinkBoardIds, addBoardId];
-  //   try {
-  //     await _client
-  //         .from('profiles')
-  //         .update({'link_board_ids': newLinkBoardIds})
-  //         .eq('user_id', userId)
-  //         .single();
-  //   } catch (err) {
-  //     rethrow;
-  //   }
-  // }
+  Future<String?> updateAvatarImage(UserModel userData, XFile file) async {
+    SupabaseStorage storage = SupabaseStorage(_client);
+
+    final filePath =
+        "${userData.userId}/${DateTime.now().millisecondsSinceEpoch}";
+
+    try {
+      /// storageに画像をアップロード
+      final storagePath =
+          await storage.uploadXFileImage(file, 'avatar_image', filePath);
+      await _client
+          .from('profiles')
+          .update({'avatar_url': storagePath}).eq('user_id', userData.userId);
+      return storagePath;
+    } catch (e) {
+      throw Exception('updateAvatarImageでexceptionが発生しました');
+    }
+  }
 
   Future<void> updateLinkedBoards(
       String userId, List<LinkedBoard> newLinkedBoards) async {

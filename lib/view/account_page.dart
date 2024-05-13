@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -24,35 +23,28 @@ class AccountPage extends HookConsumerWidget {
     final h = MediaQuery.sizeOf(context).height;
     final accountPageState = ref.watch(accountPageViewModelProvider);
 
-    // void fetchUser() async {
-    //   final signedInUser = ref.read(userStateProvider);
-    //   if (signedInUser == null) return;
-    //   final user = await ref
-    //       .read(supabaseRepositoryProvider)
-    //       .fetchUserData(signedInUser.id)
-    //       .catchError((e) {
-    //     return null;
-    //   });
-    //   if (user == null) {
-    //     if (context.mounted) {
-    //       ErrorDialog.show(context, 'Error fetching user data', onTap: () {
-    //         // context.go('/');
-    //         // ref.read(supabaseAuthRepositoryProvider).signOut();
-    //       });
-    //     }
-    //     return;
-    //   }
-    //   ref.read(accountPageViewModelProvider.notifier).getUser(user);
-    // }
-
-    Future<String> handleSubmitName(String name) async {
+    Future<void> handleSubmitName(
+        String name, BuildContext dialogContext) async {
       try {
         await ref
             .read(accountPageViewModelProvider.notifier)
             .updateUserName(name);
-        return 'success';
+
+        if (context.mounted) {
+          Navigator.pop(dialogContext);
+          Future.delayed(const Duration(milliseconds: 300), () {
+            CustomSnackBar.show(context, 'Name updated', MyColor.blue);
+          });
+        }
       } catch (e) {
-        return 'error';
+        if (context.mounted) {
+          Navigator.pop(dialogContext);
+
+          Future.delayed(const Duration(milliseconds: 300), () {
+            CustomSnackBar.show(
+                context, 'Name update Error', Colors.red.shade400);
+          });
+        }
       }
     }
 
@@ -84,18 +76,9 @@ class AccountPage extends HookConsumerWidget {
                 Align(
                   alignment: Alignment.bottomRight,
                   child: ElevatedButton(
-                      onPressed: () async {
+                      onPressed: () {
                         if (formKey.currentState!.validate()) {
-                          final res =
-                              await handleSubmitName(nameTextController.text);
-                          if (context.mounted) {
-                            res == 'success'
-                                ? CustomSnackBar.show(
-                                    context, 'Name updated', MyColor.blue)
-                                : CustomSnackBar.show(context,
-                                    'Name update Error', Colors.red.shade400);
-                            Navigator.pop(context);
-                          }
+                          handleSubmitName(nameTextController.text, context);
                         }
                       },
                       child: const Text('Save')),
@@ -105,6 +88,19 @@ class AccountPage extends HookConsumerWidget {
           ),
         ),
       );
+    }
+
+    Future<void> handleTapEditAvatar() async {
+      try {
+        await ref.read(accountPageViewModelProvider.notifier).updateAvatar();
+        if (context.mounted) {
+          CustomSnackBar.show(context, 'Avatar updated', MyColor.blue);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, 'Error handleTapEditAvatar : $e');
+        }
+      }
     }
 
     Future<void> handleDeleteAccount() async {
@@ -133,6 +129,7 @@ class AccountPage extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           leading: IconButton(
@@ -168,7 +165,8 @@ class AccountPage extends HookConsumerWidget {
                                   children: [
                                     const SizedBox(height: 30.0),
                                     _avatarImage(
-                                        accountPageState.user!.avatarUrl),
+                                        accountPageState.user!.avatarUrl,
+                                        handleTapEditAvatar),
                                     const SizedBox(height: 30.0),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
@@ -299,31 +297,62 @@ class AccountPage extends HookConsumerWidget {
         ));
   }
 
-  Widget _avatarImage(String? avatarUrl) {
-    return avatarUrl == null
-        ? const CircleAvatar(
-            radius: 70,
-            child: Icon(Icons.person, size: 70),
-          )
-        : ClipRRect(
-            borderRadius: BorderRadius.circular(99),
-            child: CachedNetworkImage(
-              imageUrl: avatarUrl,
-              width: 130,
-              height: 130,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
-                  ),
+  Widget _avatarImage(String? avatarUrl, Function() handleTapEditAvatar) {
+    const double avatarSize = 120;
+    return SizedBox(
+      width: avatarSize + 60,
+      height: avatarSize,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            alignment: Alignment.bottomRight,
+            child: InkWell(
+              onTap: () {
+                handleTapEditAvatar();
+              },
+              child: Container(
+                width: 50,
+                height: 50,
+                decoration: const BoxDecoration(
+                  color: MyColor.greenDark,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.edit, color: MyColor.greenSuperLight),
+              ),
+            ),
+          ),
+          Align(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(avatarSize / 2),
+              child: Container(
+                width: avatarSize,
+                height: avatarSize,
+                decoration: const BoxDecoration(
+                  color: MyColor.greenLight,
+                  shape: BoxShape.circle,
+                ),
+                child: Image.network(
+                  avatarUrl ?? '',
+                  width: avatarSize,
+                  height: avatarSize,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _defaultAvatar(avatarSize, color: MyColor.lightRed),
                 ),
               ),
-              placeholder: (context, url) =>
-                  const ColoredBox(color: Colors.white),
-              errorWidget: (context, url, error) =>
-                  Image.asset('assets/images/sky.jpg'),
             ),
-          );
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _defaultAvatar(double avatarSize, {Color? color}) {
+    return CircleAvatar(
+      backgroundColor: color ?? MyColor.greenDark,
+      radius: avatarSize / 2,
+      child: const Icon(Icons.person, size: 70),
+    );
   }
 }

@@ -212,7 +212,7 @@ class EditPageViewModel extends _$EditPageViewModel {
       if (deleteObject.type == ObjectType.networkImage) {
         await ref
             .read(supabaseStorageProvider)
-            .deleteImage(deleteObject.imageUrl!);
+            .deleteObjectImage(deleteObject.imageUrl!);
       }
       final newObjects = state.boardModel!.objects
           .where((element) => element.objectId != objectId)
