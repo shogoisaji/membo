@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/gen/fonts.gen.dart';
@@ -85,6 +86,8 @@ class BoardWidget extends HookWidget {
               ),
             ],
           ),
+
+          /// writable area
           child: Container(
               width: board.width.toDouble(),
               height: board.height.toDouble(),
@@ -103,26 +106,22 @@ class BoardWidget extends HookWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  ...board.objects.map((object) => ClipRRect(
-                      clipper: MyCustomClipper(radius: boardRadius),
-                      child: Stack(
+                  /// 既存のオブジェクト達
+                  ...board.objects.map((object) => Stack(
                         fit: StackFit.expand,
                         children: [
-                          ObjectWidget(object: object, opacity: 1.0),
+                          ObjectWidget(
+                              object: object,
+                              opacity: 1.0,
+                              boardWidth: board.width.toDouble(),
+                              boardHeight: board.height.toDouble())
                         ],
-                      ))),
-                  if (selectedObject != null)
-                    ClipRRect(
-                      clipper: MyCustomClipper(radius: boardRadius),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          SelectedObject(object: selectedObject!),
-                        ],
-                      ),
-                    )
-                  else
-                    const SizedBox.shrink(),
+                      )),
+
+                  /// 選択中のオブジェクト
+                  selectedObject != null
+                      ? SelectedObject(object: selectedObject!, board: board)
+                      : const SizedBox.shrink(),
                 ],
               )),
         ),
@@ -131,9 +130,9 @@ class BoardWidget extends HookWidget {
   }
 }
 
-class MyCustomClipper extends CustomClipper<RRect> {
+class PreventOverflowClipper extends CustomClipper<RRect> {
   final double radius;
-  MyCustomClipper({required this.radius});
+  PreventOverflowClipper({required this.radius});
   @override
   RRect getClip(Size size) {
     return RRect.fromLTRBR(
@@ -146,7 +145,8 @@ class MyCustomClipper extends CustomClipper<RRect> {
 
 class SelectedObject extends HookConsumerWidget {
   final ObjectModel object;
-  const SelectedObject({super.key, required this.object});
+  final BoardModel board;
+  const SelectedObject({super.key, required this.object, required this.board});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -181,7 +181,10 @@ class SelectedObject extends HookConsumerWidget {
           animation: opacityAnimation,
           builder: (context, child) {
             return ObjectWidget(
-                object: object, opacity: opacityAnimation.value);
+                object: object,
+                opacity: opacityAnimation.value,
+                boardWidth: board.width.toDouble(),
+                boardHeight: board.height.toDouble());
           },
         );
       },
@@ -192,7 +195,14 @@ class SelectedObject extends HookConsumerWidget {
 class ObjectWidget extends StatelessWidget {
   final ObjectModel object;
   final double opacity;
-  const ObjectWidget({super.key, required this.object, required this.opacity});
+  final double boardWidth;
+  final double boardHeight;
+  const ObjectWidget(
+      {super.key,
+      required this.object,
+      required this.opacity,
+      required this.boardWidth,
+      required this.boardHeight});
 
   Widget objectCheck() {
     if (object.type == ObjectType.networkImage) {
@@ -209,14 +219,16 @@ class ObjectWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final checkedObjectWidget = objectCheck();
-    final centerX =
-        object.positionX - (object.imageWidth ?? 0.0) * object.scale / 2;
-    final centerY =
-        object.positionY - (object.imageHeight ?? 0.0) * object.scale / 2;
+    final objectCenterX = boardWidth / 2 +
+        object.positionX -
+        (object.imageWidth ?? 0.0) * object.scale / 2;
+    final objectCenterY = boardHeight / 2 +
+        object.positionY -
+        (object.imageHeight ?? 0.0) * object.scale / 2;
 
     return Positioned(
-      top: centerY,
-      left: centerX,
+      top: objectCenterY,
+      left: objectCenterX,
       child: Transform.rotate(
         alignment: object.type == ObjectType.text
             ? Alignment.topLeft
