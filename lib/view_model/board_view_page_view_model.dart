@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:membo/models/board/board_model.dart';
-import 'package:membo/models/user/linked_board_model.dart';
 import 'package:membo/models/view_model_state/board_view_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
@@ -59,7 +58,7 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     });
   }
 
-  Future<void> addLinkedBoard(LinkedBoard linkedBoard) async {
+  Future<void> addLinkedBoardId(String newBoardId) async {
     final user = ref.read(userStateProvider);
     if (user == null) {
       throw Exception('User is not loaded');
@@ -73,12 +72,12 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     });
 
     /// すでにlinkedBoardが存在するか確認
-    if (userData!.linkedBoards.contains(linkedBoard)) {
+    if ((userData!.linkedBoardIds).contains(newBoardId)) {
       throw Exception('Exist linked board');
     }
-    final newLinkedBoards = [...userData.linkedBoards, linkedBoard];
+    final newLinkedBoardIds = [...(userData.linkedBoardIds), newBoardId];
     ref
         .read(supabaseRepositoryProvider)
-        .updateLinkedBoards(userData.userId, newLinkedBoards);
+        .updateLinkedBoardIds(userData.userId, newLinkedBoardIds);
   }
 }

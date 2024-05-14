@@ -16,10 +16,15 @@ _$BoardModelImpl _$$BoardModelImplFromJson(Map<String, dynamic> json) =>
               .toList() ??
           const [],
       ownerId: json['owner_id'] as String,
+      editableUserIds: (json['editable_user_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       width: json['width'] as int? ?? 1000,
       height: json['height'] as int? ?? 1000,
       bgColor: json['bg_color'] as String? ?? '0xffffffff',
       isPublic: json['is_public'] as bool? ?? false,
+      thumbnailUrl: json['thumbnail_url'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
 
@@ -30,9 +35,11 @@ Map<String, dynamic> _$$BoardModelImplToJson(_$BoardModelImpl instance) =>
       'password': instance.password,
       'objects': instance.objects,
       'owner_id': instance.ownerId,
+      'editable_user_ids': instance.editableUserIds,
       'width': instance.width,
       'height': instance.height,
       'bg_color': instance.bgColor,
       'is_public': instance.isPublic,
+      'thumbnail_url': instance.thumbnailUrl,
       'created_at': instance.createdAt.toIso8601String(),
     };

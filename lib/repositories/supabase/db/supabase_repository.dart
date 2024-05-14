@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
-import 'package:membo/models/user/linked_board_model.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -44,12 +43,26 @@ class SupabaseRepository {
           file, 'public_image', '${board.boardId}/${object.objectId}'
           // file, '${board.boardId}/${object.objectId}.$fileModifier'
           );
+      if (storagePath == null) {
+        throw Exception('image url がnullです');
+      }
+
+      String newThumbnailPath;
+
+      /// thumbnail url が null の場合は、thumbnail url を設定する
+      if (board.thumbnailUrl == null) {
+        newThumbnailPath = storagePath;
+      } else {
+        newThumbnailPath = board.thumbnailUrl!;
+      }
+
       final insertObject = object.copyWith(
         type: ObjectType.networkImage,
         imageUrl: storagePath,
       );
-      final newBoard =
-          board.copyWith(objects: [...board.objects, insertObject]);
+      final newBoard = board.copyWith(
+          thumbnailUrl: newThumbnailPath,
+          objects: [...board.objects, insertObject]);
       updateBoard(newBoard);
     } catch (e) {
       throw Exception('addImageObjectでexceptionが発生しました :$e');
@@ -139,8 +152,8 @@ class SupabaseRepository {
           await _client.from('boards').select().eq('board_id', id).single();
       final board = BoardModel.fromJson(response);
       return board;
-    } catch (err) {
-      // throw Exception('Error getting board: $err');
+    } catch (e) {
+      print('board を取得できませんでした : board id -> $id');
     }
     return null;
   }
@@ -152,11 +165,13 @@ class SupabaseRepository {
     try {
       final response =
           await _client.from('profiles').select().eq('user_id', id).single();
+      print('response: $response');
       final userData = UserModel.fromJson(response);
       return userData;
     } catch (err) {
-      throw Exception('Error getting user data: $err');
+      // throw Exception('Error fetch user data: $err');
     }
+    return null;
   }
 
   Future<void> updateUserName(
@@ -180,15 +195,12 @@ class SupabaseRepository {
     await _client.from('profiles').delete().eq('user_id', userId).single();
   }
 
-  Future<void> addOwnedBoardId(String userId, List<String> currentOwnedBoardIds,
-      String addBoardId) async {
-    final newOwnedBoardIds = [...currentOwnedBoardIds, addBoardId];
+  Future<void> updateOwnedBoardIds(
+      String userId, List<String> newOwnedBoardIds) async {
     try {
       await _client
           .from('profiles')
-          .update({'owned_board_ids': newOwnedBoardIds})
-          .eq('user_id', userId)
-          .single();
+          .update({'owned_board_ids': newOwnedBoardIds}).eq('user_id', userId);
     } catch (err) {
       rethrow;
     }
@@ -213,16 +225,30 @@ class SupabaseRepository {
     }
   }
 
-  Future<void> updateLinkedBoards(
-      String userId, List<LinkedBoard> newLinkedBoards) async {
+  Future<void> updateLinkedBoardIds(
+      String userId, List<String> newLinkedBoardIds) async {
     try {
       await _client
           .from('profiles')
-          .update({'linked_boards': newLinkedBoards})
+          .update({'linked_board_ids': newLinkedBoardIds})
           .eq('user_id', userId)
           .single();
     } catch (err) {
       rethrow;
+    }
+  }
+
+  Future<String> fetchAvatarImageUrl(String userId) async {
+    try {
+      final response = await _client
+          .from('profiles')
+          .select('avatar_url')
+          .eq('user_id', userId)
+          .single();
+      print('response: $response');
+      return response['avatar_url'];
+    } catch (err) {
+      throw Exception('Error fetch avatar image url: $err');
     }
   }
 }

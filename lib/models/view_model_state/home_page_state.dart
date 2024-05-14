@@ -1,5 +1,5 @@
 import 'package:membo/models/board/board_model.dart';
-import 'package:membo/models/user/linked_board_model.dart';
+import 'package:membo/models/board/board_permission.dart';
 import 'package:membo/models/user/user_model.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -11,16 +11,14 @@ class HomePageState with _$HomePageState {
   const factory HomePageState({
     @Default(true) bool isLoading,
     UserModel? userModel,
-    @Default([]) List<ShowBoardModel> showBoardModels,
+    @Default([]) List<CardBoardModel> cardBoardList,
+    @Default([]) List<String> carouselImageUrls,
   }) = _HomePageState;
 }
 
-class ShowBoardModel {
-  final LinkedBoardType boardType;
-  final BoardModel boardModel;
+class CardBoardModel {
+  final BoardModel board;
+  final BoardPermission permission;
 
-  ShowBoardModel({
-    required this.boardType,
-    required this.boardModel,
-  });
+  const CardBoardModel({required this.board, required this.permission});
 }

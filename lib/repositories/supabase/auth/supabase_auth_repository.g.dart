@@ -39,7 +39,7 @@ final sessionStateStreamProvider = AutoDisposeStreamProvider<Session?>.internal(
 );
 
 typedef SessionStateStreamRef = AutoDisposeStreamProviderRef<Session?>;
-String _$sessionStateHash() => r'a889f4efd9220b7f3bf8f6f12453acce2470c3a6';
+String _$sessionStateHash() => r'1e9f5c2d9e4eef8796010596efad180bfc41ed15';
 
 /// See also [sessionState].
 @ProviderFor(sessionState)

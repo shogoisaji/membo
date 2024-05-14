@@ -215,7 +215,8 @@ class AccountPage extends HookConsumerWidget {
                                       backgroundColor: MyColor.greenLight,
                                       contentWidgets: [
                                         Text(
-                                          accountPageState.ownBoardCount
+                                          (accountPageState.user!.ownedBoardIds)
+                                              .length
                                               .toString(),
                                           style: lightTextTheme.bodyLarge,
                                         ),
@@ -228,9 +229,9 @@ class AccountPage extends HookConsumerWidget {
                                       backgroundColor: MyColor.greenLight,
                                       contentWidgets: [
                                         Text(
-                                          (accountPageState.viewBoardCount +
-                                                  accountPageState
-                                                      .createBoardCount)
+                                          (accountPageState
+                                                  .user!.linkedBoardIds)
+                                              .length
                                               .toString(),
                                           style: lightTextTheme.bodyLarge,
                                         ),

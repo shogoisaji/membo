@@ -1,5 +1,4 @@
 import 'package:image_picker/image_picker.dart';
-import 'package:membo/models/user/linked_board_model.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/models/view_model_state/account_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
@@ -25,21 +24,6 @@ class AccountPageViewModel extends _$AccountPageViewModel {
       throw Exception('User is not loaded');
     }
 
-    /// それぞれのボードの種類をカウント
-    for (LinkedBoard linkedBoard in userData.linkedBoards) {
-      switch (linkedBoard.type) {
-        case LinkedBoardType.view:
-          state = state.copyWith(viewBoardCount: state.viewBoardCount + 1);
-          break;
-        case LinkedBoardType.create:
-          state = state.copyWith(createBoardCount: state.createBoardCount + 1);
-          break;
-        case LinkedBoardType.own:
-          state = state.copyWith(ownBoardCount: state.ownBoardCount + 1);
-          break;
-      }
-    }
-    print('userData: ${userData.avatarUrl}');
     state = state.copyWith(user: userData, isLoading: false);
   }
 
