@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:membo/env/env.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -120,7 +121,8 @@ class SupabaseAuthRepository {
         nonce: rawNonce,
       );
     } catch (e) {
-      throw AuthException('Apple Sign In failed on Supabase. $e');
+      throw AppException.error('Sign in に失敗しました',
+          detail: 'Apple Sign In failed on Supabase. $e');
     }
   }
 

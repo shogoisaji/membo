@@ -11,27 +11,32 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
   @override
   BoardSettingsState build() => BoardSettingsState();
 
-  void initializeLoad(String boardId) async {
-    final board =
-        await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
-    if (board == null) {
-      throw Exception('Board is not loaded');
+  Future<void> initializeLoad(String boardId) async {
+    try {
+      final board =
+          await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+
+      if (board == null) {
+        throw Exception('Board is null');
+      }
+      final currentUser = ref.read(userStateProvider);
+      if (currentUser == null) {
+        throw Exception('User is not loaded');
+      }
+      final ownerData = await ref
+          .read(supabaseRepositoryProvider)
+          .fetchUserData(board.ownerId)
+          .catchError((e) {
+        throw Exception('Owner data is not loaded');
+      });
+      state = state.copyWith(
+          currentBoard: board,
+          tempBoard: board,
+          ownerName: ownerData?.userName ?? '-',
+          isOwner: currentUser.id == board.ownerId);
+    } catch (e) {
+      throw Exception('error initializeLoad: $e');
     }
-    final currentUser = ref.read(userStateProvider);
-    if (currentUser == null) {
-      throw Exception('User is not loaded');
-    }
-    final ownerData = await ref
-        .read(supabaseRepositoryProvider)
-        .fetchUserData(board.ownerId)
-        .catchError((e) {
-      throw Exception('Owner data is not loaded');
-    });
-    state = state.copyWith(
-        currentBoard: board,
-        tempBoard: board,
-        ownerName: ownerData?.userName ?? '-',
-        isOwner: currentUser.id == board.ownerId);
   }
 
   ///

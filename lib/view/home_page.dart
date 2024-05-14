@@ -9,6 +9,8 @@ import 'package:membo/settings/text_theme.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_home_card_widget.dart';
+import 'package:membo/widgets/custom_snackbar.dart';
+import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/sharing_widget.dart';
 
 class HomePage extends HookConsumerWidget {
@@ -33,6 +35,21 @@ class HomePage extends HookConsumerWidget {
 
     void handleTapView(String boardId) {
       context.go('/view', extra: boardId);
+    }
+
+    void handleTapDelete(String boardId) async {
+      try {
+        await ref
+            .read(homePageViewModelProvider.notifier)
+            .deleteBoardFromCard(boardId);
+        if (context.mounted) {
+          CustomSnackBar.show(context, 'Board deleted', MyColor.blue);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
+      }
     }
 
     useEffect(() {
@@ -142,6 +159,10 @@ class HomePage extends HookConsumerWidget {
                                   },
                                   onTapView: () {
                                     handleTapView(homePageState
+                                        .cardBoardList[index].board.boardId);
+                                  },
+                                  onTapDelete: () {
+                                    handleTapDelete(homePageState
                                         .cardBoardList[index].board.boardId);
                                   },
                                   permission: homePageState

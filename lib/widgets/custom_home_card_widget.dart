@@ -16,6 +16,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
   final BoardPermission permission;
   final Function() onTapQr;
   final Function() onTapView;
+  final Function() onTapDelete;
   const CustomHomeCardWidget(
       {super.key,
       required this.board,
@@ -24,6 +25,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
       required this.imageUrl,
       required this.onTapQr,
       required this.onTapView,
+      required this.onTapDelete,
       required this.permission});
 
   @override
@@ -72,6 +74,10 @@ class CustomHomeCardWidget extends HookConsumerWidget {
         print('Editor avatar image url is not loaded: $e');
         throw Exception('Editor avatar image url is not loaded');
       }
+    }
+
+    void handleTapDeleteCancel() {
+      deleteFirstTap.value = false;
     }
 
     useEffect(() {
@@ -299,7 +305,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                 Expanded(
                                   child: deleteFirstTap.value
                                       ? DeleteButton(onTap: () {
-                                          //
+                                          onTapDelete();
                                         })
                                       : QrButton(
                                           onTap: () {
@@ -312,7 +318,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                 Expanded(
                                   child: deleteFirstTap.value
                                       ? DeleteCancelButton(onTap: () {
-                                          //
+                                          handleTapDeleteCancel();
                                         })
                                       : ViewButton(
                                           onTap: () {
@@ -470,30 +476,30 @@ class DeleteButton extends StatelessWidget {
         onTap();
       },
       child: Container(
-        decoration: BoxDecoration(
-          color: MyColor.red,
-          borderRadius: const BorderRadius.only(
-            bottomRight: Radius.circular(3),
-            bottomLeft: Radius.circular(10),
-            topLeft: Radius.circular(3),
-            topRight: Radius.circular(3),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 3,
-              spreadRadius: 0.2,
-              offset: const Offset(1, 1),
+          decoration: BoxDecoration(
+            color: MyColor.red,
+            borderRadius: const BorderRadius.only(
+              bottomRight: Radius.circular(3),
+              bottomLeft: Radius.circular(10),
+              topLeft: Radius.circular(3),
+              topRight: Radius.circular(3),
             ),
-          ],
-        ),
-        padding: const EdgeInsets.all(6),
-        child: const Icon(
-          Icons.delete,
-          color: MyColor.greenSuperLight,
-          size: 30,
-        ),
-      ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 3,
+                spreadRadius: 0.2,
+                offset: const Offset(1, 1),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(6),
+          child: SvgPicture.asset(
+            'assets/images/svg/dustbox.svg',
+            color: MyColor.greenSuperLight,
+            width: 30,
+            height: 30,
+          )),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/board/board_permission.dart';
 import 'package:membo/models/view_model_state/home_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
@@ -38,6 +39,8 @@ class HomePageViewModel extends _$HomePageViewModel {
       try {
         final board =
             await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+
+        /// boardがnullの場合
         if (board == null) {
           continue;
         }
@@ -64,5 +67,65 @@ class HomePageViewModel extends _$HomePageViewModel {
       cardBoardList: tempCardBoardList,
       carouselImageUrls: tempThumbnailUrls,
     );
+  }
+
+  Future<void> deleteBoardFromCard(String boardId) async {
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+    final userData =
+        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    if (userData == null) {
+      throw Exception('User data is not loaded');
+    }
+
+    if (userData.ownedBoardIds.contains(boardId)) {
+      try {
+        /// boardの削除
+        await ref.read(supabaseRepositoryProvider).deleteBoard(boardId);
+        final newOwnedBoardIds = userData.ownedBoardIds
+            .where((element) => element != boardId)
+            .toList();
+
+        /// ownedBoardIdsの更新
+        await ref
+            .read(supabaseRepositoryProvider)
+            .updateOwnedBoardIds(userData.userId, newOwnedBoardIds);
+
+        /// stateの更新
+        state = state.copyWith(
+          cardBoardList: state.cardBoardList
+              .where((element) => element.board.boardId != boardId)
+              .toList(),
+        );
+      } catch (e) {
+        throw AppException.error('board delete failed',
+            detail: 'owned board delete failed : $e');
+      }
+    }
+
+    if (userData.linkedBoardIds.contains(boardId)) {
+      try {
+        final newLinkedBoardIds = userData.linkedBoardIds
+            .where((element) => element != boardId)
+            .toList();
+
+        /// linkedBoardIdsの更新
+        await ref
+            .read(supabaseRepositoryProvider)
+            .updateLinkedBoardIds(userData.userId, newLinkedBoardIds);
+
+        /// stateの更新
+        state = state.copyWith(
+          cardBoardList: state.cardBoardList
+              .where((element) => element.board.boardId != boardId)
+              .toList(),
+        );
+      } catch (e) {
+        throw AppException.error('board delete failed',
+            detail: 'linked board delete failed : $e');
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/models/user/user_model.dart';
@@ -28,8 +29,8 @@ class SupabaseRepository {
       final insertBoardJson = board.toJson();
       await _client.from('boards').insert(insertBoardJson);
       return board.boardId;
-    } catch (err) {
-      throw Exception('Error inserting board: $err');
+    } catch (e) {
+      throw AppException.error('Board insert error', detail: '$e');
     }
   }
 
@@ -40,11 +41,9 @@ class SupabaseRepository {
     try {
       /// storageに画像をアップロード
       final storagePath = await storage.uploadXFileImage(
-          file, 'public_image', '${board.boardId}/${object.objectId}'
-          // file, '${board.boardId}/${object.objectId}.$fileModifier'
-          );
+          file, 'public_image', '${board.boardId}/${object.objectId}');
       if (storagePath == null) {
-        throw Exception('image url がnullです');
+        throw AppException.warning('storage path is null');
       }
 
       String newThumbnailPath;
@@ -65,7 +64,8 @@ class SupabaseRepository {
           objects: [...board.objects, insertObject]);
       updateBoard(newBoard);
     } catch (e) {
-      throw Exception('addImageObjectでexceptionが発生しました :$e');
+      throw AppException.error('object add to board failed',
+          detail: 'addImageObject() :$e');
     }
   }
 
@@ -85,45 +85,21 @@ class SupabaseRepository {
           .update(object)
           .eq('board_id', updatedBoard.boardId)
           .single();
-    } catch (err) {
-      /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
-      print('Error updating board: $err');
+    } catch (e) {
+      throw AppException.error('Board update error',
+          detail: 'updateBoard() :$e');
     }
   }
 
   Future<void> deleteBoard(String boardId) async {
     try {
-      /// storage imageを削除する
-      // final board = await getBoardById(boardId);
-      // final storage = SupabaseStorage(_client);
-      // for (final object in board!.objects) {
-      //   if (object.type == ObjectType.networkImage) {
-      //     await storage.deleteImage(object.imageUrl!);
-      //   }
-      // }
-
       /// db boardを削除する
-      await _client.from('boards').delete().eq('board_id', boardId).single();
-    } catch (err) {
-      throw Exception('Error deleting board: $err');
+      await _client.from('boards').delete().eq('board_id', boardId);
+    } catch (e) {
+      throw AppException.error('Board delete error',
+          detail: 'deleteBoard() :$e');
     }
   }
-
-  /// maybe no use
-  // Future<void> updateBoardSettings(
-  //     String boardId, BoardSettingsModel updatedBoardSettings) async {
-  //   final newSettings = updatedBoardSettings.toJson();
-  //   try {
-  //     await _client
-  //         .from('boards')
-  //         .update({'settings': newSettings})
-  //         .eq('board_id', boardId)
-  //         .single();
-  //   } catch (err) {
-  //     /// error -> type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'
-  //     print('Error updating board: $err');
-  //   }
-  // }
 
   Stream<BoardModel?> boardStream(String boardId) {
     final StreamController<BoardModel?> controller =
@@ -148,14 +124,16 @@ class SupabaseRepository {
 
   Future<BoardModel?> getBoardById(String id) async {
     try {
-      final response =
-          await _client.from('boards').select().eq('board_id', id).single();
-      final board = BoardModel.fromJson(response);
+      final response = await _client.from('boards').select().eq('board_id', id);
+      if (response.isEmpty) {
+        throw AppException.notFound();
+      }
+      final board = BoardModel.fromJson(response[0]);
       return board;
     } catch (e) {
-      print('board を取得できませんでした : board id -> $id');
+      throw AppException.warning('Boardを取得できませんでした',
+          detail: 'getBoardById() : board id -> $id');
     }
-    return null;
   }
 
   ///----------------------------------------
@@ -165,13 +143,12 @@ class SupabaseRepository {
     try {
       final response =
           await _client.from('profiles').select().eq('user_id', id).single();
-      print('response: $response');
       final userData = UserModel.fromJson(response);
       return userData;
-    } catch (err) {
-      // throw Exception('Error fetch user data: $err');
+    } catch (e) {
+      throw AppException.warning('fetch user data failed',
+          detail: 'fetchUserData() : user id -> $id');
     }
-    return null;
   }
 
   Future<void> updateUserName(
@@ -181,18 +158,11 @@ class SupabaseRepository {
     try {
       await _client
           .from('profiles')
-          .update({'user_name': newUserName})
-          .eq('user_id', userId)
-          .single();
-    } on TypeError catch (_) {
-      // ???
-    } catch (err) {
-      throw Exception('Error updating user name: $err');
+          .update({'user_name': newUserName}).eq('user_id', userId);
+    } catch (e) {
+      throw AppException.error('User name update error',
+          detail: 'updateUserName() :$e');
     }
-  }
-
-  Future<void> deleteAccount(String userId) async {
-    await _client.from('profiles').delete().eq('user_id', userId).single();
   }
 
   Future<void> updateOwnedBoardIds(
@@ -201,8 +171,20 @@ class SupabaseRepository {
       await _client
           .from('profiles')
           .update({'owned_board_ids': newOwnedBoardIds}).eq('user_id', userId);
-    } catch (err) {
-      rethrow;
+    } catch (e) {
+      throw AppException.error('Owned board ids update error',
+          detail: 'updateOwnedBoardIds() :$e');
+    }
+  }
+
+  Future<void> updateLinkedBoardIds(
+      String userId, List<String> newLinkedBoardIds) async {
+    try {
+      await _client.from('profiles').update(
+          {'linked_board_ids': newLinkedBoardIds}).eq('user_id', userId);
+    } catch (e) {
+      throw AppException.error('Linked board ids update error',
+          detail: 'updateLinkedBoardIds() :$e');
     }
   }
 
@@ -221,20 +203,8 @@ class SupabaseRepository {
           .update({'avatar_url': storagePath}).eq('user_id', userData.userId);
       return storagePath;
     } catch (e) {
-      throw Exception('updateAvatarImageでexceptionが発生しました');
-    }
-  }
-
-  Future<void> updateLinkedBoardIds(
-      String userId, List<String> newLinkedBoardIds) async {
-    try {
-      await _client
-          .from('profiles')
-          .update({'linked_board_ids': newLinkedBoardIds})
-          .eq('user_id', userId)
-          .single();
-    } catch (err) {
-      rethrow;
+      throw AppException.error('Avatar image update error',
+          detail: 'updateAvatarImage() :$e');
     }
   }
 
@@ -245,10 +215,10 @@ class SupabaseRepository {
           .select('avatar_url')
           .eq('user_id', userId)
           .single();
-      print('response: $response');
       return response['avatar_url'];
-    } catch (err) {
-      throw Exception('Error fetch avatar image url: $err');
+    } catch (e) {
+      throw AppException.warning('Avatar image url fetch error',
+          detail: 'fetchAvatarImageUrl() :$e');
     }
   }
 }
