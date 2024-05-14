@@ -1,4 +1,4 @@
-import 'package:membo/models/user/linked_board_model.dart';
+import 'package:membo/models/board/board_permission.dart';
 import 'package:membo/models/view_model_state/home_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
@@ -27,29 +27,42 @@ class HomePageViewModel extends _$HomePageViewModel {
       return;
     }
 
-    final tempShowBoardModels = <ShowBoardModel>[];
+    final tempCardBoardList = <CardBoardModel>[];
+    final tempThumbnailUrls = <String>[];
 
-    for (LinkedBoard linkedBoard in userData.linkedBoards) {
+    /// 同じ要素を排除するために、集合にしてからリストに戻す
+    final linkAndOwnBoards =
+        {...userData.linkedBoardIds, ...userData.ownedBoardIds}.toList();
+
+    for (String boardId in linkAndOwnBoards) {
       try {
-        final board = await ref
-            .read(supabaseRepositoryProvider)
-            .getBoardById(linkedBoard.boardId);
+        final board =
+            await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
         if (board == null) {
           continue;
         }
-        final showBoardModel = ShowBoardModel(
-          boardType: linkedBoard.type,
-          boardModel: board,
-        );
-        tempShowBoardModels.add(showBoardModel);
+
+        if (board.thumbnailUrl != null) {
+          tempThumbnailUrls.add(board.thumbnailUrl!);
+        }
+
+        /// permission check
+        final permission = board.ownerId == userData.userId
+            ? BoardPermission.owner
+            : board.editableUserIds.contains(userData.userId)
+                ? BoardPermission.editor
+                : BoardPermission.viewer;
+        tempCardBoardList
+            .add(CardBoardModel(board: board, permission: permission));
       } catch (e) {
         print('error: $e');
       }
     }
-    // await Future.delayed(const Duration(milliseconds: 500));
     state = state.copyWith(
-        isLoading: false,
-        userModel: userData,
-        showBoardModels: tempShowBoardModels);
+      isLoading: false,
+      userModel: userData,
+      cardBoardList: tempCardBoardList,
+      carouselImageUrls: tempThumbnailUrls,
+    );
   }
 }

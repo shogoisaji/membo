@@ -136,14 +136,13 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
       /// Board削除
       await ref.read(supabaseRepositoryProvider).deleteBoard(board.boardId);
 
-      final removedLinkedBoards = userData.linkedBoards
-          .where((element) => element.boardId != board.boardId)
-          .toList();
-
       /// userのlinkedBoardsからBoardを削除
+      final removedOwnedBoardIds = userData.ownedBoardIds
+          .where((element) => element != board.boardId)
+          .toList();
       await ref
           .read(supabaseRepositoryProvider)
-          .updateLinkedBoards(user.id, removedLinkedBoards);
+          .updateOwnedBoardIds(user.id, removedOwnedBoardIds);
     } catch (e) {
       if (e.toString() ==
           "Exception: Error deleting board: type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'") {

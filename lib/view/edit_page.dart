@@ -100,9 +100,6 @@ class EditPage extends HookConsumerWidget {
     void standbyCheck() {
       if (isMatrixSet.value == false) return;
 
-      /// 故意的に遅延させている
-      // Future.delayed(const Duration(milliseconds: 100), () {
-      // });
       isLoading.value = false;
     }
 

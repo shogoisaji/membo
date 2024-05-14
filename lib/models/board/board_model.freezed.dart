@@ -30,7 +30,10 @@ mixin _$BoardModel {
   List<ObjectModel> get objects =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'owner_id')
-  String get ownerId => throw _privateConstructorUsedError;
+  String get ownerId =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'editable_user_ids')
+  List<String> get editableUserIds => throw _privateConstructorUsedError;
   int get width => throw _privateConstructorUsedError;
   int get height =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
@@ -39,6 +42,9 @@ mixin _$BoardModel {
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'is_public')
   bool get isPublic =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'thumbnail_url')
+  String? get thumbnailUrl =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
@@ -61,10 +67,12 @@ abstract class $BoardModelCopyWith<$Res> {
       String password,
       List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') String ownerId,
+      @JsonKey(name: 'editable_user_ids') List<String> editableUserIds,
       int width,
       int height,
       @JsonKey(name: 'bg_color') String bgColor,
       @JsonKey(name: 'is_public') bool isPublic,
+      @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
       @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
@@ -86,10 +94,12 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
+    Object? editableUserIds = null,
     Object? width = null,
     Object? height = null,
     Object? bgColor = null,
     Object? isPublic = null,
+    Object? thumbnailUrl = freezed,
     Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
@@ -113,6 +123,10 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
               as String,
+      editableUserIds: null == editableUserIds
+          ? _value.editableUserIds
+          : editableUserIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       width: null == width
           ? _value.width
           : width // ignore: cast_nullable_to_non_nullable
@@ -129,6 +143,10 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
           ? _value.isPublic
           : isPublic // ignore: cast_nullable_to_non_nullable
               as bool,
+      thumbnailUrl: freezed == thumbnailUrl
+          ? _value.thumbnailUrl
+          : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -151,10 +169,12 @@ abstract class _$$BoardModelImplCopyWith<$Res>
       String password,
       List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') String ownerId,
+      @JsonKey(name: 'editable_user_ids') List<String> editableUserIds,
       int width,
       int height,
       @JsonKey(name: 'bg_color') String bgColor,
       @JsonKey(name: 'is_public') bool isPublic,
+      @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
       @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
@@ -174,10 +194,12 @@ class __$$BoardModelImplCopyWithImpl<$Res>
     Object? password = null,
     Object? objects = null,
     Object? ownerId = null,
+    Object? editableUserIds = null,
     Object? width = null,
     Object? height = null,
     Object? bgColor = null,
     Object? isPublic = null,
+    Object? thumbnailUrl = freezed,
     Object? createdAt = null,
   }) {
     return _then(_$BoardModelImpl(
@@ -201,6 +223,10 @@ class __$$BoardModelImplCopyWithImpl<$Res>
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
               as String,
+      editableUserIds: null == editableUserIds
+          ? _value._editableUserIds
+          : editableUserIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       width: null == width
           ? _value.width
           : width // ignore: cast_nullable_to_non_nullable
@@ -217,6 +243,10 @@ class __$$BoardModelImplCopyWithImpl<$Res>
           ? _value.isPublic
           : isPublic // ignore: cast_nullable_to_non_nullable
               as bool,
+      thumbnailUrl: freezed == thumbnailUrl
+          ? _value.thumbnailUrl
+          : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -234,12 +264,16 @@ class _$BoardModelImpl implements _BoardModel {
       this.password = '',
       final List<ObjectModel> objects = const [],
       @JsonKey(name: 'owner_id') required this.ownerId,
+      @JsonKey(name: 'editable_user_ids')
+      final List<String> editableUserIds = const [],
       this.width = 1000,
       this.height = 1000,
       @JsonKey(name: 'bg_color') this.bgColor = '0xffffffff',
       @JsonKey(name: 'is_public') this.isPublic = false,
+      @JsonKey(name: 'thumbnail_url') this.thumbnailUrl,
       @JsonKey(name: 'created_at') required this.createdAt})
-      : _objects = objects;
+      : _objects = objects,
+        _editableUserIds = editableUserIds;
 
   factory _$BoardModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$BoardModelImplFromJson(json);
@@ -268,6 +302,17 @@ class _$BoardModelImpl implements _BoardModel {
   @override
   @JsonKey(name: 'owner_id')
   final String ownerId;
+// ignore: invalid_annotation_target
+  final List<String> _editableUserIds;
+// ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'editable_user_ids')
+  List<String> get editableUserIds {
+    if (_editableUserIds is EqualUnmodifiableListView) return _editableUserIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_editableUserIds);
+  }
+
   @override
   @JsonKey()
   final int width;
@@ -284,12 +329,16 @@ class _$BoardModelImpl implements _BoardModel {
   final bool isPublic;
 // ignore: invalid_annotation_target
   @override
+  @JsonKey(name: 'thumbnail_url')
+  final String? thumbnailUrl;
+// ignore: invalid_annotation_target
+  @override
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   @override
   String toString() {
-    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, width: $width, height: $height, bgColor: $bgColor, isPublic: $isPublic, createdAt: $createdAt)';
+    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, editableUserIds: $editableUserIds, width: $width, height: $height, bgColor: $bgColor, isPublic: $isPublic, thumbnailUrl: $thumbnailUrl, createdAt: $createdAt)';
   }
 
   @override
@@ -304,11 +353,15 @@ class _$BoardModelImpl implements _BoardModel {
                 other.password == password) &&
             const DeepCollectionEquality().equals(other._objects, _objects) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
+            const DeepCollectionEquality()
+                .equals(other._editableUserIds, _editableUserIds) &&
             (identical(other.width, width) || other.width == width) &&
             (identical(other.height, height) || other.height == height) &&
             (identical(other.bgColor, bgColor) || other.bgColor == bgColor) &&
             (identical(other.isPublic, isPublic) ||
                 other.isPublic == isPublic) &&
+            (identical(other.thumbnailUrl, thumbnailUrl) ||
+                other.thumbnailUrl == thumbnailUrl) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -322,10 +375,12 @@ class _$BoardModelImpl implements _BoardModel {
       password,
       const DeepCollectionEquality().hash(_objects),
       ownerId,
+      const DeepCollectionEquality().hash(_editableUserIds),
       width,
       height,
       bgColor,
       isPublic,
+      thumbnailUrl,
       createdAt);
 
   @JsonKey(ignore: true)
@@ -344,17 +399,19 @@ class _$BoardModelImpl implements _BoardModel {
 
 abstract class _BoardModel implements BoardModel {
   const factory _BoardModel(
-          {@JsonKey(name: 'board_id') required final String boardId,
-          @JsonKey(name: 'board_name') final String boardName,
-          final String password,
-          final List<ObjectModel> objects,
-          @JsonKey(name: 'owner_id') required final String ownerId,
-          final int width,
-          final int height,
-          @JsonKey(name: 'bg_color') final String bgColor,
-          @JsonKey(name: 'is_public') final bool isPublic,
-          @JsonKey(name: 'created_at') required final DateTime createdAt}) =
-      _$BoardModelImpl;
+      {@JsonKey(name: 'board_id') required final String boardId,
+      @JsonKey(name: 'board_name') final String boardName,
+      final String password,
+      final List<ObjectModel> objects,
+      @JsonKey(name: 'owner_id') required final String ownerId,
+      @JsonKey(name: 'editable_user_ids') final List<String> editableUserIds,
+      final int width,
+      final int height,
+      @JsonKey(name: 'bg_color') final String bgColor,
+      @JsonKey(name: 'is_public') final bool isPublic,
+      @JsonKey(name: 'thumbnail_url') final String? thumbnailUrl,
+      @JsonKey(name: 'created_at')
+      required final DateTime createdAt}) = _$BoardModelImpl;
 
   factory _BoardModel.fromJson(Map<String, dynamic> json) =
       _$BoardModelImpl.fromJson;
@@ -372,6 +429,9 @@ abstract class _BoardModel implements BoardModel {
   @override // ignore: invalid_annotation_target
   @JsonKey(name: 'owner_id')
   String get ownerId;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'editable_user_ids')
+  List<String> get editableUserIds;
   @override
   int get width;
   @override
@@ -382,6 +442,9 @@ abstract class _BoardModel implements BoardModel {
   @override // ignore: invalid_annotation_target
   @JsonKey(name: 'is_public')
   bool get isPublic;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'thumbnail_url')
+  String? get thumbnailUrl;
   @override // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt;

@@ -18,9 +18,6 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AccountPageState {
   bool get isLoading => throw _privateConstructorUsedError;
   UserModel? get user => throw _privateConstructorUsedError;
-  int get viewBoardCount => throw _privateConstructorUsedError;
-  int get createBoardCount => throw _privateConstructorUsedError;
-  int get ownBoardCount => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $AccountPageStateCopyWith<AccountPageState> get copyWith =>
@@ -33,12 +30,7 @@ abstract class $AccountPageStateCopyWith<$Res> {
           AccountPageState value, $Res Function(AccountPageState) then) =
       _$AccountPageStateCopyWithImpl<$Res, AccountPageState>;
   @useResult
-  $Res call(
-      {bool isLoading,
-      UserModel? user,
-      int viewBoardCount,
-      int createBoardCount,
-      int ownBoardCount});
+  $Res call({bool isLoading, UserModel? user});
 
   $UserModelCopyWith<$Res>? get user;
 }
@@ -58,9 +50,6 @@ class _$AccountPageStateCopyWithImpl<$Res, $Val extends AccountPageState>
   $Res call({
     Object? isLoading = null,
     Object? user = freezed,
-    Object? viewBoardCount = null,
-    Object? createBoardCount = null,
-    Object? ownBoardCount = null,
   }) {
     return _then(_value.copyWith(
       isLoading: null == isLoading
@@ -71,18 +60,6 @@ class _$AccountPageStateCopyWithImpl<$Res, $Val extends AccountPageState>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as UserModel?,
-      viewBoardCount: null == viewBoardCount
-          ? _value.viewBoardCount
-          : viewBoardCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      createBoardCount: null == createBoardCount
-          ? _value.createBoardCount
-          : createBoardCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      ownBoardCount: null == ownBoardCount
-          ? _value.ownBoardCount
-          : ownBoardCount // ignore: cast_nullable_to_non_nullable
-              as int,
     ) as $Val);
   }
 
@@ -107,12 +84,7 @@ abstract class _$$AccountPageStateImplCopyWith<$Res>
       __$$AccountPageStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool isLoading,
-      UserModel? user,
-      int viewBoardCount,
-      int createBoardCount,
-      int ownBoardCount});
+  $Res call({bool isLoading, UserModel? user});
 
   @override
   $UserModelCopyWith<$Res>? get user;
@@ -131,9 +103,6 @@ class __$$AccountPageStateImplCopyWithImpl<$Res>
   $Res call({
     Object? isLoading = null,
     Object? user = freezed,
-    Object? viewBoardCount = null,
-    Object? createBoardCount = null,
-    Object? ownBoardCount = null,
   }) {
     return _then(_$AccountPageStateImpl(
       isLoading: null == isLoading
@@ -144,18 +113,6 @@ class __$$AccountPageStateImplCopyWithImpl<$Res>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as UserModel?,
-      viewBoardCount: null == viewBoardCount
-          ? _value.viewBoardCount
-          : viewBoardCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      createBoardCount: null == createBoardCount
-          ? _value.createBoardCount
-          : createBoardCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      ownBoardCount: null == ownBoardCount
-          ? _value.ownBoardCount
-          : ownBoardCount // ignore: cast_nullable_to_non_nullable
-              as int,
     ));
   }
 }
@@ -163,31 +120,17 @@ class __$$AccountPageStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$AccountPageStateImpl implements _AccountPageState {
-  const _$AccountPageStateImpl(
-      {this.isLoading = true,
-      this.user,
-      this.viewBoardCount = 0,
-      this.createBoardCount = 0,
-      this.ownBoardCount = 0});
+  const _$AccountPageStateImpl({this.isLoading = true, this.user});
 
   @override
   @JsonKey()
   final bool isLoading;
   @override
   final UserModel? user;
-  @override
-  @JsonKey()
-  final int viewBoardCount;
-  @override
-  @JsonKey()
-  final int createBoardCount;
-  @override
-  @JsonKey()
-  final int ownBoardCount;
 
   @override
   String toString() {
-    return 'AccountPageState(isLoading: $isLoading, user: $user, viewBoardCount: $viewBoardCount, createBoardCount: $createBoardCount, ownBoardCount: $ownBoardCount)';
+    return 'AccountPageState(isLoading: $isLoading, user: $user)';
   }
 
   @override
@@ -197,18 +140,11 @@ class _$AccountPageStateImpl implements _AccountPageState {
             other is _$AccountPageStateImpl &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
-            (identical(other.user, user) || other.user == user) &&
-            (identical(other.viewBoardCount, viewBoardCount) ||
-                other.viewBoardCount == viewBoardCount) &&
-            (identical(other.createBoardCount, createBoardCount) ||
-                other.createBoardCount == createBoardCount) &&
-            (identical(other.ownBoardCount, ownBoardCount) ||
-                other.ownBoardCount == ownBoardCount));
+            (identical(other.user, user) || other.user == user));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, isLoading, user, viewBoardCount,
-      createBoardCount, ownBoardCount);
+  int get hashCode => Object.hash(runtimeType, isLoading, user);
 
   @JsonKey(ignore: true)
   @override
@@ -220,22 +156,12 @@ class _$AccountPageStateImpl implements _AccountPageState {
 
 abstract class _AccountPageState implements AccountPageState {
   const factory _AccountPageState(
-      {final bool isLoading,
-      final UserModel? user,
-      final int viewBoardCount,
-      final int createBoardCount,
-      final int ownBoardCount}) = _$AccountPageStateImpl;
+      {final bool isLoading, final UserModel? user}) = _$AccountPageStateImpl;
 
   @override
   bool get isLoading;
   @override
   UserModel? get user;
-  @override
-  int get viewBoardCount;
-  @override
-  int get createBoardCount;
-  @override
-  int get ownBoardCount;
   @override
   @JsonKey(ignore: true)
   _$$AccountPageStateImplCopyWith<_$AccountPageStateImpl> get copyWith =>

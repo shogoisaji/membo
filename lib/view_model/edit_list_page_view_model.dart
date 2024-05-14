@@ -1,5 +1,4 @@
 import 'package:membo/models/board/board_model.dart';
-import 'package:membo/models/user/linked_board_model.dart';
 import 'package:membo/models/view_model_state/edit_list_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
@@ -31,22 +30,15 @@ class EditListPageViewModel extends _$EditListPageViewModel {
 
     final tempBoards = <BoardModel>[];
 
-    for (LinkedBoard linkedBoard in userData.linkedBoards) {
-      /// create, ownのみデータを取得
-      if (linkedBoard.type != LinkedBoardType.own &&
-          linkedBoard.type != LinkedBoardType.create) continue;
-      try {
-        final board = await ref
-            .read(supabaseRepositoryProvider)
-            .getBoardById(linkedBoard.boardId);
-        if (board == null) continue;
-
+    for (String linkedBoardId in userData.linkedBoardIds) {
+      final board = await ref
+          .read(supabaseRepositoryProvider)
+          .getBoardById(linkedBoardId);
+      if (board == null) continue;
+      if (board.editableUserIds.contains(user.id)) {
         tempBoards.add(board);
-      } catch (e) {
-        print('error: $e');
       }
     }
-    // await Future.delayed(const Duration(milliseconds: 500));
     state = state.copyWith(isLoading: false, editableBoards: tempBoards);
   }
 
@@ -69,21 +61,22 @@ class EditListPageViewModel extends _$EditListPageViewModel {
     try {
       final insertedBoardId =
           await ref.read(supabaseRepositoryProvider).insertBoard(newBoard);
+      if (insertedBoardId == null) {
+        throw Exception('boardの作成に失敗しました : board id null');
+      }
 
-      /// user linkedBoardsに追加
+      /// userDataに new board id を追加
       try {
-        final newLinkedBoard =
-            LinkedBoard(boardId: insertedBoardId!, type: LinkedBoardType.own);
-        final newLinkedBoards = [...userData.linkedBoards, newLinkedBoard];
+        final newOwnedBoardIds = [...userData.ownedBoardIds, insertedBoardId];
         await ref
             .read(supabaseRepositoryProvider)
-            .updateLinkedBoards(user.id, newLinkedBoards);
+            .updateOwnedBoardIds(userData.userId, newOwnedBoardIds);
       } catch (e) {
-        print('error: $e');
+        throw Exception('new board id を user data に追加できませんでした');
       }
       return insertedBoardId;
     } catch (e) {
-      throw Exception('Error inserting board: $e');
+      throw Exception('Error create new board: $e');
     }
   }
 }

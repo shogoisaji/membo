@@ -50,11 +50,23 @@ class BoardViewPage extends HookConsumerWidget {
       });
     }
 
-    // void handleAddLinkBoardIds() async {
-    //   ref.read(boardViewPageViewModelProvider.notifier).addLinkBoardIds(
-    //         boardId,
-    //       );
-    // }
+    void handleAddLinkBoardIds() async {
+      try {
+        await ref
+            .read(boardViewPageViewModelProvider.notifier)
+            .addLinkedBoardId(
+              boardId,
+            );
+      } catch (e) {
+        if (context.mounted) {
+          if (e.toString() == 'Exist linked board') {
+            ErrorDialog.show(context, '既に追加済みです');
+            return;
+          }
+          ErrorDialog.show(context, '追加に失敗しました');
+        }
+      }
+    }
 
     useEffect(() {
       initialize();
@@ -81,9 +93,6 @@ class BoardViewPage extends HookConsumerWidget {
     void standbyCheck() {
       if (isMatrixSet.value == false) return;
 
-      /// 故意的に遅延させている
-      // Future.delayed(const Duration(milliseconds: 100), () {
-      // });
       isLoading.value = false;
     }
 
@@ -115,7 +124,7 @@ class BoardViewPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(right: 8.0),
               child: ElevatedButton(
                 onPressed: () {
-                  print('add link board ids');
+                  handleAddLinkBoardIds();
                 },
                 child: const Text('このボードを登録'),
               ),

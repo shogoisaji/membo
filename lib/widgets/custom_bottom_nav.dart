@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/state/navigation_state.dart';
 
@@ -22,7 +21,7 @@ class CustomBottomNav extends HookConsumerWidget {
     final navState = ref.watch(bottomNavigationStateProvider);
     final currentRoute = navState.currentRoute;
     final w = MediaQuery.sizeOf(context).width;
-    final navSize = Size(w, 70);
+    final navSize = Size(w.clamp(250, 500), 70);
 
     /// Listen to route & change the current route
     void routeListener() {
@@ -43,7 +42,7 @@ class CustomBottomNav extends HookConsumerWidget {
     return navState.visible
         ? SafeArea(
             child: Align(
-              alignment: Alignment.bottomLeft,
+              alignment: Alignment.bottomCenter,
               child: Container(
                   width: navSize.width,
                   height: navSize.height,

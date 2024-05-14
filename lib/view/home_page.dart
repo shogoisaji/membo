@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
@@ -26,14 +27,22 @@ class HomePage extends HookConsumerWidget {
       ref.read(homePageViewModelProvider.notifier).initialize();
     }
 
+    void handleTapQr(String boardId) {
+      tappedBoardId.value = boardId;
+    }
+
+    void handleTapView(String boardId) {
+      context.go('/view', extra: boardId);
+    }
+
     useEffect(() {
       init();
       return null;
     }, []);
 
-    final List<Widget> imageSliders = homePageState.showBoardModels
-        .map((board) => CachedNetworkImage(
-            imageUrl: board.boardModel.objects.first.imageUrl ?? '',
+    final List<Widget> imageSliders = homePageState.carouselImageUrls
+        .map((imageUrl) => CachedNetworkImage(
+            imageUrl: imageUrl,
             width: double.infinity,
             height: double.infinity,
             imageBuilder: (context, imageProvider) => Container(
@@ -46,8 +55,12 @@ class HomePage extends HookConsumerWidget {
                 ),
             placeholder: (context, url) =>
                 const ColoredBox(color: Colors.white),
-            errorWidget: (context, url, error) => const ColoredBox(
-                color: Colors.white, child: Icon(Icons.error))))
+            errorWidget: (context, url, error) => Image.asset(
+                  'assets/images/logo.png',
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  height: double.infinity,
+                )))
         .toList();
 
     return Scaffold(
@@ -55,26 +68,30 @@ class HomePage extends HookConsumerWidget {
       body: Stack(
         children: [
           BgPaint(width: w, height: h),
-          CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                stretch: true,
-                expandedHeight: 150,
-                flexibleSpace: FlexibleSpaceBar(
-                  titlePadding: const EdgeInsets.only(left: 0, bottom: 2),
-                  title: Text('Membo',
-                      style: lightTextTheme.titleLarge!.copyWith(shadows: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.7),
-                          blurRadius: 2,
-                          spreadRadius: 1,
-                          offset:
-                              const Offset(1, 2), // changes position of shadow
-                        ),
-                      ], color: MyColor.greenSuperLight, fontSize: 32)),
-                  background: homePageState.isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : Container(
+          homePageState.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      stretch: true,
+                      expandedHeight: 150,
+                      flexibleSpace: FlexibleSpaceBar(
+                        titlePadding: const EdgeInsets.only(left: 0, bottom: 2),
+
+                        /// TITLE
+                        title: Text('',
+                            // 'Membo',
+                            style:
+                                lightTextTheme.titleLarge!.copyWith(shadows: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.7),
+                                blurRadius: 2,
+                                spreadRadius: 1,
+                                offset: const Offset(
+                                    1, 2), // changes position of shadow
+                              ),
+                            ], color: MyColor.greenSuperLight, fontSize: 32)),
+                        background: Container(
                           color: Colors.white,
                           height: double.infinity,
                           width: double.infinity,
@@ -94,49 +111,54 @@ class HomePage extends HookConsumerWidget {
                             ),
                           ),
                         ),
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 18),
+                      sliver: SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          childAspectRatio: 0.8,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                return CustomHomeCardWidget(
+                                  board:
+                                      homePageState.cardBoardList[index].board,
+                                  width: constraints.maxWidth,
+                                  height: constraints.maxHeight,
+                                  imageUrl: homePageState.cardBoardList[index]
+                                          .board.thumbnailUrl ??
+                                      '',
+                                  onTapQr: () {
+                                    handleTapQr(homePageState
+                                        .cardBoardList[index].board.boardId);
+                                  },
+                                  onTapView: () {
+                                    handleTapView(homePageState
+                                        .cardBoardList[index].board.boardId);
+                                  },
+                                  permission: homePageState
+                                      .cardBoardList[index].permission,
+                                );
+                              },
+                            );
+                          },
+                          childCount: homePageState.cardBoardList.length,
+                        ),
+                      ),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: 150),
+                    ),
+                  ],
                 ),
-              ),
-              SliverPadding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 0.8,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return LayoutBuilder(
-                        builder: (context, constraints) {
-                          return CustomHomeCardWidget(
-                            board:
-                                homePageState.showBoardModels[index].boardModel,
-                            width: constraints.maxWidth,
-                            height: constraints.maxHeight,
-                            imageUrl: homePageState.showBoardModels[index]
-                                    .boardModel.objects.first.imageUrl ??
-                                '',
-                            onTapQr: () {
-                              //
-                            },
-                            onTapView: () {
-                              //
-                            },
-                          );
-                        },
-                      );
-                    },
-                    childCount: homePageState.showBoardModels.length,
-                  ),
-                ),
-              ),
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 150),
-              ),
-            ],
-          ),
           tappedBoardId.value != null
               ? SharingWidget(
                   boardId: tappedBoardId.value!,
