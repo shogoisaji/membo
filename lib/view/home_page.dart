@@ -8,12 +8,14 @@ import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
+import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_home_card_widget.dart';
 import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/sharing_widget.dart';
 
 class HomePage extends HookConsumerWidget {
+  final double appBarHeight = 240;
   const HomePage({super.key});
 
   @override
@@ -21,7 +23,12 @@ class HomePage extends HookConsumerWidget {
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
 
-    final tappedBoardId = useState<String?>(null);
+    final pageController = usePageController();
+    final textFocusNode = useFocusNode();
+
+    final currentPage = useState(0);
+
+    final tappedQrBoardId = useState<String?>(null);
 
     final homePageState = ref.watch(homePageViewModelProvider);
 
@@ -30,7 +37,7 @@ class HomePage extends HookConsumerWidget {
     }
 
     void handleTapQr(String boardId) {
-      tappedBoardId.value = boardId;
+      tappedQrBoardId.value = boardId;
     }
 
     void handleTapView(String boardId) {
@@ -52,12 +59,43 @@ class HomePage extends HookConsumerWidget {
       }
     }
 
+    void handleTapCreate(String boardName) async {
+      try {
+        final insertedBoardId = await ref
+            .read(homePageViewModelProvider.notifier)
+            .createNewBoard(boardName);
+        if (insertedBoardId == null) {
+          if (context.mounted) {
+            ErrorDialog.show(context, "ボードが作成できませんでした");
+          }
+          return;
+        }
+        if (context.mounted) {
+          context.go('/edit', extra: insertedBoardId);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
+      }
+    }
+
     useEffect(() {
       init();
+
+      /// currentPageを監視して変更があればpageを切り替える（board name input page）
+      currentPage.addListener(() {
+        pageController.animateToPage(currentPage.value,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut);
+        if (currentPage.value == 0) {
+          textFocusNode.unfocus();
+        }
+      });
       return null;
     }, []);
 
-    final List<Widget> imageSliders = homePageState.carouselImageUrls
+    final List<Widget> carouselImageSliders = homePageState.carouselImageUrls
         .map((imageUrl) => CachedNetworkImage(
             imageUrl: imageUrl,
             width: double.infinity,
@@ -71,7 +109,7 @@ class HomePage extends HookConsumerWidget {
                   ),
                 ),
             placeholder: (context, url) =>
-                const ColoredBox(color: Colors.white),
+                const ColoredBox(color: MyColor.pink),
             errorWidget: (context, url, error) => Image.asset(
                   'assets/images/logo.png',
                   fit: BoxFit.contain,
@@ -82,6 +120,7 @@ class HomePage extends HookConsumerWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           BgPaint(width: w, height: h),
@@ -91,55 +130,133 @@ class HomePage extends HookConsumerWidget {
                   slivers: [
                     SliverAppBar(
                       stretch: true,
-                      expandedHeight: 150,
+                      expandedHeight: appBarHeight,
                       flexibleSpace: FlexibleSpaceBar(
-                        titlePadding: const EdgeInsets.only(left: 0, bottom: 2),
-
-                        /// TITLE
-                        title: Text('',
-                            // 'Membo',
-                            style:
-                                lightTextTheme.titleLarge!.copyWith(shadows: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.7),
-                                blurRadius: 2,
-                                spreadRadius: 1,
-                                offset: const Offset(
-                                    1, 2), // changes position of shadow
-                              ),
-                            ], color: MyColor.greenSuperLight, fontSize: 32)),
                         background: Container(
-                          color: Colors.white,
+                          color: MyColor.pink,
                           height: double.infinity,
                           width: double.infinity,
-                          child: CarouselSlider(
-                            items: imageSliders,
-                            options: CarouselOptions(
-                              height: double.infinity,
-                              viewportFraction: 1.0,
-                              autoPlay: true,
-                              // aspectRatio: 2.0,
-                              autoPlayInterval:
-                                  const Duration(milliseconds: 3500),
-                              enlargeCenterPage: false,
-                              onPageChanged: (index, _) {
-                                // print('index: $index');
-                              },
-                            ),
+                          child: Stack(
+                            children: [
+                              CarouselSlider(
+                                items: [
+                                  Image.asset(
+                                    'assets/images/logo.png',
+                                    fit: BoxFit.contain,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                  ...carouselImageSliders
+                                ],
+                                options: CarouselOptions(
+                                  height: double.infinity,
+                                  viewportFraction: 1.0,
+                                  autoPlay: true,
+                                  autoPlayInterval:
+                                      const Duration(milliseconds: 3500),
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      Colors.transparent,
+                                      Colors.transparent,
+                                      Colors.transparent,
+                                      MyColor.pink.withOpacity(0.1),
+                                      MyColor.pink.withOpacity(0.7),
+                                      MyColor.pink,
+                                      MyColor.pink,
+                                    ],
+                                  ),
+                                ),
+                                child: Align(
+                                  alignment: const Alignment(0.0, 0.88),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 150,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.settings,
+                                                size: 36,
+                                              ),
+                                              onPressed: () {
+                                                context.go('/settings');
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.link,
+                                                size: 36,
+                                              ),
+                                              onPressed: () {
+                                                context.go('/connect');
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 12.0),
+                                        child: CustomButton(
+                                          width: 150,
+                                          height: 40,
+                                          color: MyColor.lightBlue,
+                                          child: Center(
+                                              child: Text(
+                                            'New Board',
+                                            style: lightTextTheme.bodyLarge!
+                                                .copyWith(
+                                              color: Colors.white,
+                                            ),
+                                          )),
+                                          onTap: () {
+                                            currentPage.value = 1;
+                                            pageController.nextPage(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                curve: Curves.easeInOut);
+                                            print(
+                                                'New Board ${textFocusNode.hasFocus}');
+                                            textFocusNode.requestFocus();
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
                     SliverPadding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 18),
+                          horizontal: 12, vertical: 12),
                       sliver: SliverGrid(
                         gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200,
-                          childAspectRatio: 0.8,
-                          mainAxisSpacing: 12,
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
                           crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          // childAspectRatio: 1.0,
+                          mainAxisExtent: 250,
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
@@ -161,6 +278,13 @@ class HomePage extends HookConsumerWidget {
                                     handleTapView(homePageState
                                         .cardBoardList[index].board.boardId);
                                   },
+                                  onTapEdit: () {
+                                    context.go('/edit',
+                                        extra: homePageState
+                                            .cardBoardList[index]
+                                            .board
+                                            .boardId);
+                                  },
                                   onTapDelete: () {
                                     handleTapDelete(homePageState
                                         .cardBoardList[index].board.boardId);
@@ -180,14 +304,189 @@ class HomePage extends HookConsumerWidget {
                     ),
                   ],
                 ),
-          tappedBoardId.value != null
+
+          /// show QR code
+          tappedQrBoardId.value != null
               ? SharingWidget(
-                  boardId: tappedBoardId.value!,
+                  boardId: tappedQrBoardId.value!,
                   onTapModal: () {
-                    tappedBoardId.value = null;
+                    tappedQrBoardId.value = null;
                   },
                 )
               : const SizedBox.shrink(),
+          IgnorePointer(
+            ignoring: currentPage.value != 1,
+            child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: pageController,
+              children: [
+                /// 初期ページに空ページ
+                Container(
+                  color: Colors.transparent,
+                ),
+
+                /// ボード名入力ページ
+                GestureDetector(
+                  onTap: () {
+                    textFocusNode.unfocus();
+                  },
+                  child: SizedBox(
+                    width: w,
+                    height: h,
+                    child: Stack(
+                      children: [
+                        BgPaint(width: w, height: h),
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: SizedBox(
+                            width: w,
+                            height: appBarHeight + kToolbarHeight,
+                            child: BoardNameInputPage(
+                              pageController: pageController,
+                              focusNode: textFocusNode,
+                              onTapCancel: () {
+                                currentPage.value = 0;
+                              },
+                              onTapCreate: (String boardName) {
+                                handleTapCreate(boardName);
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BoardNameInputPage extends HookWidget {
+  final PageController pageController;
+  final FocusNode focusNode;
+  final int maxChars = 16;
+  final Function() onTapCancel;
+  final Function(String) onTapCreate;
+  const BoardNameInputPage(
+      {super.key,
+      required this.pageController,
+      required this.focusNode,
+      required this.onTapCancel,
+      required this.onTapCreate});
+
+  @override
+  Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    final textController = useTextEditingController();
+
+    return ColoredBox(
+      color: MyColor.pink,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            alignment: const Alignment(0.0, 0.9),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 300,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Board Name', style: lightTextTheme.titleMedium),
+                      Text('Max $maxChars chars',
+                          style: lightTextTheme.bodySmall),
+                    ],
+                  ),
+                  Form(
+                    key: formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          // autofocus: true,
+                          focusNode: focusNode,
+                          maxLength: maxChars,
+                          controller: textController,
+                          style: lightTextTheme.bodyMedium,
+                          decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              counterText: '',
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12.0)),
+                                borderSide:
+                                    BorderSide(color: MyColor.greenText),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12.0)),
+                                borderSide:
+                                    BorderSide(color: MyColor.greenText),
+                              )),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Name is required';
+                            } else if (value.length > maxChars) {
+                              return 'Name cannot be longer than $maxChars characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: CustomButton(
+                                width: 100,
+                                height: 40,
+                                color: MyColor.greenDark,
+                                child: Center(
+                                    child: Text('Create',
+                                        style:
+                                            lightTextTheme.bodyLarge!.copyWith(
+                                          color: Colors.white,
+                                        ))),
+                                onTap: () {
+                                  onTapCreate(textController.text);
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: CustomButton(
+                                width: 100,
+                                height: 40,
+                                color: MyColor.greenSuperLight,
+                                onTap: onTapCancel,
+                                child: Center(
+                                    child: Text('Cancel',
+                                        style:
+                                            lightTextTheme.bodyLarge!.copyWith(
+                                          color: MyColor.greenText,
+                                        ))),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

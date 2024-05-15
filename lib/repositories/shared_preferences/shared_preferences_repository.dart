@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:membo/repositories/shared_preferences/shared_preferences_key.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,14 +16,26 @@ class SharedPreferencesRepository {
 
   final SharedPreferences _prefs;
 
-  Future<bool> saveIsDarkMode(SharedPreferencesKey key, bool value) async {
-    return _prefs.setBool(key.value, value);
+  Future<bool> save<T>(SharedPreferencesKey key, T value) async {
+    if (value is bool) {
+      return _prefs.setBool(key.value, value);
+    }
+    if (value is String) {
+      return _prefs.setString(key.value, value);
+    }
+    throw UnsupportedError('Not support \'$value\'');
   }
 
-  bool? fetchIsDarkMode(
+  T? fetch<T>(
     SharedPreferencesKey key,
   ) {
-    return _prefs.getBool(key.value);
+    if (T == bool) {
+      return _prefs.getBool(key.value) as T?;
+    }
+    if (T == String) {
+      return _prefs.getString(key.value) as T?;
+    }
+    throw UnsupportedError('Not support \'$T\'');
   }
 
   Future<bool> remove(SharedPreferencesKey key) => _prefs.remove(key.value);

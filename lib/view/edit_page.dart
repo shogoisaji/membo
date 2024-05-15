@@ -34,6 +34,8 @@ class EditPage extends HookConsumerWidget {
     const scaleMin = 0.07;
     const scaleMax = 0.8;
 
+    const bgColor = MyColor.green;
+
     final streamBoard = ref.watch(streamBoardModelProvider);
 
     /// Drawerで使用
@@ -71,6 +73,8 @@ class EditPage extends HookConsumerWidget {
 
     useEffect(() {
       initialize();
+
+      /// 画面回転を可能にする
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
@@ -117,21 +121,30 @@ class EditPage extends HookConsumerWidget {
 
     return Scaffold(
         key: scaffoldKey,
+        backgroundColor: bgColor,
         extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 36),
-            onPressed: () => context.go('/edit-list'),
+            onPressed: () => context.go('/'),
           ),
           actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: SvgPicture.asset(
+                  'assets/images/svg/edit.svg',
+                  color: MyColor.greenSuperLight,
+                  width: 30,
+                  height: 30,
+                )),
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: MyColor.green,
+                  color: bgColor,
                   borderRadius: BorderRadius.circular(99),
                   border: Border.all(width: 3, color: MyColor.greenText),
                 ),
@@ -243,7 +256,7 @@ class EditPage extends HookConsumerWidget {
             : Stack(
                 children: [
                   Container(
-                    color: MyColor.green,
+                    color: bgColor,
                     width: double.infinity,
                     height: double.infinity,
                   ),

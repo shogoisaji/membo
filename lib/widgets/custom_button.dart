@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:membo/utils/color_utils.dart';
@@ -40,6 +41,9 @@ class CustomButton extends HookWidget {
       onTap: () {
         if (onTap == null) return;
         controller.reset();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          HapticFeedback.lightImpact();
+        });
         Future.delayed(const Duration(milliseconds: 200), () {
           onTap!();
         });
