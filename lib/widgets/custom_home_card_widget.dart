@@ -79,6 +79,12 @@ class CustomHomeCardWidget extends HookConsumerWidget {
       }
     }
 
+    void handleTapDelete() {
+      onTapDelete();
+      animationController.reset();
+      deleteFirstTap.value = false;
+    }
+
     void handleTapDeleteCancel() {
       deleteFirstTap.value = false;
     }
@@ -314,7 +320,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                           Expanded(
                                             child: deleteFirstTap.value
                                                 ? DeleteButton(onTap: () {
-                                                    onTapDelete();
+                                                    handleTapDelete();
                                                   })
                                                 : QrButton(
                                                     onTap: () {

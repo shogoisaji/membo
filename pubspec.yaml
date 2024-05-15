@@ -37,6 +37,7 @@ dependencies:
   qr_flutter:
   carousel_slider:
   flutter_image_compress:
+  app_settings:
 
   cupertino_icons: ^1.0.6
 

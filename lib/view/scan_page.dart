@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:membo/settings/color.dart';
+import 'package:membo/settings/text_theme.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QrScanPage extends StatefulWidget {
@@ -328,10 +330,13 @@ class ScannerErrorWidget extends StatelessWidget {
               errorMessage,
               style: const TextStyle(color: Colors.white),
             ),
-            // Text(
-            //   error.errorDetails?.message ?? '',
-            //   style: const TextStyle(color: Colors.white),
-            // ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                AppSettings.openAppSettings();
+              },
+              child: Text('Open settings', style: lightTextTheme.bodyMedium),
+            ),
           ],
         ),
       ),

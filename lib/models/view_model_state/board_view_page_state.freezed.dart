@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$BoardViewPageState {
   Matrix4? get transformationMatrix => throw _privateConstructorUsedError;
+  bool get isLinked => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $BoardViewPageStateCopyWith<BoardViewPageState> get copyWith =>
@@ -29,7 +30,7 @@ abstract class $BoardViewPageStateCopyWith<$Res> {
           BoardViewPageState value, $Res Function(BoardViewPageState) then) =
       _$BoardViewPageStateCopyWithImpl<$Res, BoardViewPageState>;
   @useResult
-  $Res call({Matrix4? transformationMatrix});
+  $Res call({Matrix4? transformationMatrix, bool isLinked});
 }
 
 /// @nodoc
@@ -46,12 +47,17 @@ class _$BoardViewPageStateCopyWithImpl<$Res, $Val extends BoardViewPageState>
   @override
   $Res call({
     Object? transformationMatrix = freezed,
+    Object? isLinked = null,
   }) {
     return _then(_value.copyWith(
       transformationMatrix: freezed == transformationMatrix
           ? _value.transformationMatrix
           : transformationMatrix // ignore: cast_nullable_to_non_nullable
               as Matrix4?,
+      isLinked: null == isLinked
+          ? _value.isLinked
+          : isLinked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -64,7 +70,7 @@ abstract class _$$EditPageStateImplCopyWith<$Res>
       __$$EditPageStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Matrix4? transformationMatrix});
+  $Res call({Matrix4? transformationMatrix, bool isLinked});
 }
 
 /// @nodoc
@@ -79,12 +85,17 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? transformationMatrix = freezed,
+    Object? isLinked = null,
   }) {
     return _then(_$EditPageStateImpl(
       transformationMatrix: freezed == transformationMatrix
           ? _value.transformationMatrix
           : transformationMatrix // ignore: cast_nullable_to_non_nullable
               as Matrix4?,
+      isLinked: null == isLinked
+          ? _value.isLinked
+          : isLinked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -92,14 +103,17 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$EditPageStateImpl implements _EditPageState {
-  _$EditPageStateImpl({this.transformationMatrix});
+  _$EditPageStateImpl({this.transformationMatrix, this.isLinked = true});
 
   @override
   final Matrix4? transformationMatrix;
+  @override
+  @JsonKey()
+  final bool isLinked;
 
   @override
   String toString() {
-    return 'BoardViewPageState(transformationMatrix: $transformationMatrix)';
+    return 'BoardViewPageState(transformationMatrix: $transformationMatrix, isLinked: $isLinked)';
   }
 
   @override
@@ -108,11 +122,13 @@ class _$EditPageStateImpl implements _EditPageState {
         (other.runtimeType == runtimeType &&
             other is _$EditPageStateImpl &&
             (identical(other.transformationMatrix, transformationMatrix) ||
-                other.transformationMatrix == transformationMatrix));
+                other.transformationMatrix == transformationMatrix) &&
+            (identical(other.isLinked, isLinked) ||
+                other.isLinked == isLinked));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, transformationMatrix);
+  int get hashCode => Object.hash(runtimeType, transformationMatrix, isLinked);
 
   @JsonKey(ignore: true)
   @override
@@ -122,11 +138,14 @@ class _$EditPageStateImpl implements _EditPageState {
 }
 
 abstract class _EditPageState implements BoardViewPageState {
-  factory _EditPageState({final Matrix4? transformationMatrix}) =
-      _$EditPageStateImpl;
+  factory _EditPageState(
+      {final Matrix4? transformationMatrix,
+      final bool isLinked}) = _$EditPageStateImpl;
 
   @override
   Matrix4? get transformationMatrix;
+  @override
+  bool get isLinked;
   @override
   @JsonKey(ignore: true)
   _$$EditPageStateImplCopyWith<_$EditPageStateImpl> get copyWith =>

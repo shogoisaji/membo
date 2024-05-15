@@ -8,5 +8,6 @@ part 'board_view_page_state.freezed.dart';
 class BoardViewPageState with _$BoardViewPageState {
   factory BoardViewPageState({
     Matrix4? transformationMatrix,
+    @Default(true) bool isLinked,
   }) = _EditPageState;
 }

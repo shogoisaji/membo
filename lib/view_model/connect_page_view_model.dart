@@ -19,4 +19,8 @@ class ConnectPageViewModel extends _$ConnectPageViewModel {
       return false;
     }
   }
+
+  void clearBoard() {
+    state = state.copyWith(board: null);
+  }
 }

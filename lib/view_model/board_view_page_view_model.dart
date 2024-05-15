@@ -41,6 +41,21 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     }
   }
 
+  Future<bool> checkLinked(String boardId) async {
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+    final userData =
+        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    if (userData == null) {
+      throw Exception('User is not loaded');
+    }
+    final result = userData.linkedBoardIds.contains(boardId) ||
+        userData.ownedBoardIds.contains(boardId);
+    return result;
+  }
+
   Future<void> initialize(String boardId, double w, double h) async {
     final board =
         await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
@@ -51,9 +66,12 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     ref.read(streamBoardIdProvider.notifier).setStreamBoardId(boardId);
 
     final matrix = calcInitialTransform(board, w, h);
+
+    final isLinked = await checkLinked(boardId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       state = state.copyWith(
         transformationMatrix: matrix,
+        isLinked: isLinked,
       );
     });
   }
