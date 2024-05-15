@@ -5,12 +5,16 @@ const lightTextTheme = TextTheme(
     fontSize: 24,
     fontWeight: FontWeight.w700,
   ),
+  titleMedium: TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w700,
+  ),
   bodyLarge: TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,
   ),
   bodyMedium: TextStyle(
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: FontWeight.w500,
   ),
   bodySmall: TextStyle(

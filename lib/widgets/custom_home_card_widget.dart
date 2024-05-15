@@ -17,6 +17,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
   final Function() onTapQr;
   final Function() onTapView;
   final Function() onTapDelete;
+  final Function() onTapEdit;
   const CustomHomeCardWidget(
       {super.key,
       required this.board,
@@ -25,6 +26,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
       required this.imageUrl,
       required this.onTapQr,
       required this.onTapView,
+      required this.onTapEdit,
       required this.onTapDelete,
       required this.permission});
 
@@ -35,6 +37,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
     const editorAvatarRadius = 18.0;
     const positionXFromRight = 45.0;
     const contentBaseHeight = 80.0;
+    const slideHeight = 105.0;
 
     final deleteFirstTap = useState(false);
     final ownerAvatarUrl = useState<String?>(null);
@@ -102,7 +105,8 @@ class CustomHomeCardWidget extends HookConsumerWidget {
       child: AnimatedBuilder(
         animation: animation,
         builder: (context, child) {
-          final contentHeight = contentBaseHeight + animation.value * 60;
+          final contentHeight =
+              contentBaseHeight + animation.value * slideHeight;
           return Container(
             width: width,
             height: height,
@@ -168,11 +172,10 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                   /// delete label
                   Positioned(
                       bottom: 0,
-                      left: 25,
+                      left: 32,
                       child: InkWell(
                         onTap: () {
                           deleteFirstTap.value = !deleteFirstTap.value;
-                          print('delete');
                         },
                         child: Container(
                           width: 50,
@@ -202,7 +205,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                         ),
                       )),
 
-                  /// card 下部のコンテントエリア
+                  /// card 下部のウェーブコンテントエリア
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: CustomPaint(
@@ -227,9 +230,9 @@ class CustomHomeCardWidget extends HookConsumerWidget {
 
                   /// Content
                   Positioned(
-                    bottom: (-1 + animation.value) * 60,
+                    bottom: (animation.value - 1) * slideHeight,
                     child: Container(
-                      height: 140,
+                      height: contentBaseHeight + slideHeight,
                       width: width,
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       alignment: Alignment.centerLeft,
@@ -257,7 +260,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 3),
+                              const SizedBox(height: 4),
 
                               /// linked user list
                               SingleChildScrollView(
@@ -297,38 +300,62 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                               ),
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Expanded(
-                                  child: deleteFirstTap.value
-                                      ? DeleteButton(onTap: () {
-                                          onTapDelete();
-                                        })
-                                      : QrButton(
-                                          onTap: () {
-                                            onTapQr();
-                                          },
-                                          permission: permission,
-                                        ),
+                          animationController.value == 0.0
+                              ? const SizedBox.shrink()
+                              : Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Expanded(
+                                            child: deleteFirstTap.value
+                                                ? DeleteButton(onTap: () {
+                                                    onTapDelete();
+                                                  })
+                                                : QrButton(
+                                                    onTap: () {
+                                                      onTapQr();
+                                                    },
+                                                    permission: permission,
+                                                  ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: deleteFirstTap.value
+                                                ? DeleteCancelButton(onTap: () {
+                                                    handleTapDeleteCancel();
+                                                  })
+                                                : EditButton(
+                                                    onTap: () {
+                                                      onTapEdit();
+                                                    },
+                                                  ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: ViewButton(
+                                              onTap: () {
+                                                onTapView();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: deleteFirstTap.value
-                                      ? DeleteCancelButton(onTap: () {
-                                          handleTapDeleteCancel();
-                                        })
-                                      : ViewButton(
-                                          onTap: () {
-                                            onTapView();
-                                          },
-                                        ),
-                                ),
-                              ],
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -343,52 +370,6 @@ class CustomHomeCardWidget extends HookConsumerWidget {
   }
 }
 
-class QrButton extends StatelessWidget {
-  final Function() onTap;
-  final BoardPermission permission;
-  const QrButton({super.key, required this.onTap, required this.permission});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        if (permission == BoardPermission.viewer) {
-          return;
-        }
-        onTap();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: permission == BoardPermission.viewer
-              ? Colors.grey.shade400
-              : MyColor.green,
-          borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(10),
-            bottomRight: Radius.circular(3),
-            topLeft: Radius.circular(3),
-            topRight: Radius.circular(3),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 3,
-              spreadRadius: 0.2,
-              offset: const Offset(1, 1),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(6),
-        child: SvgPicture.asset(
-          'assets/images/svg/qr.svg',
-          width: 30,
-          height: 30,
-          color: MyColor.greenSuperLight,
-        ),
-      ),
-    );
-  }
-}
-
 class ViewButton extends StatelessWidget {
   final Function() onTap;
   const ViewButton({super.key, required this.onTap});
@@ -396,15 +377,13 @@ class ViewButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        onTap();
-      },
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: MyColor.greenDark,
+          color: MyColor.green,
           borderRadius: const BorderRadius.only(
             bottomRight: Radius.circular(10),
-            bottomLeft: Radius.circular(3),
+            bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(3),
             topRight: Radius.circular(3),
           ),
@@ -429,6 +408,83 @@ class ViewButton extends StatelessWidget {
   }
 }
 
+class QrButton extends StatelessWidget {
+  final Function() onTap;
+  final BoardPermission permission;
+  const QrButton({super.key, required this.onTap, required this.permission});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        if (permission == BoardPermission.viewer) {
+          return;
+        }
+        onTap();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: permission == BoardPermission.viewer
+              ? Colors.grey.shade400
+              : MyColor.blue,
+          borderRadius: const BorderRadius.all(
+            Radius.circular(3),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 3,
+              spreadRadius: 0.2,
+              offset: const Offset(1, 1),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(6),
+        child: SvgPicture.asset(
+          'assets/images/svg/qr.svg',
+          width: 30,
+          height: 30,
+          color: MyColor.greenSuperLight,
+        ),
+      ),
+    );
+  }
+}
+
+class EditButton extends StatelessWidget {
+  final Function() onTap;
+  const EditButton({super.key, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+          decoration: BoxDecoration(
+            color: MyColor.greenDark,
+            borderRadius: const BorderRadius.all(
+              Radius.circular(3),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 3,
+                spreadRadius: 0.2,
+                offset: const Offset(1, 1),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(6),
+          child: SvgPicture.asset(
+            'assets/images/svg/edit.svg',
+            color: MyColor.greenSuperLight,
+            width: 30,
+            height: 30,
+          )),
+    );
+  }
+}
+
 class DeleteCancelButton extends StatelessWidget {
   final Function() onTap;
   const DeleteCancelButton({super.key, required this.onTap});
@@ -436,17 +492,12 @@ class DeleteCancelButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        onTap();
-      },
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: ColorUtils.moreLight(MyColor.red),
-          borderRadius: const BorderRadius.only(
-            bottomRight: Radius.circular(10),
-            bottomLeft: Radius.circular(3),
-            topLeft: Radius.circular(3),
-            topRight: Radius.circular(3),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(3),
           ),
           boxShadow: [
             BoxShadow(
@@ -472,17 +523,12 @@ class DeleteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        onTap();
-      },
+      onTap: onTap,
       child: Container(
           decoration: BoxDecoration(
             color: MyColor.red,
-            borderRadius: const BorderRadius.only(
-              bottomRight: Radius.circular(3),
-              bottomLeft: Radius.circular(10),
-              topLeft: Radius.circular(3),
-              topRight: Radius.circular(3),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(3),
             ),
             boxShadow: [
               BoxShadow(

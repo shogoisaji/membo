@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
@@ -27,6 +28,7 @@ class BoardViewPage extends HookConsumerWidget {
 
     const scaleMin = 0.07;
     const scaleMax = 0.8;
+    const bgColor = MyColor.greenLight;
 
     /// interactive viewerのコントローラー
     final TransformationController transformController =
@@ -111,6 +113,7 @@ class BoardViewPage extends HookConsumerWidget {
     return Scaffold(
         extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
+        backgroundColor: bgColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(
@@ -120,6 +123,15 @@ class BoardViewPage extends HookConsumerWidget {
             },
           ),
           actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: SvgPicture.asset(
+                'assets/images/svg/view.svg',
+                color: MyColor.greenDark,
+                width: 30,
+                height: 30,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: ElevatedButton(
@@ -134,7 +146,7 @@ class BoardViewPage extends HookConsumerWidget {
         body: isLoading.value
             ? const Center(child: CircularProgressIndicator())
             : Container(
-                color: MyColor.green,
+                color: bgColor,
                 width: double.infinity,
                 height: double.infinity,
                 child: Stack(

@@ -17,7 +17,14 @@ class SettingsPage extends ConsumerWidget {
       children: [
         Scaffold(
           extendBodyBehindAppBar: true,
-          appBar: AppBar(),
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, size: 36),
+              onPressed: () {
+                context.go('/');
+              },
+            ),
+          ),
           body: Stack(
             children: [
               BgPaint(width: w, height: h),

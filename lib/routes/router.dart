@@ -12,7 +12,6 @@ import 'package:membo/view/board_view_page.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/view/policy_page.dart';
 import 'package:membo/view/scan_page.dart';
-import 'package:membo/widgets/custom_bottom_nav.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:membo/view/sign_in_page.dart';
 import 'package:membo/view/home_page.dart';
@@ -87,10 +86,12 @@ GoRouter router(RouterRef ref) {
               Stack(
                 children: [
                   child,
-                  const Align(
-                    alignment: Alignment.bottomCenter,
-                    child: CustomBottomNav(),
-                  ),
+
+                  /// 画面下部にナビゲーションバーを表示
+                  // const Align(
+                  //   alignment: Alignment.bottomCenter,
+                  //   child: CustomBottomNav(),
+                  // ),
                 ],
               )
             ],

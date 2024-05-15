@@ -23,7 +23,6 @@ class BoardSettingsPage extends HookConsumerWidget {
     final h = MediaQuery.sizeOf(context).height;
     final isFocus = useState(false);
     final focusNode = useFocusNode();
-    final showPassword = useState(false);
     final showColorPicker = useState(false);
     final boardSettingsState = ref.watch(boardSettingsViewModelProvider);
     final boardNameTextController = useTextEditingController();
@@ -210,10 +209,14 @@ class BoardSettingsPage extends HookConsumerWidget {
                                                 children: [
                                                   Expanded(
                                                     child: TextField(
+                                                      maxLength: 10,
                                                       focusNode: focusNode,
                                                       textAlign: TextAlign.end,
                                                       decoration:
                                                           const InputDecoration(
+
+                                                              /// maxLength のカウンターは表示しない
+                                                              counterText: '',
                                                               focusedBorder:
                                                                   OutlineInputBorder(
                                                                 borderSide: BorderSide(
@@ -432,7 +435,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           const SizedBox(height: 20.0),
                           CustomListContent(
                             titleIcon: const Icon(Icons.language),
-                            title: 'Share Setting',
+                            title: 'Share',
                             titleStyle: lightTextTheme.bodyLarge!,
                             backgroundColor: MyColor.greenLight,
                             contentWidgets: [
@@ -456,51 +459,54 @@ class BoardSettingsPage extends HookConsumerWidget {
                                   ),
                                 ],
                               ),
-                              // TODO: 仮に反転している
-                              boardSettingsState.currentBoard!.isPublic !=
-                                          true &&
-                                      boardSettingsState.isOwner
-                                  ? Column(
-                                      children: [
-                                        const Divider(color: MyColor.greenDark),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text('Password',
-                                                style:
-                                                    lightTextTheme.bodyLarge),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                    showPassword.value
-                                                        ? boardSettingsState
-                                                                .tempPassword ??
-                                                            boardSettingsState
-                                                                .currentBoard!
-                                                                .password
-                                                        : '⚫︎' * 7,
-                                                    style: lightTextTheme
-                                                        .bodyLarge),
-                                                const SizedBox(width: 6.0),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    if (!boardSettingsState
-                                                        .isOwner) return;
-                                                    showPassword.value =
-                                                        !showPassword.value;
-                                                  },
-                                                  child: Icon(showPassword.value
-                                                      ? Icons.visibility
-                                                      : Icons.visibility_off),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    )
-                                  : const SizedBox.shrink(),
+
+                              /// TODO: 仮に反転している
+                              /// Password settings
+                              //
+                              // boardSettingsState.currentBoard!.isPublic !=
+                              //             true &&
+                              //         boardSettingsState.isOwner
+                              //     ? Column(
+                              //         children: [
+                              //           const Divider(color: MyColor.greenDark),
+                              //           Row(
+                              //             mainAxisAlignment:
+                              //                 MainAxisAlignment.spaceBetween,
+                              //             children: [
+                              //               Text('Password',
+                              //                   style:
+                              //                       lightTextTheme.bodyLarge),
+                              //               Row(
+                              //                 children: [
+                              //                   Text(
+                              //                       showPassword.value
+                              //                           ? boardSettingsState
+                              //                                   .tempPassword ??
+                              //                               boardSettingsState
+                              //                                   .currentBoard!
+                              //                                   .password
+                              //                           : '⚫︎' * 7,
+                              //                       style: lightTextTheme
+                              //                           .bodyLarge),
+                              //                   const SizedBox(width: 6.0),
+                              //                   GestureDetector(
+                              //                     onTap: () {
+                              //                       if (!boardSettingsState
+                              //                           .isOwner) return;
+                              //                       showPassword.value =
+                              //                           !showPassword.value;
+                              //                     },
+                              //                     child: Icon(showPassword.value
+                              //                         ? Icons.visibility
+                              //                         : Icons.visibility_off),
+                              //                   ),
+                              //                 ],
+                              //               ),
+                              //             ],
+                              //           ),
+                              //         ],
+                              //       )
+                              //     : const SizedBox.shrink(),
                             ],
                           ),
                           const SizedBox(height: 32.0),
@@ -530,7 +536,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           CustomButton(
                             width: double.infinity,
                             height: 50,
-                            color: MyColor.blue,
+                            color: MyColor.blueDark,
                             onTap: () {
                               showDialog(
                                 context: context,
@@ -569,7 +575,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           CustomButton(
                             width: double.infinity,
                             height: 50,
-                            color: MyColor.pink,
+                            color: MyColor.red,
                             onTap: () {
                               showDialog(
                                 context: context,
@@ -593,7 +599,8 @@ class BoardSettingsPage extends HookConsumerWidget {
                             },
                             child: Center(
                                 child: Text('Delete',
-                                    style: lightTextTheme.bodyLarge)),
+                                    style: lightTextTheme.bodyLarge!
+                                        .copyWith(color: Colors.white))),
                           ),
                           const SizedBox(height: 100.0),
                         ],

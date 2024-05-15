@@ -104,19 +104,46 @@ class AccountPage extends HookConsumerWidget {
     }
 
     Future<void> handleDeleteAccount() async {
-      if (accountPageState.user == null) return;
-      try {
-        await ref
-            .read(supabaseAuthRepositoryProvider)
-            .deleteAccount(accountPageState.user!.userId);
-        if (context.mounted) {
-          context.go('/sign-in');
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ErrorDialog.show(context, 'Error deleting account');
-        }
-      }
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Delete Account', style: lightTextTheme.titleLarge!),
+          content: Text('Are you sure you want to delete your account?',
+              style: lightTextTheme.bodyLarge),
+          actionsAlignment: MainAxisAlignment.spaceAround,
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: MyColor.red),
+              onPressed: () async {
+                if (accountPageState.user == null) return;
+                try {
+                  await ref
+                      .read(supabaseAuthRepositoryProvider)
+                      .deleteAccount(accountPageState.user!.userId);
+                  if (context.mounted) {
+                    CustomSnackBar.show(
+                        context, 'Account deleted', MyColor.blue);
+                    context.go('/sign-in');
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ErrorDialog.show(context, 'Error deleting account');
+                  }
+                }
+              },
+              child: Text('Delete',
+                  style:
+                      lightTextTheme.bodyLarge!.copyWith(color: Colors.white)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel', style: lightTextTheme.bodyLarge),
+            ),
+          ],
+        ),
+      );
     }
 
     void initialize() {
@@ -278,10 +305,11 @@ class AccountPage extends HookConsumerWidget {
                               : CustomButton(
                                   width: double.infinity,
                                   height: 50,
-                                  color: MyColor.pink.withBlue(60),
+                                  color: MyColor.red,
                                   child: Center(
                                       child: Text('Delete Account',
-                                          style: lightTextTheme.titleLarge)),
+                                          style: lightTextTheme.titleLarge!
+                                              .copyWith(color: Colors.white))),
                                   onTap: () async {
                                     handleDeleteAccount();
                                   },
