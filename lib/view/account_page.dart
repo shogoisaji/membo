@@ -103,6 +103,10 @@ class AccountPage extends HookConsumerWidget {
       }
     }
 
+    void handleTapSignOut() {
+      ref.read(supabaseAuthRepositoryProvider).signOut();
+    }
+
     Future<void> handleDeleteAccount() async {
       showDialog(
         context: context,
@@ -294,9 +298,7 @@ class AccountPage extends HookConsumerWidget {
                                 child: Text('Sign out',
                                     style: lightTextTheme.titleLarge)),
                             onTap: () {
-                              ref
-                                  .read(supabaseAuthRepositoryProvider)
-                                  .signOut();
+                              handleTapSignOut();
                             },
                           ),
                           const SizedBox(height: 32.0),
