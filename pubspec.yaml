@@ -2,8 +2,8 @@ name: membo
 description: "membo"
 publish_to: "none"
 
-# 2024.5.11 -> 1.0.0+2
-version: 1.0.0+2
+# 2024.5.15 -> 1.0.0+3
+version: 1.0.0+3
 
 environment:
   sdk: ">=3.3.2 <4.0.0"
@@ -38,6 +38,8 @@ dependencies:
   carousel_slider:
   flutter_image_compress:
   app_settings:
+  url_launcher:
+  package_info_plus:
 
   cupertino_icons: ^1.0.6
 
