@@ -14,7 +14,9 @@ import 'package:membo/widgets/error_dialog.dart';
 
 class BoardViewPage extends HookConsumerWidget {
   final String boardId;
-  const BoardViewPage({super.key, required this.boardId});
+  final bool? isFromConnect;
+  const BoardViewPage(
+      {super.key, required this.boardId, this.isFromConnect = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -132,15 +134,17 @@ class BoardViewPage extends HookConsumerWidget {
                 height: 30,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  handleAddLinkBoardIds();
-                },
-                child: const Text('このボードを登録'),
-              ),
-            ),
+            boardViewPageState.isLinked
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        handleAddLinkBoardIds();
+                      },
+                      child: const Text('このボードをコネクトリストに追加'),
+                    ),
+                  )
           ],
         ),
         body: isLoading.value

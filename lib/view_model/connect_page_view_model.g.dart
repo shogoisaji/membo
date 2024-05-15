@@ -7,7 +7,7 @@ part of 'connect_page_view_model.dart';
 // **************************************************************************
 
 String _$connectPageViewModelHash() =>
-    r'48ca3040a741ded74d5fa9b5a4036fc9453b3bc6';
+    r'6c4e47ae59a3c2e6db28d38da65ed434e9bdce50';
 
 /// See also [ConnectPageViewModel].
 @ProviderFor(ConnectPageViewModel)
