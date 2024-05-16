@@ -91,6 +91,21 @@ class EditPageViewModel extends _$EditPageViewModel {
       positionX: state.selectedObject!.positionX + offset.dx,
       positionY: state.selectedObject!.positionY + offset.dy,
     );
+
+    /// out range check
+
+    /// 左端の場合
+    if (movedObject.positionX < -state.boardModel!.width / 2) return;
+
+    /// 右端の場合
+    if (movedObject.positionX > state.boardModel!.width / 2) return;
+
+    /// 上端の場合
+    if (movedObject.positionY < -state.boardModel!.height / 2) return;
+
+    /// 下端の場合
+    if (movedObject.positionY > state.boardModel!.height / 2) return;
+
     state = state.copyWith(selectedObject: movedObject);
   }
 

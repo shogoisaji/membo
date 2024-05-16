@@ -369,7 +369,7 @@ class HomePage extends HookConsumerWidget {
 class BoardNameInputPage extends HookWidget {
   final PageController pageController;
   final FocusNode focusNode;
-  final int maxChars = 16;
+  final int maxBoardNameChars = 16;
   final Function() onTapCancel;
   final Function(String) onTapCreate;
   const BoardNameInputPage(
@@ -404,7 +404,7 @@ class BoardNameInputPage extends HookWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Board Name', style: lightTextTheme.titleMedium),
-                      Text('Max $maxChars chars',
+                      Text('Max $maxBoardNameChars chars',
                           style: lightTextTheme.bodySmall),
                     ],
                   ),
@@ -415,7 +415,7 @@ class BoardNameInputPage extends HookWidget {
                         TextFormField(
                           // autofocus: true,
                           focusNode: focusNode,
-                          maxLength: maxChars,
+                          maxLength: maxBoardNameChars,
                           controller: textController,
                           style: lightTextTheme.bodyMedium,
                           decoration: const InputDecoration(
@@ -437,8 +437,8 @@ class BoardNameInputPage extends HookWidget {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Name is required';
-                            } else if (value.length > maxChars) {
-                              return 'Name cannot be longer than $maxChars characters';
+                            } else if (value.length > maxBoardNameChars) {
+                              return 'Name cannot be longer than $maxBoardNameChars characters';
                             }
                             return null;
                           },
@@ -459,7 +459,9 @@ class BoardNameInputPage extends HookWidget {
                                           color: Colors.white,
                                         ))),
                                 onTap: () {
-                                  onTapCreate(textController.text);
+                                  if (formKey.currentState!.validate()) {
+                                    onTapCreate(textController.text);
+                                  }
                                 },
                               ),
                             ),
