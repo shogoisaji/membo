@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/gen/fonts.gen.dart';
@@ -103,26 +102,29 @@ class BoardWidget extends HookWidget {
                   ),
                 ],
               ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  /// 既存のオブジェクト達
-                  ...board.objects.map((object) => Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          ObjectWidget(
-                              object: object,
-                              opacity: 1.0,
-                              boardWidth: board.width.toDouble(),
-                              boardHeight: board.height.toDouble())
-                        ],
-                      )),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(boardRadius),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    /// 既存のオブジェクト達
+                    ...board.objects.map((object) => Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ObjectWidget(
+                                object: object,
+                                opacity: 1.0,
+                                boardWidth: board.width.toDouble(),
+                                boardHeight: board.height.toDouble())
+                          ],
+                        )),
 
-                  /// 選択中のオブジェクト
-                  selectedObject != null
-                      ? SelectedObject(object: selectedObject!, board: board)
-                      : const SizedBox.shrink(),
-                ],
+                    /// 選択中のオブジェクト
+                    selectedObject != null
+                        ? SelectedObject(object: selectedObject!, board: board)
+                        : const SizedBox.shrink(),
+                  ],
+                ),
               )),
         ),
       ],
