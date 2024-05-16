@@ -319,9 +319,12 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                         children: [
                                           Expanded(
                                             child: deleteFirstTap.value
-                                                ? DeleteButton(onTap: () {
-                                                    handleTapDelete();
-                                                  })
+                                                ? DeleteButton(
+                                                    onTap: () {
+                                                      handleTapDelete();
+                                                    },
+                                                    permission: permission,
+                                                  )
                                                 : QrButton(
                                                     onTap: () {
                                                       onTapQr();
@@ -339,6 +342,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                                     onTap: () {
                                                       onTapEdit();
                                                     },
+                                                    permission: permission,
                                                   ),
                                           ),
                                         ],
@@ -385,6 +389,7 @@ class ViewButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
+        height: 40,
         decoration: BoxDecoration(
           color: MyColor.green,
           borderRadius: const BorderRadius.only(
@@ -405,7 +410,8 @@ class ViewButton extends StatelessWidget {
         padding: const EdgeInsets.all(6),
         child: SvgPicture.asset(
           'assets/images/svg/view.svg',
-          color: MyColor.greenSuperLight,
+          colorFilter:
+              const ColorFilter.mode(MyColor.greenSuperLight, BlendMode.srcIn),
           width: 30,
           height: 30,
         ),
@@ -429,6 +435,7 @@ class QrButton extends StatelessWidget {
         onTap();
       },
       child: Container(
+        height: 40,
         decoration: BoxDecoration(
           color: permission == BoardPermission.viewer
               ? Colors.grey.shade400
@@ -450,7 +457,8 @@ class QrButton extends StatelessWidget {
           'assets/images/svg/qr.svg',
           width: 30,
           height: 30,
-          color: MyColor.greenSuperLight,
+          colorFilter:
+              const ColorFilter.mode(MyColor.greenSuperLight, BlendMode.srcIn),
         ),
       ),
     );
@@ -459,15 +467,24 @@ class QrButton extends StatelessWidget {
 
 class EditButton extends StatelessWidget {
   final Function() onTap;
-  const EditButton({super.key, required this.onTap});
+  final BoardPermission permission;
+  const EditButton({super.key, required this.onTap, required this.permission});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        if (permission == BoardPermission.viewer) {
+          return;
+        }
+        onTap();
+      },
       child: Container(
+          height: 40,
           decoration: BoxDecoration(
-            color: MyColor.greenDark,
+            color: permission == BoardPermission.viewer
+                ? Colors.grey.shade400
+                : MyColor.greenDark,
             borderRadius: const BorderRadius.all(
               Radius.circular(3),
             ),
@@ -483,7 +500,8 @@ class EditButton extends StatelessWidget {
           padding: const EdgeInsets.all(6),
           child: SvgPicture.asset(
             'assets/images/svg/edit.svg',
-            color: MyColor.greenSuperLight,
+            colorFilter: const ColorFilter.mode(
+                MyColor.greenSuperLight, BlendMode.srcIn),
             width: 30,
             height: 30,
           )),
@@ -500,6 +518,7 @@ class DeleteCancelButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
+        height: 40,
         decoration: BoxDecoration(
           color: ColorUtils.moreLight(MyColor.red),
           borderRadius: const BorderRadius.all(
@@ -515,8 +534,8 @@ class DeleteCancelButton extends StatelessWidget {
           ],
         ),
         padding: const EdgeInsets.all(6),
-        child:
-            const Icon(Icons.clear, color: MyColor.greenSuperLight, size: 30),
+        child: const Icon(Icons.clear_rounded,
+            color: MyColor.greenSuperLight, size: 30),
       ),
     );
   }
@@ -524,13 +543,16 @@ class DeleteCancelButton extends StatelessWidget {
 
 class DeleteButton extends StatelessWidget {
   final Function() onTap;
-  const DeleteButton({super.key, required this.onTap});
+  final BoardPermission permission;
+  const DeleteButton(
+      {super.key, required this.onTap, required this.permission});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
       child: Container(
+          height: 40,
           decoration: BoxDecoration(
             color: MyColor.red,
             borderRadius: const BorderRadius.all(
@@ -545,12 +567,22 @@ class DeleteButton extends StatelessWidget {
               ),
             ],
           ),
-          padding: const EdgeInsets.all(6),
-          child: SvgPicture.asset(
-            'assets/images/svg/dustbox.svg',
-            color: MyColor.greenSuperLight,
-            width: 30,
-            height: 30,
+          child: Align(
+            child: permission == BoardPermission.owner
+                ? SvgPicture.asset(
+                    'assets/images/svg/dustbox.svg',
+                    colorFilter: const ColorFilter.mode(
+                        MyColor.greenSuperLight, BlendMode.srcIn),
+                    width: 30,
+                    height: 30,
+                  )
+                : SvgPicture.asset(
+                    'assets/images/svg/unlink.svg',
+                    colorFilter: const ColorFilter.mode(
+                        MyColor.greenSuperLight, BlendMode.srcIn),
+                    width: 30,
+                    height: 30,
+                  ),
           )),
     );
   }

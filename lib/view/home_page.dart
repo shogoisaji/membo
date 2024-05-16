@@ -64,12 +64,6 @@ class HomePage extends HookConsumerWidget {
         final insertedBoardId = await ref
             .read(homePageViewModelProvider.notifier)
             .createNewBoard(boardName);
-        if (insertedBoardId == null) {
-          if (context.mounted) {
-            ErrorDialog.show(context, "ボードが作成できませんでした");
-          }
-          return;
-        }
         if (context.mounted) {
           context.go('/edit', extra: insertedBoardId);
         }
@@ -214,8 +208,8 @@ class HomePage extends HookConsumerWidget {
                                         padding:
                                             const EdgeInsets.only(right: 12.0),
                                         child: CustomButton(
-                                          width: 150,
-                                          height: 40,
+                                          width: 160,
+                                          height: 42,
                                           color: MyColor.lightBlue,
                                           child: Center(
                                               child: Text(

@@ -33,7 +33,10 @@ mixin _$BoardModel {
   String get ownerId =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'editable_user_ids')
-  List<String> get editableUserIds => throw _privateConstructorUsedError;
+  List<String> get editableUserIds =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'edit_request_user_ids')
+  List<String> get editRequestUserIds => throw _privateConstructorUsedError;
   int get width => throw _privateConstructorUsedError;
   int get height =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
@@ -68,6 +71,7 @@ abstract class $BoardModelCopyWith<$Res> {
       List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') String ownerId,
       @JsonKey(name: 'editable_user_ids') List<String> editableUserIds,
+      @JsonKey(name: 'edit_request_user_ids') List<String> editRequestUserIds,
       int width,
       int height,
       @JsonKey(name: 'bg_color') String bgColor,
@@ -95,6 +99,7 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
     Object? objects = null,
     Object? ownerId = null,
     Object? editableUserIds = null,
+    Object? editRequestUserIds = null,
     Object? width = null,
     Object? height = null,
     Object? bgColor = null,
@@ -126,6 +131,10 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
       editableUserIds: null == editableUserIds
           ? _value.editableUserIds
           : editableUserIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      editRequestUserIds: null == editRequestUserIds
+          ? _value.editRequestUserIds
+          : editRequestUserIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
       width: null == width
           ? _value.width
@@ -170,6 +179,7 @@ abstract class _$$BoardModelImplCopyWith<$Res>
       List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') String ownerId,
       @JsonKey(name: 'editable_user_ids') List<String> editableUserIds,
+      @JsonKey(name: 'edit_request_user_ids') List<String> editRequestUserIds,
       int width,
       int height,
       @JsonKey(name: 'bg_color') String bgColor,
@@ -195,6 +205,7 @@ class __$$BoardModelImplCopyWithImpl<$Res>
     Object? objects = null,
     Object? ownerId = null,
     Object? editableUserIds = null,
+    Object? editRequestUserIds = null,
     Object? width = null,
     Object? height = null,
     Object? bgColor = null,
@@ -226,6 +237,10 @@ class __$$BoardModelImplCopyWithImpl<$Res>
       editableUserIds: null == editableUserIds
           ? _value._editableUserIds
           : editableUserIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      editRequestUserIds: null == editRequestUserIds
+          ? _value._editRequestUserIds
+          : editRequestUserIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
       width: null == width
           ? _value.width
@@ -266,6 +281,8 @@ class _$BoardModelImpl implements _BoardModel {
       @JsonKey(name: 'owner_id') required this.ownerId,
       @JsonKey(name: 'editable_user_ids')
       final List<String> editableUserIds = const [],
+      @JsonKey(name: 'edit_request_user_ids')
+      final List<String> editRequestUserIds = const [],
       this.width = 1000,
       this.height = 1000,
       @JsonKey(name: 'bg_color') this.bgColor = '0xffffffff',
@@ -273,7 +290,8 @@ class _$BoardModelImpl implements _BoardModel {
       @JsonKey(name: 'thumbnail_url') this.thumbnailUrl,
       @JsonKey(name: 'created_at') required this.createdAt})
       : _objects = objects,
-        _editableUserIds = editableUserIds;
+        _editableUserIds = editableUserIds,
+        _editRequestUserIds = editRequestUserIds;
 
   factory _$BoardModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$BoardModelImplFromJson(json);
@@ -313,6 +331,18 @@ class _$BoardModelImpl implements _BoardModel {
     return EqualUnmodifiableListView(_editableUserIds);
   }
 
+// ignore: invalid_annotation_target
+  final List<String> _editRequestUserIds;
+// ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'edit_request_user_ids')
+  List<String> get editRequestUserIds {
+    if (_editRequestUserIds is EqualUnmodifiableListView)
+      return _editRequestUserIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_editRequestUserIds);
+  }
+
   @override
   @JsonKey()
   final int width;
@@ -338,7 +368,7 @@ class _$BoardModelImpl implements _BoardModel {
 
   @override
   String toString() {
-    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, editableUserIds: $editableUserIds, width: $width, height: $height, bgColor: $bgColor, isPublic: $isPublic, thumbnailUrl: $thumbnailUrl, createdAt: $createdAt)';
+    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, editableUserIds: $editableUserIds, editRequestUserIds: $editRequestUserIds, width: $width, height: $height, bgColor: $bgColor, isPublic: $isPublic, thumbnailUrl: $thumbnailUrl, createdAt: $createdAt)';
   }
 
   @override
@@ -355,6 +385,8 @@ class _$BoardModelImpl implements _BoardModel {
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             const DeepCollectionEquality()
                 .equals(other._editableUserIds, _editableUserIds) &&
+            const DeepCollectionEquality()
+                .equals(other._editRequestUserIds, _editRequestUserIds) &&
             (identical(other.width, width) || other.width == width) &&
             (identical(other.height, height) || other.height == height) &&
             (identical(other.bgColor, bgColor) || other.bgColor == bgColor) &&
@@ -376,6 +408,7 @@ class _$BoardModelImpl implements _BoardModel {
       const DeepCollectionEquality().hash(_objects),
       ownerId,
       const DeepCollectionEquality().hash(_editableUserIds),
+      const DeepCollectionEquality().hash(_editRequestUserIds),
       width,
       height,
       bgColor,
@@ -405,6 +438,8 @@ abstract class _BoardModel implements BoardModel {
       final List<ObjectModel> objects,
       @JsonKey(name: 'owner_id') required final String ownerId,
       @JsonKey(name: 'editable_user_ids') final List<String> editableUserIds,
+      @JsonKey(name: 'edit_request_user_ids')
+      final List<String> editRequestUserIds,
       final int width,
       final int height,
       @JsonKey(name: 'bg_color') final String bgColor,
@@ -432,6 +467,9 @@ abstract class _BoardModel implements BoardModel {
   @override // ignore: invalid_annotation_target
   @JsonKey(name: 'editable_user_ids')
   List<String> get editableUserIds;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'edit_request_user_ids')
+  List<String> get editRequestUserIds;
   @override
   int get width;
   @override

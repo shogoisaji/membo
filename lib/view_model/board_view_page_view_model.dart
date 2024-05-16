@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/board/board_model.dart';
+import 'package:membo/models/request/edit_request_model.dart';
 import 'package:membo/models/view_model_state/board_view_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/state/stream_board_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'board_view_page_view_model.g.dart';
 
@@ -41,7 +44,7 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     }
   }
 
-  Future<bool> checkLinked(String boardId) async {
+  Future<ViewPageUserTypes> checkUserType(String boardId) async {
     final user = ref.read(userStateProvider);
     if (user == null) {
       throw Exception('User is not loaded');
@@ -51,27 +54,54 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     if (userData == null) {
       throw Exception('User is not loaded');
     }
-    final result = userData.linkedBoardIds.contains(boardId) ||
-        userData.ownedBoardIds.contains(boardId);
-    return result;
+
+    /// owner
+    if (userData.ownedBoardIds.contains(boardId)) {
+      return ViewPageUserTypes.owner;
+    }
+
+    final board =
+        await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+
+    /// editor
+    if (board.editableUserIds.contains(userData.userId)) {
+      return ViewPageUserTypes.editor;
+    }
+
+    if (userData.linkedBoardIds.contains(boardId)) {
+      /// edit request check
+      final existEditRequest = await ref
+          .read(supabaseRepositoryProvider)
+          .fetchEditRequestForRequestor(user.id, boardId);
+
+      if (existEditRequest != null) {
+        /// requestor
+        return ViewPageUserTypes.requestedUser;
+      } else {
+        /// linked user
+        return ViewPageUserTypes.linkedUser;
+      }
+    }
+
+    /// visitor
+    return ViewPageUserTypes.visitor;
   }
 
   Future<void> initialize(String boardId, double w, double h) async {
     final board =
         await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
 
-    if (board == null) return;
-
     /// streamをセット
     ref.read(streamBoardIdProvider.notifier).setStreamBoardId(boardId);
 
     final matrix = calcInitialTransform(board, w, h);
 
-    final isLinked = await checkLinked(boardId);
+    final userType = await checkUserType(boardId);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       state = state.copyWith(
         transformationMatrix: matrix,
-        isLinked: isLinked,
+        userType: userType,
       );
     });
   }
@@ -97,5 +127,66 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     ref
         .read(supabaseRepositoryProvider)
         .updateLinkedBoardIds(userData.userId, newLinkedBoardIds);
+
+    state = state.copyWith(
+      userType: ViewPageUserTypes.linkedUser,
+    );
+  }
+
+  Future<void> sendEditRequest(String boardId) async {
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+
+    /// exist check
+    try {
+      final existEditRequest = await ref
+          .read(supabaseRepositoryProvider)
+          .fetchEditRequestForRequestor(user.id, boardId);
+      if (existEditRequest != null) {
+        throw AppException.exist();
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    final board =
+        await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+
+    final newRequest = EditRequestModel(
+      editRequestId: const Uuid().v4(),
+      boardId: boardId,
+      ownerId: board.ownerId,
+      requestorId: user.id,
+      createdAt: DateTime.now(),
+    );
+    await ref.read(supabaseRepositoryProvider).insertEditRequest(newRequest);
+    state = state.copyWith(
+      userType: ViewPageUserTypes.requestedUser,
+    );
+  }
+
+  Future<void> cancelRequest(String boardId) async {
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+    final userData =
+        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    if (userData == null) {
+      throw Exception('User is not loaded');
+    }
+
+    final existEditRequest = await ref
+        .read(supabaseRepositoryProvider)
+        .fetchEditRequestForRequestor(user.id, boardId);
+    if (existEditRequest == null) {
+      throw AppException.notFound();
+    }
+    await ref
+        .read(supabaseRepositoryProvider)
+        .deleteEditRequest(existEditRequest.editRequestId);
+    state = state.copyWith(userType: ViewPageUserTypes.linkedUser);
   }
 }

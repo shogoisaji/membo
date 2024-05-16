@@ -112,7 +112,8 @@ class ViewButton extends StatelessWidget {
         padding: const EdgeInsets.all(6),
         child: SvgPicture.asset(
           'assets/images/svg/view.svg',
-          color: MyColor.greenSuperLight,
+          colorFilter:
+              const ColorFilter.mode(MyColor.greenSuperLight, BlendMode.srcIn),
           width: 30,
           height: 30,
         ),

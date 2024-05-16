@@ -32,7 +32,10 @@ class HomePageViewModel extends _$HomePageViewModel {
     }
 
     final tempCardBoardList = <CardBoardModel>[];
-    final tempThumbnailUrls = <String>[];
+    final tempCarouselImageUrls = <String>[];
+
+    /// カルーセルの最大数
+    const carouselLimit = 5;
 
     /// 同じ要素を排除するために、集合にしてからリストに戻す
     ///
@@ -52,8 +55,9 @@ class HomePageViewModel extends _$HomePageViewModel {
           continue;
         }
 
-        if (board.thumbnailUrl != null) {
-          tempThumbnailUrls.add(board.thumbnailUrl!);
+        if (board.thumbnailUrl != null &&
+            tempCarouselImageUrls.length < carouselLimit) {
+          tempCarouselImageUrls.add(board.thumbnailUrl!);
         }
 
         /// permission check
@@ -72,7 +76,7 @@ class HomePageViewModel extends _$HomePageViewModel {
       isLoading: false,
       userModel: userData,
       cardBoardList: tempCardBoardList,
-      carouselImageUrls: tempThumbnailUrls,
+      carouselImageUrls: tempCarouselImageUrls,
     );
   }
 
@@ -136,7 +140,7 @@ class HomePageViewModel extends _$HomePageViewModel {
     }
   }
 
-  Future<String?> createNewBoard(String boardName) async {
+  Future<String> createNewBoard(String boardName) async {
     /// Get the current user
     final User? user = ref.read(userStateProvider);
     if (user == null) {
@@ -145,7 +149,7 @@ class HomePageViewModel extends _$HomePageViewModel {
     final userData =
         await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
     if (userData == null) {
-      throw Exception('UserData is not signed in');
+      throw Exception('User data is not loaded');
     }
     final newBoard = BoardModel(
       boardId: const Uuid().v4(),
@@ -154,25 +158,18 @@ class HomePageViewModel extends _$HomePageViewModel {
       createdAt: DateTime.now(),
     );
 
-    try {
-      final insertedBoardId =
-          await ref.read(supabaseRepositoryProvider).insertBoard(newBoard);
-      if (insertedBoardId == null) {
-        throw Exception('boardの作成に失敗しました : board id null');
-      }
+    /// tableに新しいboardを追加
+    final insertedBoardId =
+        await ref.read(supabaseRepositoryProvider).insertBoard(newBoard);
 
-      /// userDataに new board id を追加
-      try {
-        final newOwnedBoardIds = [...userData.ownedBoardIds, insertedBoardId];
-        await ref
-            .read(supabaseRepositoryProvider)
-            .updateOwnedBoardIds(userData.userId, newOwnedBoardIds);
-      } catch (e) {
-        throw Exception('new board id を user data に追加できませんでした');
-      }
-      return insertedBoardId;
-    } catch (e) {
-      throw Exception('Error create new board: $e');
-    }
+    /// 仮のListにboard idを追加
+    final newOwnedBoardIds = [...userData.ownedBoardIds, insertedBoardId];
+
+    /// ownedBoardIdsの更新
+    await ref
+        .read(supabaseRepositoryProvider)
+        .updateOwnedBoardIds(userData.userId, newOwnedBoardIds);
+
+    return insertedBoardId;
   }
 }
