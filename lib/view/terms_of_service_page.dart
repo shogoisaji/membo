@@ -3,15 +3,15 @@ import 'package:go_router/go_router.dart';
 import 'package:membo/settings/color.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class PolicyPage extends StatefulWidget {
-  const PolicyPage({super.key});
+class TermsOfServicePage extends StatefulWidget {
+  const TermsOfServicePage({super.key});
 
   @override
-  State<PolicyPage> createState() => _PolicyPageState();
+  State<TermsOfServicePage> createState() => _TermsOfServicePageState();
 }
 
-class _PolicyPageState extends State<PolicyPage> {
-  static const url = 'https://membo.vercel.app/privacy-policy';
+class _TermsOfServicePageState extends State<TermsOfServicePage> {
+  static const url = 'https://membo.vercel.app/terms-of-service';
   final controller = WebViewController()
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..loadRequest(Uri.parse(url));

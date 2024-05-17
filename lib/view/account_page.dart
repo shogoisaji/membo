@@ -53,7 +53,7 @@ class AccountPage extends HookConsumerWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Edit Name', style: lightTextTheme.titleLarge!),
+          title: Text('名前の編集', style: lightTextTheme.titleLarge!),
           content: Form(
             key: formKey,
             child: Column(
@@ -65,9 +65,9 @@ class AccountPage extends HookConsumerWidget {
                   controller: nameTextController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Name is required';
+                      return '入力欄が空です';
                     } else if (value.length > 8) {
-                      return 'Name cannot be longer than 8 characters';
+                      return '8文字以下です';
                     }
                     return null;
                   },
@@ -81,7 +81,7 @@ class AccountPage extends HookConsumerWidget {
                           handleSubmitName(nameTextController.text, context);
                         }
                       },
-                      child: const Text('Save')),
+                      child: const Text('保存')),
                 )
               ],
             ),
@@ -94,7 +94,7 @@ class AccountPage extends HookConsumerWidget {
       try {
         await ref.read(accountPageViewModelProvider.notifier).updateAvatar();
         if (context.mounted) {
-          CustomSnackBar.show(context, 'Avatar updated', MyColor.blue);
+          CustomSnackBar.show(context, 'アバターが更新されました', MyColor.blue);
         }
       } catch (e) {
         if (context.mounted) {
@@ -111,9 +111,8 @@ class AccountPage extends HookConsumerWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Delete Account', style: lightTextTheme.titleLarge!),
-          content: Text('Are you sure you want to delete your account?',
-              style: lightTextTheme.bodyLarge),
+          title: Text('アカウントの削除', style: lightTextTheme.titleLarge!),
+          content: Text('本当にこのアカウントを削除しますか?', style: lightTextTheme.bodyLarge),
           actionsAlignment: MainAxisAlignment.spaceAround,
           actions: [
             ElevatedButton(
@@ -125,17 +124,16 @@ class AccountPage extends HookConsumerWidget {
                       .read(supabaseAuthRepositoryProvider)
                       .deleteAccount(accountPageState.user!.userId);
                   if (context.mounted) {
-                    CustomSnackBar.show(
-                        context, 'Account deleted', MyColor.blue);
+                    CustomSnackBar.show(context, 'アカウントを削除しました', MyColor.blue);
                     context.go('/sign-in');
                   }
                 } catch (e) {
                   if (context.mounted) {
-                    ErrorDialog.show(context, 'Error deleting account');
+                    ErrorDialog.show(context, 'アカウントの削除に失敗しました');
                   }
                 }
               },
-              child: Text('Delete',
+              child: Text('削除',
                   style:
                       lightTextTheme.bodyLarge!.copyWith(color: Colors.white)),
             ),
@@ -143,7 +141,7 @@ class AccountPage extends HookConsumerWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel', style: lightTextTheme.bodyLarge),
+              child: Text('キャンセル', style: lightTextTheme.bodyLarge),
             ),
           ],
         ),
@@ -194,7 +192,7 @@ class AccountPage extends HookConsumerWidget {
                                 )
                               : Column(
                                   children: [
-                                    const SizedBox(height: 30.0),
+                                    const SizedBox(height: 10.0),
                                     _avatarImage(
                                         accountPageState.user!.avatarUrl,
                                         handleTapEditAvatar),
@@ -217,7 +215,7 @@ class AccountPage extends HookConsumerWidget {
                                       ),
                                     ),
                                     CustomListContent(
-                                      title: 'Name',
+                                      title: '名前',
                                       titleStyle: lightTextTheme.titleLarge!,
                                       backgroundColor: MyColor.greenLight,
                                       contentWidgets: [
@@ -241,7 +239,7 @@ class AccountPage extends HookConsumerWidget {
                                     ),
                                     const SizedBox(height: 20.0),
                                     CustomListContent(
-                                      title: 'Owned Boards',
+                                      title: 'マイボード数',
                                       titleStyle: lightTextTheme.titleLarge!,
                                       backgroundColor: MyColor.greenLight,
                                       contentWidgets: [
@@ -255,7 +253,7 @@ class AccountPage extends HookConsumerWidget {
                                     ),
                                     const SizedBox(height: 20.0),
                                     CustomListContent(
-                                      title: 'Link Boards',
+                                      title: 'リンクボード数',
                                       titleStyle: lightTextTheme.titleLarge!,
                                       backgroundColor: MyColor.greenLight,
                                       contentWidgets: [
@@ -292,7 +290,7 @@ class AccountPage extends HookConsumerWidget {
                             height: 50,
                             color: MyColor.pink,
                             child: Center(
-                                child: Text('Sign out',
+                                child: Text('ログアウト',
                                     style: lightTextTheme.titleLarge)),
                             onTap: () {
                               handleTapSignOut();
@@ -306,7 +304,7 @@ class AccountPage extends HookConsumerWidget {
                                   height: 50,
                                   color: MyColor.red,
                                   child: Center(
-                                      child: Text('Delete Account',
+                                      child: Text('アカウント削除',
                                           style: lightTextTheme.titleLarge!
                                               .copyWith(color: Colors.white))),
                                   onTap: () async {

@@ -136,7 +136,7 @@ class EditPage extends HookConsumerWidget {
                 child: SvgPicture.asset(
                   'assets/images/svg/edit.svg',
                   colorFilter: const ColorFilter.mode(
-                      MyColor.greenDark, BlendMode.srcIn),
+                      MyColor.greenText, BlendMode.srcIn),
                   width: 30,
                   height: 30,
                 )),
@@ -150,9 +150,7 @@ class EditPage extends HookConsumerWidget {
                   border: Border.all(width: 3, color: MyColor.greenText),
                 ),
                 child: Text(
-                  editPageState.boardModel?.isPublic == true
-                      ? 'Public'
-                      : 'Private',
+                  editPageState.boardModel?.isPublic == true ? '公開' : '非公開',
                   style: lightTextTheme.bodyLarge,
                 ),
               ),
@@ -210,16 +208,16 @@ class EditPage extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 16),
-                        child: Text(
-                          'Object List',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                          ),
-                        ),
-                      ),
+                      // const Padding(
+                      //   padding: EdgeInsets.only(left: 16),
+                      //   child: Text(
+                      //     'Object List',
+                      //     style: TextStyle(
+                      //       color: Colors.white,
+                      //       fontSize: 24,
+                      //     ),
+                      //   ),
+                      // ),
                       IconButton(
                         padding: const EdgeInsets.all(12),
                         icon: const Icon(Icons.arrow_forward,
@@ -470,27 +468,31 @@ class DrawerCard extends HookConsumerWidget {
                             padding: const EdgeInsets.only(top: 12.0),
                             child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   ElevatedButton(
                                       style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12),
                                         backgroundColor: Colors.red.shade300,
                                       ),
                                       onPressed: () {
                                         handleDelete();
                                       },
-                                      child: Text('Delete',
+                                      child: Text('削除',
                                           style: lightTextTheme.bodyMedium!
                                               .copyWith(color: Colors.white))),
                                   ElevatedButton(
                                       style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
                                         backgroundColor:
                                             MyColor.greenSuperLight,
                                       ),
                                       onPressed: () {
                                         handleDeleteCancel();
                                       },
-                                      child: Text('Cancel',
+                                      child: Text('キャンセル',
                                           style: lightTextTheme.bodyMedium)),
                                 ]),
                           )
@@ -1037,7 +1039,8 @@ class TextInputModal extends HookConsumerWidget {
                                       .hideInputMenu();
                                   textController.clear();
                                 },
-                                child: const Text('OK'),
+                                child: Text('OK',
+                                    style: lightTextTheme.bodyMedium!),
                               ),
                             ),
                           ],
