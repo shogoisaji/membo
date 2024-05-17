@@ -1,3 +1,5 @@
+import 'package:membo/exceptions/app_exception.dart';
+import 'package:membo/models/request/edit_request_model.dart';
 import 'package:membo/models/view_model_state/board_settings_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
@@ -12,13 +14,9 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
   BoardSettingsState build() => BoardSettingsState();
 
   Future<void> initializeLoad(String boardId) async {
+    final board =
+        await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
     try {
-      final board =
-          await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
-
-      if (board == null) {
-        throw Exception('Board is null');
-      }
       final currentUser = ref.read(userStateProvider);
       if (currentUser == null) {
         throw Exception('User is not loaded');
@@ -50,11 +48,6 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
       return false;
     }
     return state.currentBoard! != state.tempBoard;
-  }
-
-  /// テスト用
-  void changeOwner() {
-    state = state.copyWith(isOwner: state.isOwner ? false : true);
   }
 
   void updateBoardSettings(
@@ -156,4 +149,127 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
       throw Exception('Board delete error : $e');
     }
   }
+
+  Future<List<EditorUserData>> getEditors() async {
+    if (state.currentBoard == null) {
+      throw Exception('current board is not set');
+    }
+    final board = await ref
+        .read(supabaseRepositoryProvider)
+        .getBoardById(state.currentBoard!.boardId);
+
+    /// boardのeditorのname,avatarUrlを取得
+    final editors = <EditorUserData>[];
+
+    for (String editorId in board.editableUserIds) {
+      /// user_name, avatar_urlをjsonで取得
+      final data = await ref
+          .read(supabaseRepositoryProvider)
+          .fetchUserNameAndAvatar(editorId);
+
+      if (data['user_name'] != null) {
+        final editor = EditorUserData(
+          userId: editorId,
+          userName: data['user_name'],
+          avatarUrl: data['avatar_url'],
+        );
+
+        editors.add(editor);
+      }
+    }
+    return editors;
+  }
+
+  Future<List<EditorUserData>> getRequestors() async {
+    if (state.currentBoard == null) {
+      throw Exception('current board is not set');
+    }
+    final requests = await ref
+        .read(supabaseRepositoryProvider)
+        .fetchEditRequestsByBoardId(state.currentBoard!.boardId);
+
+    final requestors = <EditorUserData>[];
+
+    for (EditRequestModel request in requests) {
+      /// user_name, avatar_urlをjsonで取得
+      final data = await ref
+          .read(supabaseRepositoryProvider)
+          .fetchUserNameAndAvatar(request.requestorId);
+
+      if (data['user_name'] != null) {
+        final editor = EditorUserData(
+          userId: request.requestorId,
+          userName: data['user_name'],
+          avatarUrl: data['avatar_url'],
+        );
+
+        requestors.add(editor);
+      }
+    }
+    return requestors;
+  }
+
+  /// リクエストユーザーのuser idをボードのeditableUserIdsに追加
+  Future<void> approveRequest(String requestorId) async {
+    if (state.currentBoard == null) {
+      throw Exception('current board is not set');
+    }
+    final request = await ref
+        .read(supabaseRepositoryProvider)
+        .fetchEditRequest(requestorId, state.currentBoard!.boardId);
+
+    if (request == null) throw AppException.error('Request not found');
+
+    final board = await ref
+        .read(supabaseRepositoryProvider)
+        .getBoardById(state.currentBoard!.boardId);
+
+    if (board.editableUserIds.contains(requestorId)) {
+      throw Exception('Requestor is already editable');
+    }
+
+    final newEditableUserIds = [...board.editableUserIds, requestorId];
+
+    /// board の editableUserIds を更新
+    await ref
+        .read(supabaseRepositoryProvider)
+        .updateEditableUserIds(state.currentBoard!.boardId, newEditableUserIds);
+
+    /// 承認後リクエストを削除
+    await ref
+        .read(supabaseRepositoryProvider)
+        .deleteEditRequest(request.editRequestId);
+  }
+
+  /// editorから除外
+  Future<void> excludeEditor(String excludeEditorId) async {
+    if (state.currentBoard == null) {
+      throw Exception('current board is not set');
+    }
+
+    final board = await ref
+        .read(supabaseRepositoryProvider)
+        .getBoardById(state.currentBoard!.boardId);
+
+    final newEditableUserIds = board.editableUserIds
+        .where((element) => element != excludeEditorId)
+        .toList();
+
+    /// board の editableUserIds を更新
+    await ref
+        .read(supabaseRepositoryProvider)
+        .updateEditableUserIds(state.currentBoard!.boardId, newEditableUserIds);
+  }
+}
+
+class EditorUserData {
+  final String userId;
+  final String userName;
+  final String? avatarUrl;
+
+  const EditorUserData({
+    required this.userId,
+    required this.userName,
+    this.avatarUrl,
+  });
 }

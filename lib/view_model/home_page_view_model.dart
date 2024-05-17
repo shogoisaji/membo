@@ -46,31 +46,27 @@ class HomePageViewModel extends _$HomePageViewModel {
     }.toList();
 
     for (String boardId in linkAndOwnBoards) {
+      BoardModel? board;
       try {
-        final board =
+        board =
             await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
-
-        /// boardがnullの場合
-        if (board == null) {
-          continue;
-        }
-
-        if (board.thumbnailUrl != null &&
-            tempCarouselImageUrls.length < carouselLimit) {
-          tempCarouselImageUrls.add(board.thumbnailUrl!);
-        }
-
-        /// permission check
-        final permission = board.ownerId == userData.userId
-            ? BoardPermission.owner
-            : board.editableUserIds.contains(userData.userId)
-                ? BoardPermission.editor
-                : BoardPermission.viewer;
-        tempCardBoardList
-            .add(CardBoardModel(board: board, permission: permission));
       } catch (e) {
         print('error: $e');
+        continue;
       }
+      if (board.thumbnailUrl != null &&
+          tempCarouselImageUrls.length < carouselLimit) {
+        tempCarouselImageUrls.add(board.thumbnailUrl!);
+      }
+
+      /// permission check
+      final permission = board.ownerId == userData.userId
+          ? BoardPermission.owner
+          : board.editableUserIds.contains(userData.userId)
+              ? BoardPermission.editor
+              : BoardPermission.viewer;
+      tempCardBoardList
+          .add(CardBoardModel(board: board, permission: permission));
     }
     state = state.copyWith(
       isLoading: false,
@@ -171,5 +167,24 @@ class HomePageViewModel extends _$HomePageViewModel {
         .updateOwnedBoardIds(userData.userId, newOwnedBoardIds);
 
     return insertedBoardId;
+  }
+
+  /// have the authority -> true, no authority -> false
+  Future<bool> checkPermission(String boardId) async {
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+    final userData =
+        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    if (userData == null) {
+      throw Exception('User data is not loaded');
+    }
+
+    final board =
+        await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+
+    return board.ownerId == userData.userId ||
+        board.editableUserIds.contains(userData.userId);
   }
 }

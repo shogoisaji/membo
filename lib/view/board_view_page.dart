@@ -6,7 +6,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/view_model_state/board_view_page_state.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/state/stream_board_state.dart';

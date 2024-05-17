@@ -144,6 +144,17 @@ class SupabaseRepository {
     }
   }
 
+  Future<void> updateEditableUserIds(
+      String boardId, List<String> newEditableUserIds) async {
+    try {
+      await _client.from('boards').update(
+          {'editable_user_ids': newEditableUserIds}).eq('board_id', boardId);
+    } catch (e) {
+      throw AppException.error('editable user ids update error',
+          detail: 'updateEditableUserIds() :$e');
+    }
+  }
+
   ///----------------------------------------
   /// User
   ///----------------------------------------
@@ -153,6 +164,21 @@ class SupabaseRepository {
           await _client.from('profiles').select().eq('user_id', id).single();
       final userData = UserModel.fromJson(response);
       return userData;
+    } catch (e) {
+      throw AppException.warning('fetch user data failed',
+          detail: 'fetchUserData() : user id -> $id');
+    }
+  }
+
+  /// return -> {"user_name": name, "avatar_url": url}
+  Future<Map<String, dynamic>> fetchUserNameAndAvatar(String id) async {
+    try {
+      final response = await _client
+          .from('profiles')
+          .select('user_name, avatar_url')
+          .eq('user_id', id)
+          .single();
+      return response;
     } catch (e) {
       throw AppException.warning('fetch user data failed',
           detail: 'fetchUserData() : user id -> $id');
@@ -271,7 +297,7 @@ class SupabaseRepository {
     }
   }
 
-  Future<EditRequestModel?> fetchEditRequestForRequestor(
+  Future<EditRequestModel?> fetchEditRequest(
       String requestorId, String boardId) async {
     try {
       final response = await _client

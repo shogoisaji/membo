@@ -72,7 +72,7 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
       /// edit request check
       final existEditRequest = await ref
           .read(supabaseRepositoryProvider)
-          .fetchEditRequestForRequestor(user.id, boardId);
+          .fetchEditRequest(user.id, boardId);
 
       if (existEditRequest != null) {
         /// requestor
@@ -143,7 +143,7 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     try {
       final existEditRequest = await ref
           .read(supabaseRepositoryProvider)
-          .fetchEditRequestForRequestor(user.id, boardId);
+          .fetchEditRequest(user.id, boardId);
       if (existEditRequest != null) {
         throw AppException.exist();
       }
@@ -180,7 +180,7 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
 
     final existEditRequest = await ref
         .read(supabaseRepositoryProvider)
-        .fetchEditRequestForRequestor(user.id, boardId);
+        .fetchEditRequest(user.id, boardId);
     if (existEditRequest == null) {
       throw AppException.notFound();
     }

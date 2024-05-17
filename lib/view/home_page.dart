@@ -44,6 +44,19 @@ class HomePage extends HookConsumerWidget {
       context.go('/view', extra: boardId);
     }
 
+    void handleTapEdit(String boardId) async {
+      /// 権限のチェック
+      final isEditable = await ref
+          .read(homePageViewModelProvider.notifier)
+          .checkPermission(boardId);
+      if (!context.mounted) return;
+      if (!isEditable) {
+        ErrorDialog.show(context, '権限がありません');
+        return;
+      }
+      context.go('/edit', extra: boardId);
+    }
+
     void handleTapDelete(String boardId) async {
       try {
         await ref
@@ -273,11 +286,8 @@ class HomePage extends HookConsumerWidget {
                                         .cardBoardList[index].board.boardId);
                                   },
                                   onTapEdit: () {
-                                    context.go('/edit',
-                                        extra: homePageState
-                                            .cardBoardList[index]
-                                            .board
-                                            .boardId);
+                                    handleTapEdit(homePageState
+                                        .cardBoardList[index].board.boardId);
                                   },
                                   onTapDelete: () {
                                     handleTapDelete(homePageState

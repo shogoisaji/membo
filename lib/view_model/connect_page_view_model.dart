@@ -9,15 +9,9 @@ class ConnectPageViewModel extends _$ConnectPageViewModel {
   @override
   ConnectPageState build() => const ConnectPageState();
 
-  Future<bool> checkBoardExist(String uuid) async {
-    try {
-      final board =
-          await ref.read(supabaseRepositoryProvider).getBoardById(uuid);
-      state = state.copyWith(board: board);
-      return board != null;
-    } catch (e) {
-      return false;
-    }
+  Future<void> checkBoardExist(String uuid) async {
+    final board = await ref.read(supabaseRepositoryProvider).getBoardById(uuid);
+    state = state.copyWith(board: board);
   }
 
   void clearBoard() {
