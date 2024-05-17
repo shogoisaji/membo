@@ -63,12 +63,11 @@ class SupabaseAuthRepository {
           throw 'No ID Token found.';
         }
 
-        final AuthResponse res = await _client.auth.signInWithIdToken(
+        await _client.auth.signInWithIdToken(
           provider: OAuthProvider.google,
           idToken: idToken,
           accessToken: accessToken,
         );
-        print('user name : ${res.user?.userMetadata?['full_name']}');
       } else {
         /// Web Client ID that you registered with Google Cloud.
         await _client.auth.signInWithOAuth(
@@ -106,7 +105,6 @@ class SupabaseAuthRepository {
       /// Apple Sign In canceled!
       return;
     }
-    print(credential);
 
     final idToken = credential.identityToken;
     if (idToken == null) {
@@ -152,7 +150,6 @@ Session? sessionState(SessionStateRef ref) {
   return sessionStreamData.when(
     loading: () => null,
     error: (e, __) {
-      debugPrint("session error: $e");
       return null;
     },
     data: (d) {

@@ -1,7 +1,11 @@
 CREATE POLICY select_boards ON boards
     FOR SELECT
     TO authenticated
-    USING ((is_public IS TRUE) OR (auth.uid() = owner_id));
+    USING ((is_public IS TRUE) 
+        OR (auth.uid() = owner_id)
+        OR (board_name IS NOT NULL)
+        OR (thumbnail_url IS NOT NULL)
+        );
 
 CREATE POLICY insert_boards ON boards
     FOR INSERT

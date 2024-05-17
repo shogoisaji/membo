@@ -144,6 +144,41 @@ class SupabaseRepository {
     }
   }
 
+  Future<Map<String, dynamic>> getBoardNameAndThumbnail(String id) async {
+    try {
+      final response = await _client
+          .from('boards')
+          .select('board_name, thumbnail_url')
+          .eq('board_id', id);
+      if (response.isEmpty) {
+        throw AppException.notFound();
+      }
+      return response[0];
+    } on AppException catch (_) {
+      rethrow;
+    } catch (e) {
+      throw AppException.warning('Boardを取得できませんでした',
+          detail: 'getBoardNameAndThumbnail() : board id -> $id');
+    }
+  }
+
+  Future<List<String>> getEditableUserIds(String boardId) async {
+    try {
+      final response = await _client
+          .from('boards')
+          .select('editable_user_ids')
+          .eq('board_id', boardId)
+          .single();
+      List<dynamic> dynamicList = response['editable_user_ids'];
+      List<String> stringList =
+          dynamicList.map((item) => item.toString()).toList();
+      return stringList;
+    } catch (e) {
+      throw AppException.warning('Editable user ids fetch error',
+          detail: 'getEditableUserIds() :$e');
+    }
+  }
+
   Future<void> updateEditableUserIds(
       String boardId, List<String> newEditableUserIds) async {
     try {
@@ -211,16 +246,16 @@ class SupabaseRepository {
     }
   }
 
-  Future<void> updateLinkedBoardIds(
-      String userId, List<String> newLinkedBoardIds) async {
-    try {
-      await _client.from('profiles').update(
-          {'linked_board_ids': newLinkedBoardIds}).eq('user_id', userId);
-    } catch (e) {
-      throw AppException.error('Linked board ids update error',
-          detail: 'updateLinkedBoardIds() :$e');
-    }
-  }
+  // Future<void> updateLinkedBoardIds(
+  //     String userId, List<String> newLinkedBoardIds) async {
+  //   try {
+  //     await _client.from('profiles').update(
+  //         {'linked_board_ids': newLinkedBoardIds}).eq('user_id', userId);
+  //   } catch (e) {
+  //     throw AppException.error('Linked board ids update error',
+  //         detail: 'updateLinkedBoardIds() :$e');
+  //   }
+  // }
 
   Future<String?> updateAvatarImage(UserModel userData, XFile file) async {
     SupabaseStorage storage = SupabaseStorage(_client);
@@ -307,7 +342,6 @@ class SupabaseRepository {
           .eq('board_id', boardId)
           .limit(1)
           .maybeSingle();
-      print(response);
       if (response == null) {
         return null;
       }

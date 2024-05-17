@@ -270,36 +270,38 @@ class HomePage extends HookConsumerWidget {
                             return LayoutBuilder(
                               builder: (context, constraints) {
                                 return CustomHomeCardWidget(
-                                  board:
-                                      homePageState.cardBoardList[index].board,
+                                  board: homePageState
+                                      .allCardBoardList[index].board,
                                   width: constraints.maxWidth,
                                   height: constraints.maxHeight,
-                                  imageUrl: homePageState.cardBoardList[index]
-                                          .board.thumbnailUrl ??
+                                  imageUrl: homePageState
+                                          .allCardBoardList[index]
+                                          .board
+                                          .thumbnailUrl ??
                                       '',
                                   onTapQr: () {
                                     handleTapQr(homePageState
-                                        .cardBoardList[index].board.boardId);
+                                        .allCardBoardList[index].board.boardId);
                                   },
                                   onTapView: () {
                                     handleTapView(homePageState
-                                        .cardBoardList[index].board.boardId);
+                                        .allCardBoardList[index].board.boardId);
                                   },
                                   onTapEdit: () {
                                     handleTapEdit(homePageState
-                                        .cardBoardList[index].board.boardId);
+                                        .allCardBoardList[index].board.boardId);
                                   },
                                   onTapDelete: () {
                                     handleTapDelete(homePageState
-                                        .cardBoardList[index].board.boardId);
+                                        .allCardBoardList[index].board.boardId);
                                   },
                                   permission: homePageState
-                                      .cardBoardList[index].permission,
+                                      .allCardBoardList[index].permission,
                                 );
                               },
                             );
                           },
-                          childCount: homePageState.cardBoardList.length,
+                          childCount: homePageState.allCardBoardList.length,
                         ),
                       ),
                     ),

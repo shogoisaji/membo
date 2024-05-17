@@ -260,10 +260,7 @@ class AccountPage extends HookConsumerWidget {
                                       backgroundColor: MyColor.greenLight,
                                       contentWidgets: [
                                         Text(
-                                          (accountPageState
-                                                  .user!.linkedBoardIds)
-                                              .length
-                                              .toString(),
+                                          'coming soon',
                                           style: lightTextTheme.bodyLarge,
                                         ),
                                       ],

@@ -1,26 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'home_page_view_model.dart';
+part of 'sqflite_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$homePageViewModelHash() => r'ee9ef10dccd6d7e5b77c6d1795ce119c33ddb9ff';
+String _$sqfliteRepositoryHash() => r'cc9ef56f444e1c85d3e6cafb1988b288d3ffa97a';
 
-/// See also [HomePageViewModel].
-@ProviderFor(HomePageViewModel)
-final homePageViewModelProvider =
-    NotifierProvider<HomePageViewModel, HomePageState>.internal(
-  HomePageViewModel.new,
-  name: r'homePageViewModelProvider',
+/// See also [sqfliteRepository].
+@ProviderFor(sqfliteRepository)
+final sqfliteRepositoryProvider = Provider<SqfliteRepository>.internal(
+  sqfliteRepository,
+  name: r'sqfliteRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$homePageViewModelHash,
+      : _$sqfliteRepositoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$HomePageViewModel = Notifier<HomePageState>;
+typedef SqfliteRepositoryRef = ProviderRef<SqfliteRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

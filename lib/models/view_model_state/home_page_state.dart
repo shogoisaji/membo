@@ -11,7 +11,9 @@ class HomePageState with _$HomePageState {
   const factory HomePageState({
     @Default(true) bool isLoading,
     UserModel? userModel,
-    @Default([]) List<CardBoardModel> cardBoardList,
+    @Default([]) List<CardBoardModel> allCardBoardList,
+    @Default([]) List<CardBoardModel> ownedCardBoardList,
+    @Default([]) List<CardBoardModel> linkedCardBoardList,
     @Default([]) List<String> carouselImageUrls,
   }) = _HomePageState;
 }

@@ -36,7 +36,6 @@ class SettingsPage extends HookConsumerWidget {
       final packageInfo = await PackageInfo.fromPlatform();
 
       appVersion.value = packageInfo.version;
-      print(appVersion.value);
     }
 
     // useEffect(() {

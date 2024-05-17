@@ -30,15 +30,15 @@ class EditListPageViewModel extends _$EditListPageViewModel {
 
     final tempBoards = <BoardModel>[];
 
-    for (String linkedBoardId in userData.linkedBoardIds) {
-      final board = await ref
-          .read(supabaseRepositoryProvider)
-          .getBoardById(linkedBoardId);
-      if (board == null) continue;
-      if (board.editableUserIds.contains(user.id)) {
-        tempBoards.add(board);
-      }
-    }
+    // for (String linkedBoardId in userData.linkedBoardIds) {
+    //   final board = await ref
+    //       .read(supabaseRepositoryProvider)
+    //       .getBoardById(linkedBoardId);
+    //   if (board == null) continue;
+    //   if (board.editableUserIds.contains(user.id)) {
+    //     tempBoards.add(board);
+    //   }
+    // }
     state = state.copyWith(isLoading: false, editableBoards: tempBoards);
   }
 
@@ -61,9 +61,6 @@ class EditListPageViewModel extends _$EditListPageViewModel {
     try {
       final insertedBoardId =
           await ref.read(supabaseRepositoryProvider).insertBoard(newBoard);
-      if (insertedBoardId == null) {
-        throw Exception('boardの作成に失敗しました : board id null');
-      }
 
       /// userDataに new board id を追加
       try {
