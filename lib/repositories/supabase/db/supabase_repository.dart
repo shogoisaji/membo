@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/models/request/edit_request_model.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -24,11 +25,19 @@ class SupabaseRepository {
   ///----------------------------------------
   /// Board
   ///----------------------------------------
-  Future<String?> insertBoard(BoardModel board) async {
+  Future<String> insertBoard(BoardModel board) async {
     try {
       final insertBoardJson = board.toJson();
       await _client.from('boards').insert(insertBoardJson);
       return board.boardId;
+    } on PostgrestException catch (e) {
+      switch (e.code) {
+        case '42501':
+          throw AppException.error("Permission denied");
+        default:
+          throw AppException.error('PostgrestException : ${e.code}',
+              detail: '$e');
+      }
     } catch (e) {
       throw AppException.error('Board insert error', detail: '$e');
     }
@@ -83,8 +92,7 @@ class SupabaseRepository {
       await _client
           .from('boards')
           .update(object)
-          .eq('board_id', updatedBoard.boardId)
-          .single();
+          .eq('board_id', updatedBoard.boardId);
     } catch (e) {
       throw AppException.error('Board update error',
           detail: 'updateBoard() :$e');
@@ -122,7 +130,7 @@ class SupabaseRepository {
     return controller.stream;
   }
 
-  Future<BoardModel?> getBoardById(String id) async {
+  Future<BoardModel> getBoardById(String id) async {
     try {
       final response = await _client.from('boards').select().eq('board_id', id);
       if (response.isEmpty) {
@@ -136,6 +144,17 @@ class SupabaseRepository {
     }
   }
 
+  Future<void> updateEditableUserIds(
+      String boardId, List<String> newEditableUserIds) async {
+    try {
+      await _client.from('boards').update(
+          {'editable_user_ids': newEditableUserIds}).eq('board_id', boardId);
+    } catch (e) {
+      throw AppException.error('editable user ids update error',
+          detail: 'updateEditableUserIds() :$e');
+    }
+  }
+
   ///----------------------------------------
   /// User
   ///----------------------------------------
@@ -145,6 +164,21 @@ class SupabaseRepository {
           await _client.from('profiles').select().eq('user_id', id).single();
       final userData = UserModel.fromJson(response);
       return userData;
+    } catch (e) {
+      throw AppException.warning('fetch user data failed',
+          detail: 'fetchUserData() : user id -> $id');
+    }
+  }
+
+  /// return -> {"user_name": name, "avatar_url": url}
+  Future<Map<String, dynamic>> fetchUserNameAndAvatar(String id) async {
+    try {
+      final response = await _client
+          .from('profiles')
+          .select('user_name, avatar_url')
+          .eq('user_id', id)
+          .single();
+      return response;
     } catch (e) {
       throw AppException.warning('fetch user data failed',
           detail: 'fetchUserData() : user id -> $id');
@@ -219,6 +253,80 @@ class SupabaseRepository {
     } catch (e) {
       throw AppException.warning('Avatar image url fetch error',
           detail: 'fetchAvatarImageUrl() :$e');
+    }
+  }
+
+  ///----------------------------------------
+  /// edit request
+  ///----------------------------------------
+
+  Future<void> insertEditRequest(EditRequestModel requestModel) async {
+    try {
+      await _client.from('edit_requests').insert(requestModel.toJson());
+    } catch (e) {
+      throw AppException.error('Edit request insert error',
+          detail: 'insertEditRequest() :$e');
+    }
+  }
+
+  Future<List<EditRequestModel>> fetchEditRequestsByBoardId(
+      String boardId) async {
+    try {
+      final response =
+          await _client.from('edit_requests').select().eq('board_id', boardId);
+      return response
+          .map<EditRequestModel>((json) => EditRequestModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw AppException.warning('Edit request fetch error',
+          detail: 'fetchEditRequestByBoardId() :$e');
+    }
+  }
+
+  Future<List<EditRequestModel>> fetchEditRequestsByOwnerId(
+      String ownerId) async {
+    try {
+      final response =
+          await _client.from('edit_requests').select().eq('owner_id', ownerId);
+      return response
+          .map<EditRequestModel>((json) => EditRequestModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw AppException.warning('Edit request fetch error',
+          detail: 'fetchEditRequestByOwnerId() :$e');
+    }
+  }
+
+  Future<EditRequestModel?> fetchEditRequest(
+      String requestorId, String boardId) async {
+    try {
+      final response = await _client
+          .from('edit_requests')
+          .select()
+          .eq('requestor_id', requestorId)
+          .eq('board_id', boardId)
+          .limit(1)
+          .maybeSingle();
+      print(response);
+      if (response == null) {
+        return null;
+      }
+      return EditRequestModel.fromJson(response);
+    } catch (e) {
+      throw AppException.warning('Edit request fetch error',
+          detail: 'fetchEditRequestForRequestor() :$e');
+    }
+  }
+
+  Future<void> deleteEditRequest(String editRequestId) async {
+    try {
+      await _client
+          .from('edit_requests')
+          .delete()
+          .eq('edit_request_id', editRequestId);
+    } catch (e) {
+      throw AppException.error('Edit request delete error',
+          detail: 'deleteEditRequest() :$e');
     }
   }
 }

@@ -1,11 +1,11 @@
 extension StringExtension on String {
   // "2024-03-11 21:26:34.764871" -> "2024/03/11 21:26"
   String toYMDHMString() {
-    final regex = RegExp(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+$');
+    final regex = RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$');
     if (!regex.hasMatch(this)) {
       throw FormatException("対象の文字列はDateTimeを文字列に変換した形式である必要があります: $this");
     }
-    final dateTimeParts = split(' ');
+    final dateTimeParts = split('T');
     final dateParts = dateTimeParts[0].split('-');
     final timeParts = dateTimeParts[1].split(':');
     return "${dateParts[0]}/${dateParts[1]}/${dateParts[2]} ${timeParts[0]}:${timeParts[1]}";

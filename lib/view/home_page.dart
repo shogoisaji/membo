@@ -44,6 +44,19 @@ class HomePage extends HookConsumerWidget {
       context.go('/view', extra: boardId);
     }
 
+    void handleTapEdit(String boardId) async {
+      /// 権限のチェック
+      final isEditable = await ref
+          .read(homePageViewModelProvider.notifier)
+          .checkPermission(boardId);
+      if (!context.mounted) return;
+      if (!isEditable) {
+        ErrorDialog.show(context, '権限がありません');
+        return;
+      }
+      context.go('/edit', extra: boardId);
+    }
+
     void handleTapDelete(String boardId) async {
       try {
         await ref
@@ -64,12 +77,6 @@ class HomePage extends HookConsumerWidget {
         final insertedBoardId = await ref
             .read(homePageViewModelProvider.notifier)
             .createNewBoard(boardName);
-        if (insertedBoardId == null) {
-          if (context.mounted) {
-            ErrorDialog.show(context, "ボードが作成できませんでした");
-          }
-          return;
-        }
         if (context.mounted) {
           context.go('/edit', extra: insertedBoardId);
         }
@@ -214,8 +221,8 @@ class HomePage extends HookConsumerWidget {
                                         padding:
                                             const EdgeInsets.only(right: 12.0),
                                         child: CustomButton(
-                                          width: 150,
-                                          height: 40,
+                                          width: 160,
+                                          height: 42,
                                           color: MyColor.lightBlue,
                                           child: Center(
                                               child: Text(
@@ -279,11 +286,8 @@ class HomePage extends HookConsumerWidget {
                                         .cardBoardList[index].board.boardId);
                                   },
                                   onTapEdit: () {
-                                    context.go('/edit',
-                                        extra: homePageState
-                                            .cardBoardList[index]
-                                            .board
-                                            .boardId);
+                                    handleTapEdit(homePageState
+                                        .cardBoardList[index].board.boardId);
                                   },
                                   onTapDelete: () {
                                     handleTapDelete(homePageState

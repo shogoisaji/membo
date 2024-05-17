@@ -135,7 +135,8 @@ class EditPage extends HookConsumerWidget {
                 padding: const EdgeInsets.only(right: 12.0),
                 child: SvgPicture.asset(
                   'assets/images/svg/edit.svg',
-                  color: MyColor.greenSuperLight,
+                  colorFilter: const ColorFilter.mode(
+                      MyColor.greenDark, BlendMode.srcIn),
                   width: 30,
                   height: 30,
                 )),
@@ -705,7 +706,8 @@ class EditToolBar extends HookConsumerWidget {
                                       rate.values.first,
                                       width: 30,
                                       height: 30,
-                                      color: MyColor.blue,
+                                      colorFilter: const ColorFilter.mode(
+                                          MyColor.blue, BlendMode.srcIn),
                                     ),
                                   ),
                                 );

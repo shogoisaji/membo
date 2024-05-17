@@ -35,11 +35,14 @@ class ConnectPage extends HookConsumerWidget {
 
     void checkBoard() async {
       if (uuid == null) return;
-      final isExist = await ref
-          .read(connectPageViewModelProvider.notifier)
-          .checkBoardExist(uuid!);
-      if (!isExist && context.mounted) {
-        ErrorDialog.show(context, "ボードを取得できませんでした");
+      try {
+        await ref
+            .read(connectPageViewModelProvider.notifier)
+            .checkBoardExist(uuid!);
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, "$e");
+        }
       }
     }
 

@@ -20,6 +20,10 @@ class BoardModel with _$BoardModel {
     @JsonKey(name: 'editable_user_ids')
     @Default([])
     List<String> editableUserIds,
+    // ignore: invalid_annotation_target
+    @JsonKey(name: 'edit_request_user_ids')
+    @Default([])
+    List<String> editRequestUserIds,
     @Default(1000) int width,
     @Default(1000) int height,
     // ignore: invalid_annotation_target

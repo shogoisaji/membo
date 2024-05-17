@@ -6,10 +6,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/models/view_model_state/board_view_page_state.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/state/stream_board_state.dart';
 import 'package:membo/view_model/board_view_page_view_model.dart';
 import 'package:membo/widgets/board_widget.dart';
+import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:membo/widgets/error_dialog.dart';
 
 class BoardViewPage extends HookConsumerWidget {
@@ -21,6 +23,8 @@ class BoardViewPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final streamBoard = ref.watch(streamBoardModelProvider);
+    final boardViewPageState = ref.watch(boardViewPageViewModelProvider);
+
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
 
@@ -35,8 +39,6 @@ class BoardViewPage extends HookConsumerWidget {
     /// interactive viewerのコントローラー
     final TransformationController transformController =
         useTransformationController();
-
-    final boardViewPageState = ref.watch(boardViewPageViewModelProvider);
 
     void initialize() async {
       await ref
@@ -70,6 +72,91 @@ class BoardViewPage extends HookConsumerWidget {
           ErrorDialog.show(context, '追加に失敗しました');
         }
       }
+    }
+
+    void handleEditRequest() async {
+      /// linked user 以外はリクエストできない
+      if (boardViewPageState.userType != ViewPageUserTypes.linkedUser) return;
+      showDialog(
+          context: context,
+          builder: (BuildContext dialogContext) => AlertDialog(
+                title: const Text('編集リクエストをしますか？'),
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MyColor.blue,
+                    ),
+                    onPressed: () async {
+                      Navigator.of(dialogContext).pop();
+                      try {
+                        await ref
+                            .read(boardViewPageViewModelProvider.notifier)
+                            .sendEditRequest(boardId);
+                        if (context.mounted) {
+                          CustomSnackBar.show(
+                              context, '編集リクエストをしました', MyColor.blue);
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ErrorDialog.show(context, '編集リクエストに失敗しました : $e');
+                        }
+                      }
+                    },
+                    child: const Text('リクエスト',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                    child: const Text('キャンセル'),
+                  ),
+                ],
+              ));
+    }
+
+    void handleAfterRequest(BuildContext context) async {
+      /// requested user 以外はリクエストできない
+      if (boardViewPageState.userType != ViewPageUserTypes.requestedUser) {
+        return;
+      }
+      showDialog(
+          context: context,
+          builder: (BuildContext dialogContext) => AlertDialog(
+                title: const Text('リクエスト済みです'),
+                content: const Text('リクエストを取り消しますか？'),
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MyColor.lightRed,
+                    ),
+                    onPressed: () async {
+                      Navigator.of(dialogContext).pop();
+                      try {
+                        await ref
+                            .read(boardViewPageViewModelProvider.notifier)
+                            .cancelRequest(boardId);
+                        if (context.mounted) {
+                          CustomSnackBar.show(
+                              context, 'リクエストを取り消しました', MyColor.blue);
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ErrorDialog.show(context, '取り消しに失敗しました');
+                        }
+                      }
+                    },
+                    child: const Text('取り消す',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                    child: const Text('キャンセル'),
+                  ),
+                ],
+              ));
     }
 
     useEffect(() {
@@ -129,22 +216,66 @@ class BoardViewPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(right: 12.0),
               child: SvgPicture.asset(
                 'assets/images/svg/view.svg',
-                color: MyColor.greenDark,
+                colorFilter:
+                    const ColorFilter.mode(MyColor.greenDark, BlendMode.srcIn),
                 width: 30,
                 height: 30,
               ),
             ),
-            boardViewPageState.isLinked
-                ? const SizedBox.shrink()
-                : Padding(
+            boardViewPageState.userType == ViewPageUserTypes.requestedUser
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColor.greenSuperLight,
+                      ),
+                      onPressed: () {
+                        handleAfterRequest(context);
+                      },
+                      child: SvgPicture.asset(
+                        'assets/images/svg/request.svg',
+                        colorFilter: const ColorFilter.mode(
+                            MyColor.green, BlendMode.srcIn),
+                        width: 35,
+                        height: 35,
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            boardViewPageState.userType == ViewPageUserTypes.linkedUser
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColor.green,
+                      ),
+                      onPressed: () {
+                        handleEditRequest();
+                      },
+                      child: SvgPicture.asset(
+                        'assets/images/svg/request.svg',
+                        colorFilter: const ColorFilter.mode(
+                            MyColor.greenText, BlendMode.srcIn),
+                        width: 35,
+                        height: 35,
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            boardViewPageState.userType == ViewPageUserTypes.visitor
+                ? Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColor.green,
+                      ),
                       onPressed: () {
                         handleAddLinkBoardIds();
                       },
-                      child: const Text('このボードをコネクトリストに追加'),
+                      child: const Text('リストに追加'),
                     ),
                   )
+                : const SizedBox.shrink(),
           ],
         ),
         body: isLoading.value

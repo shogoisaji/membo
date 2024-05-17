@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
@@ -69,6 +70,17 @@ class BoardSettingsPage extends HookConsumerWidget {
       } catch (e) {
         throw Exception(e.toString());
       }
+    }
+
+    void showEditRequestList() async {
+      if (!context.mounted) return;
+
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return const EditorListModal();
+        },
+      );
     }
 
     void deleteBoard() async {
@@ -174,13 +186,20 @@ class BoardSettingsPage extends HookConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              ref
-                                  .read(boardSettingsViewModelProvider.notifier)
-                                  .changeOwner();
-                            },
-                            child: const Text('仮 Change Owner'),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                showEditRequestList();
+                              },
+                              child: SvgPicture.asset(
+                                'assets/images/svg/editor.svg',
+                                colorFilter: const ColorFilter.mode(
+                                    MyColor.greenText, BlendMode.srcIn),
+                                width: 35,
+                                height: 35,
+                              ),
+                            ),
                           ),
                           CustomListContent(
                             titleIcon: const Icon(Icons.local_mall),
@@ -459,54 +478,6 @@ class BoardSettingsPage extends HookConsumerWidget {
                                   ),
                                 ],
                               ),
-
-                              /// TODO: 仮に反転している
-                              /// Password settings
-                              //
-                              // boardSettingsState.currentBoard!.isPublic !=
-                              //             true &&
-                              //         boardSettingsState.isOwner
-                              //     ? Column(
-                              //         children: [
-                              //           const Divider(color: MyColor.greenDark),
-                              //           Row(
-                              //             mainAxisAlignment:
-                              //                 MainAxisAlignment.spaceBetween,
-                              //             children: [
-                              //               Text('Password',
-                              //                   style:
-                              //                       lightTextTheme.bodyLarge),
-                              //               Row(
-                              //                 children: [
-                              //                   Text(
-                              //                       showPassword.value
-                              //                           ? boardSettingsState
-                              //                                   .tempPassword ??
-                              //                               boardSettingsState
-                              //                                   .currentBoard!
-                              //                                   .password
-                              //                           : '⚫︎' * 7,
-                              //                       style: lightTextTheme
-                              //                           .bodyLarge),
-                              //                   const SizedBox(width: 6.0),
-                              //                   GestureDetector(
-                              //                     onTap: () {
-                              //                       if (!boardSettingsState
-                              //                           .isOwner) return;
-                              //                       showPassword.value =
-                              //                           !showPassword.value;
-                              //                     },
-                              //                     child: Icon(showPassword.value
-                              //                         ? Icons.visibility
-                              //                         : Icons.visibility_off),
-                              //                   ),
-                              //                 ],
-                              //               ),
-                              //             ],
-                              //           ),
-                              //         ],
-                              //       )
-                              //     : const SizedBox.shrink(),
                             ],
                           ),
                           const SizedBox(height: 32.0),
@@ -675,6 +646,193 @@ class SizeDropDown extends HookConsumerWidget {
           .toList(),
       onChanged: (value) {
         onChanged(value as int);
+      },
+    );
+  }
+}
+
+class EditorListModal extends HookConsumerWidget {
+  const EditorListModal({super.key});
+
+  Widget divider() {
+    return Container(
+      width: double.infinity,
+      height: 1,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.transparent, MyColor.greenDark, Colors.transparent],
+        ),
+      ),
+    );
+  }
+
+  Widget avatar(String? avatarUrl) {
+    return CircleAvatar(
+      radius: 20,
+      foregroundImage: NetworkImage(
+        avatarUrl ?? '',
+      ),
+      child: const Icon(Icons.person, size: 24),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final w = MediaQuery.sizeOf(context).width;
+
+    final editors = useState<List<EditorUserData>>([]);
+    final requestors = useState<List<EditorUserData>>([]);
+
+    void initialize() async {
+      editors.value =
+          await ref.read(boardSettingsViewModelProvider.notifier).getEditors();
+      requestors.value = await ref
+          .read(boardSettingsViewModelProvider.notifier)
+          .getRequestors();
+    }
+
+    void handleApproveRequest(String requestId) async {
+      try {
+        await ref
+            .read(boardSettingsViewModelProvider.notifier)
+            .approveRequest(requestId);
+        await Future.delayed(const Duration(milliseconds: 500));
+        initialize();
+        if (context.mounted) {
+          CustomSnackBar.show(context, 'Request approved', MyColor.blue);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
+      }
+    }
+
+    void handleExcludeEditor(String excludeEditorId) async {
+      try {
+        await ref
+            .read(boardSettingsViewModelProvider.notifier)
+            .excludeEditor(excludeEditorId);
+        initialize();
+        if (context.mounted) {
+          CustomSnackBar.show(context, 'Editor excluded', MyColor.blue);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
+      }
+    }
+
+    useEffect(() {
+      initialize();
+      return;
+    }, []);
+
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Container(
+          width: w,
+          height: constraints.maxHeight,
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 32.0),
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+              color: MyColor.greenSuperLight),
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Column(
+            children: [
+              Text('Request List', style: lightTextTheme.bodyLarge),
+              divider(),
+              Expanded(
+                flex: 2,
+                child: ListView.builder(
+                  itemCount: requestors.value.length,
+                  itemBuilder: (context, int index) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              avatar(requestors.value[index].avatarUrl),
+                              Expanded(
+                                child: Text(
+                                  requestors.value[index].userName,
+                                  style: lightTextTheme.bodyMedium,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              handleApproveRequest(
+                                  requestors.value[index].userId);
+                            },
+                            child: Text('Approve',
+                                style: lightTextTheme.bodyMedium))
+                      ],
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20.0),
+              Text('Editor List', style: lightTextTheme.bodyLarge),
+
+              divider(),
+              Expanded(
+                flex: 5,
+                child: ListView.builder(
+                  itemCount: editors.value.length,
+                  itemBuilder: (context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                avatar(editors.value[index].avatarUrl),
+                                Expanded(
+                                  child: Text(
+                                    editors.value[index].userName,
+                                    style: lightTextTheme.bodyMedium,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ElevatedButton(
+                              onPressed: () {
+                                handleExcludeEditor(
+                                    editors.value[index].userId);
+                              },
+                              child: Text('Exclude',
+                                  style: lightTextTheme.bodyMedium))
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              // ...editors.map((editor) => Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         avatar(editor.avatarUrl),
+              //         Text(editor.userName, style: lightTextTheme.bodyMedium),
+              //       ],
+              //     )),
+            ],
+          ),
+        );
       },
     );
   }

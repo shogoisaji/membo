@@ -354,26 +354,35 @@ class AccountPage extends HookConsumerWidget {
             ),
           ),
           Align(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(avatarSize / 2),
-              child: Container(
-                width: avatarSize,
-                height: avatarSize,
-                decoration: const BoxDecoration(
-                  color: MyColor.greenLight,
-                  shape: BoxShape.circle,
-                ),
-                child: Image.network(
-                  avatarUrl ?? '',
-                  width: avatarSize,
-                  height: avatarSize,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      _defaultAvatar(avatarSize, color: MyColor.lightRed),
-                ),
+            child: CircleAvatar(
+              radius: avatarSize / 2,
+              foregroundImage: NetworkImage(
+                avatarUrl ?? '',
               ),
+              child: const Icon(Icons.person, size: 70),
             ),
           )
+          // Align(
+          //   child: ClipRRect(
+          //     borderRadius: BorderRadius.circular(avatarSize / 2),
+          //     child: Container(
+          //       width: avatarSize,
+          //       height: avatarSize,
+          //       decoration: const BoxDecoration(
+          //         color: MyColor.greenLight,
+          //         shape: BoxShape.circle,
+          //       ),
+          //       child: Image.network(
+          //         avatarUrl ?? '',
+          //         width: avatarSize,
+          //         height: avatarSize,
+          //         fit: BoxFit.cover,
+          //         errorBuilder: (context, error, stackTrace) =>
+          //             _defaultAvatar(avatarSize, color: MyColor.lightRed),
+          //       ),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );

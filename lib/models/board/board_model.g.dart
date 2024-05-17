@@ -20,6 +20,10 @@ _$BoardModelImpl _$$BoardModelImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      editRequestUserIds: (json['edit_request_user_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       width: json['width'] as int? ?? 1000,
       height: json['height'] as int? ?? 1000,
       bgColor: json['bg_color'] as String? ?? '0xffffffff',
@@ -36,6 +40,7 @@ Map<String, dynamic> _$$BoardModelImplToJson(_$BoardModelImpl instance) =>
       'objects': instance.objects,
       'owner_id': instance.ownerId,
       'editable_user_ids': instance.editableUserIds,
+      'edit_request_user_ids': instance.editRequestUserIds,
       'width': instance.width,
       'height': instance.height,
       'bg_color': instance.bgColor,

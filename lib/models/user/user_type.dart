@@ -2,6 +2,9 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'user_type.g.dart'; // JSON シリアライズのコードを生成するためのパートファイル
 
+// UserTypeのenum定義
+enum UserTypes { admin, free, premium }
+
 @JsonSerializable()
 class UserType {
   @JsonKey(name: 'user_type')
@@ -31,9 +34,6 @@ class UserType {
   factory UserType.fromJson(Map<String, dynamic> json) =>
       _$UserTypeFromJson(json);
 }
-
-// UserTypeのenum定義
-enum UserTypes { admin, free, premium }
 
 // JSON キーのカスタムデシリアライズロジック
 UserTypes _userTypeFromJson(String type) {

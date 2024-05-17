@@ -50,8 +50,6 @@ class EditPageViewModel extends _$EditPageViewModel {
     final board =
         await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
 
-    if (board == null) return;
-
     ref.read(streamBoardIdProvider.notifier).setStreamBoardId(boardId);
 
     final matrix = calcInitialTransform(board, w, h);
