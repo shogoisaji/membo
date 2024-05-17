@@ -137,16 +137,23 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                   /// thumbnail image
                   Align(
                     alignment: Alignment.topCenter,
-                    child: Image.network(board.thumbnailUrl ?? "",
-                        fit: BoxFit.cover,
-                        width: width,
-                        height: height,
-                        errorBuilder: (context, url, error) => Image.asset(
-                              'assets/images/logo.png',
-                              fit: BoxFit.contain,
-                              width: double.infinity,
-                              height: double.infinity,
-                            )),
+                    child: board.thumbnailUrl != null
+                        ? Image.network(board.thumbnailUrl!,
+                            fit: BoxFit.cover,
+                            width: width,
+                            height: height,
+                            errorBuilder: (context, url, error) => Image.asset(
+                                  'assets/images/logo.png',
+                                  fit: BoxFit.contain,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ))
+                        : Image.asset(
+                            'assets/images/logo.png',
+                            fit: BoxFit.contain,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
                   ),
 
                   /// permission label
@@ -230,7 +237,13 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                     right: positionXFromRight - ownerAvatarRadius,
                     child: CircleAvatar(
                       radius: ownerAvatarRadius,
-                      foregroundImage: NetworkImage(ownerAvatarUrl.value ?? ""),
+                      foregroundImage: ownerAvatarUrl.value != null
+                          ? NetworkImage(ownerAvatarUrl.value!)
+                          : null,
+                      child: const Icon(
+                        Icons.person,
+                        size: 30,
+                      ),
                     ),
                   ),
 
@@ -276,13 +289,14 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                     ...editorAvatarUrlList.value
                                         .map((url) => Row(
                                               children: [
-                                                Container(
-                                                    color: Colors.red,
-                                                    width: 10),
                                                 CircleAvatar(
                                                   radius: editorAvatarRadius,
                                                   foregroundImage:
                                                       NetworkImage(url),
+                                                  child: const Icon(
+                                                    Icons.person,
+                                                    size: 30,
+                                                  ),
                                                 ),
                                               ],
                                             )),
@@ -297,10 +311,6 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                       foregroundImage: NetworkImage(tempAvatar),
                                     ),
                                     const SizedBox(width: 10),
-                                    const CircleAvatar(
-                                      radius: editorAvatarRadius,
-                                      foregroundImage: NetworkImage(tempAvatar),
-                                    ),
                                   ],
                                 ),
                               ),

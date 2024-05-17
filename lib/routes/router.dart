@@ -12,6 +12,7 @@ import 'package:membo/view/board_view_page.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/view/policy_page.dart';
 import 'package:membo/view/scan_page.dart';
+import 'package:membo/view/terms_of_service_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:membo/view/sign_in_page.dart';
 import 'package:membo/view/home_page.dart';
@@ -33,6 +34,7 @@ class PagePath {
   static const publicPolicy = '/public-policy';
   static const qrScan = '/qr-scan';
   static const license = '/license';
+  static const termsOfService = '/terms-of-service';
 }
 
 CustomTransitionPage buildPageWithDefaultTransition<T>({
@@ -45,19 +47,13 @@ CustomTransitionPage buildPageWithDefaultTransition<T>({
     opaque: false,
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-        FadeTransition(
-            opacity: Tween<double>(begin: 0.5, end: 1.0).animate(animation),
-            child: SlideTransition(
-              position: Tween<Offset>(
-                      begin: const Offset(0.03, -0.005),
-                      end: const Offset(0, 0))
-                  .animate(animation),
-              child: ScaleTransition(
-                scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
-                child: child,
-              ),
-            )),
-    transitionDuration: const Duration(milliseconds: 150),
+        SlideTransition(
+      position: Tween<Offset>(
+              begin: const Offset(0.03, -0.005), end: const Offset(0, 0))
+          .animate(animation),
+      child: child,
+    ),
+    transitionDuration: const Duration(milliseconds: 50),
   );
 }
 
@@ -177,6 +173,14 @@ GoRouter router(RouterRef ref) {
             context: context,
             state: state,
             child: const PolicyPage(),
+          ),
+        ),
+        GoRoute(
+          path: PagePath.termsOfService,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: const TermsOfServicePage(),
           ),
         ),
         GoRoute(

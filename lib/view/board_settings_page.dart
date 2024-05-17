@@ -88,7 +88,7 @@ class BoardSettingsPage extends HookConsumerWidget {
         await ref.read(boardSettingsViewModelProvider.notifier).deleteBoard();
 
         if (context.mounted) {
-          CustomSnackBar.show(context, 'Board deleted', MyColor.blue);
+          CustomSnackBar.show(context, 'ボードを削除しました', MyColor.blue);
           context.go('/');
         }
       } catch (e) {
@@ -203,7 +203,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           ),
                           CustomListContent(
                             titleIcon: const Icon(Icons.local_mall),
-                            title: 'Board Name',
+                            title: 'ボード名',
                             titleStyle: lightTextTheme.bodyLarge!,
                             backgroundColor: MyColor.greenLight,
                             padding: EdgeInsets.symmetric(
@@ -287,7 +287,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           const SizedBox(height: 20.0),
                           CustomListContent(
                             titleIcon: const Icon(Icons.zoom_out_map),
-                            title: 'Board Size',
+                            title: 'ボードサイズ',
                             titleStyle: lightTextTheme.bodyLarge!,
                             backgroundColor: MyColor.greenLight,
                             padding: const EdgeInsets.symmetric(
@@ -365,7 +365,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           const SizedBox(height: 20.0),
                           CustomListContent(
                             titleIcon: const Icon(Icons.color_lens),
-                            title: 'Background Color',
+                            title: '背景色',
                             titleStyle: lightTextTheme.bodyLarge!,
                             backgroundColor: MyColor.greenLight,
                             contentWidgets: [
@@ -423,7 +423,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           CustomListContent(
                             titleIcon:
                                 const Icon(Icons.sentiment_satisfied_alt),
-                            title: 'Board Owner',
+                            title: '所有者',
                             titleStyle: lightTextTheme.bodyLarge!,
                             backgroundColor: MyColor.greenLight,
                             contentWidgets: [
@@ -435,7 +435,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('OwnerName',
+                                    Text('Name',
                                         style: lightTextTheme.bodyLarge),
                                     const SizedBox(width: 22.0),
                                     Expanded(
@@ -454,7 +454,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                           const SizedBox(height: 20.0),
                           CustomListContent(
                             titleIcon: const Icon(Icons.language),
-                            title: 'Share',
+                            title: '公開ステータス',
                             titleStyle: lightTextTheme.bodyLarge!,
                             backgroundColor: MyColor.greenLight,
                             contentWidgets: [
@@ -462,17 +462,17 @@ class BoardSettingsPage extends HookConsumerWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('PublicState',
+                                  Text('State',
                                       style: lightTextTheme.bodyLarge),
                                   Row(
                                     children: [
                                       boardSettingsState.currentBoard!.isPublic
                                           ? Text(
-                                              'Public',
+                                              '公開',
                                               style: lightTextTheme.bodyLarge!
                                                   .copyWith(color: MyColor.red),
                                             )
-                                          : Text('Private',
+                                          : Text('非公開',
                                               style: lightTextTheme.bodyLarge),
                                     ],
                                   ),
@@ -499,7 +499,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                         }
                                       : null,
                                   child: Center(
-                                      child: Text('Save',
+                                      child: Text('保存',
                                           style: lightTextTheme.bodyLarge)),
                                 )
                               : const SizedBox.shrink(),
@@ -524,12 +524,12 @@ class BoardSettingsPage extends HookConsumerWidget {
                                             },
                                         child: Text(boardSettingsState
                                                 .currentBoard!.isPublic
-                                            ? 'Unpublish'
-                                            : 'Publish')),
+                                            ? '非公開にする'
+                                            : '公開する')),
                                     ElevatedButton(
                                         onPressed: () =>
                                             Navigator.of(context).pop(),
-                                        child: const Text('Cancel')),
+                                        child: const Text('キャンセル')),
                                   ],
                                 ),
                               );
@@ -537,8 +537,8 @@ class BoardSettingsPage extends HookConsumerWidget {
                             child: Center(
                                 child: Text(
                                     boardSettingsState.currentBoard!.isPublic
-                                        ? 'Unpublish'
-                                        : 'Publish',
+                                        ? '非公開'
+                                        : '公開',
                                     style: lightTextTheme.bodyLarge!.copyWith(
                                         color: MyColor.greenSuperLight))),
                           ),
@@ -559,17 +559,17 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           Navigator.of(context).pop();
                                           deleteBoard();
                                         },
-                                        child: const Text('Delete')),
+                                        child: const Text('削除')),
                                     ElevatedButton(
                                         onPressed: () =>
                                             Navigator.of(context).pop(),
-                                        child: const Text('Cancel')),
+                                        child: const Text('キャンセル')),
                                   ],
                                 ),
                               );
                             },
                             child: Center(
-                                child: Text('Delete',
+                                child: Text('削除',
                                     style: lightTextTheme.bodyLarge!
                                         .copyWith(color: Colors.white))),
                           ),

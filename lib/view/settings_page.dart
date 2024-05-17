@@ -19,10 +19,10 @@ class SettingsPage extends HookConsumerWidget {
 
     final appVersion = useState('');
 
-    Widget Spacer() => const SizedBox(height: 20.0);
+    Widget spacer() => const SizedBox(height: 24.0);
 
     Future<void> inquiryURL() async {
-      final Uri url = Uri.parse('https://flutter.dev');
+      final Uri url = Uri.parse('https://membo.vercel.app/inquiry');
       if (await canLaunchUrl(url)) {
         await launchUrl(url);
       } else {
@@ -36,12 +36,8 @@ class SettingsPage extends HookConsumerWidget {
       final packageInfo = await PackageInfo.fromPlatform();
 
       appVersion.value = packageInfo.version;
-      print(appVersion.value);
     }
 
-    // useEffect(() {
-    //   return null;
-    // }, [appVersion.value]);
     useEffect(() {
       loadVersion();
       return null;
@@ -58,7 +54,7 @@ class SettingsPage extends HookConsumerWidget {
                 context.go('/');
               },
             ),
-            title: Text('Settings', style: lightTextTheme.titleLarge),
+            title: Text('設定', style: lightTextTheme.titleLarge),
           ),
           body: Stack(
             children: [
@@ -73,43 +69,53 @@ class SettingsPage extends HookConsumerWidget {
                             horizontal: 20.0, vertical: 16.0),
                         child: Column(
                           children: [
-                            Spacer(),
+                            spacer(),
                             ListContentBase(
-                              title: 'Account',
+                              title: 'アカウント',
                               onTap: () {
                                 context.go('/account');
                               },
                             ),
-                            Spacer(),
+                            spacer(),
                             ListContentBase(
-                              title: 'Policy',
+                              title: 'プライバシーポリシー',
                               onTap: () {
                                 context.go('/policy');
                               },
                             ),
-                            Spacer(),
+                            spacer(),
                             ListContentBase(
-                              title: 'License',
+                              title: '利用規約',
+                              onTap: () {
+                                context.go('/terms-of-service');
+                              },
+                            ),
+                            spacer(),
+                            ListContentBase(
+                              title: 'ライセンス',
                               onTap: () {
                                 context.push('/license');
                               },
                             ),
-                            Spacer(),
+                            spacer(),
                             ListContentBase(
-                              title: 'Inquiry',
+                              title: '問い合わせ',
                               onTap: inquiryURL,
                               isWeb: true,
                             ),
-                            Spacer(),
+                            spacer(),
                             ListContentBase(
-                              title: 'Version',
-                              onTap: inquiryURL,
-                              tailContent: Text(
-                                appVersion.value,
-                                style: lightTextTheme.bodyLarge,
+                              title: 'バージョン',
+                              onTap: () {},
+                              tailContent: Padding(
+                                padding: const EdgeInsets.only(right: 10.0),
+                                child: Text(
+                                  appVersion.value,
+                                  style: lightTextTheme.bodyLarge,
+                                ),
                               ),
                             ),
-                            Spacer(),
+                            spacer(),
                             const SizedBox(height: 100.0),
                           ],
                         ),
@@ -142,25 +148,30 @@ class ListContentBase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        color: MyColor.greenLight,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: lightTextTheme.titleLarge),
-          tailContent ??
-              GestureDetector(
-                onTap: onTap,
-                child: isWeb
-                    ? const Icon(Icons.open_in_new, size: 24)
-                    : const Icon(Icons.chevron_right_rounded, size: 30),
-              ),
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          color: MyColor.greenLight,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title, style: lightTextTheme.titleMedium),
+            tailContent ??
+                SizedBox(
+                  child: isWeb
+                      ? const Padding(
+                          padding: EdgeInsets.only(right: 6.0),
+                          child: Icon(Icons.open_in_new, size: 28),
+                        )
+                      : const Icon(Icons.chevron_right_rounded, size: 36),
+                ),
+          ],
+        ),
       ),
     );
   }

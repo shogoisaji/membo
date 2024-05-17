@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
@@ -206,9 +207,14 @@ class HomePage extends HookConsumerWidget {
                                               },
                                             ),
                                             IconButton(
-                                              icon: const Icon(
-                                                Icons.link,
-                                                size: 36,
+                                              icon: SvgPicture.asset(
+                                                'assets/images/svg/connect.svg',
+                                                width: 36,
+                                                height: 36,
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                        MyColor.greenText,
+                                                        BlendMode.srcIn),
                                               ),
                                               onPressed: () {
                                                 context.go('/connect');
@@ -226,7 +232,7 @@ class HomePage extends HookConsumerWidget {
                                           color: MyColor.lightBlue,
                                           child: Center(
                                               child: Text(
-                                            'New Board',
+                                            'ボード作成',
                                             style: lightTextTheme.bodyLarge!
                                                 .copyWith(
                                               color: Colors.white,
@@ -270,36 +276,38 @@ class HomePage extends HookConsumerWidget {
                             return LayoutBuilder(
                               builder: (context, constraints) {
                                 return CustomHomeCardWidget(
-                                  board:
-                                      homePageState.cardBoardList[index].board,
+                                  board: homePageState
+                                      .allCardBoardList[index].board,
                                   width: constraints.maxWidth,
                                   height: constraints.maxHeight,
-                                  imageUrl: homePageState.cardBoardList[index]
-                                          .board.thumbnailUrl ??
+                                  imageUrl: homePageState
+                                          .allCardBoardList[index]
+                                          .board
+                                          .thumbnailUrl ??
                                       '',
                                   onTapQr: () {
                                     handleTapQr(homePageState
-                                        .cardBoardList[index].board.boardId);
+                                        .allCardBoardList[index].board.boardId);
                                   },
                                   onTapView: () {
                                     handleTapView(homePageState
-                                        .cardBoardList[index].board.boardId);
+                                        .allCardBoardList[index].board.boardId);
                                   },
                                   onTapEdit: () {
                                     handleTapEdit(homePageState
-                                        .cardBoardList[index].board.boardId);
+                                        .allCardBoardList[index].board.boardId);
                                   },
                                   onTapDelete: () {
                                     handleTapDelete(homePageState
-                                        .cardBoardList[index].board.boardId);
+                                        .allCardBoardList[index].board.boardId);
                                   },
                                   permission: homePageState
-                                      .cardBoardList[index].permission,
+                                      .allCardBoardList[index].permission,
                                 );
                               },
                             );
                           },
-                          childCount: homePageState.cardBoardList.length,
+                          childCount: homePageState.allCardBoardList.length,
                         ),
                       ),
                     ),
@@ -407,8 +415,8 @@ class BoardNameInputPage extends HookWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Board Name', style: lightTextTheme.titleMedium),
-                      Text('Max $maxBoardNameChars chars',
+                      Text('ボード名', style: lightTextTheme.titleMedium),
+                      Text('$maxBoardNameChars文字以下',
                           style: lightTextTheme.bodySmall),
                     ],
                   ),
@@ -440,9 +448,9 @@ class BoardNameInputPage extends HookWidget {
                               )),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Name is required';
+                              return '入力欄が空欄です';
                             } else if (value.length > maxBoardNameChars) {
-                              return 'Name cannot be longer than $maxBoardNameChars characters';
+                              return '$maxBoardNameChars文字以下で入力してください';
                             }
                             return null;
                           },
@@ -457,7 +465,7 @@ class BoardNameInputPage extends HookWidget {
                                 height: 40,
                                 color: MyColor.greenDark,
                                 child: Center(
-                                    child: Text('Create',
+                                    child: Text('作成',
                                         style:
                                             lightTextTheme.bodyLarge!.copyWith(
                                           color: Colors.white,
@@ -477,7 +485,7 @@ class BoardNameInputPage extends HookWidget {
                                 color: MyColor.greenSuperLight,
                                 onTap: onTapCancel,
                                 child: Center(
-                                    child: Text('Cancel',
+                                    child: Text('キャンセル',
                                         style:
                                             lightTextTheme.bodyLarge!.copyWith(
                                           color: MyColor.greenText,

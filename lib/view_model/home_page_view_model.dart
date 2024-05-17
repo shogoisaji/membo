@@ -1,7 +1,9 @@
 import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/board_permission.dart';
+import 'package:membo/models/board/linked_board_model.dart';
 import 'package:membo/models/view_model_state/home_page_state.dart';
+import 'package:membo/repositories/sqflite/sqflite_repository.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -15,6 +17,7 @@ class HomePageViewModel extends _$HomePageViewModel {
   @override
   HomePageState build() => const HomePageState();
 
+  /// TODO:user dataのselectを指定してソートして取得した方が良いかも
   void initialize() async {
     final user = ref.read(userStateProvider);
 
@@ -31,47 +34,100 @@ class HomePageViewModel extends _$HomePageViewModel {
       return;
     }
 
-    final tempCardBoardList = <CardBoardModel>[];
-    final tempCarouselImageUrls = <String>[];
+    var tempOwnedCardBoardList = <CardBoardModel>[];
+    var tempLinkedCardBoardList = <CardBoardModel>[];
+    var tempCarouselImageUrls = <String>[];
 
     /// カルーセルの最大数
     const carouselLimit = 5;
 
-    /// 同じ要素を排除するために、集合にしてからリストに戻す
-    ///
-    /// リストは反転している。最新が最初
-    final linkAndOwnBoards = {
-      ...userData.ownedBoardIds.reversed,
-      ...userData.linkedBoardIds.reversed
-    }.toList();
-
-    for (String boardId in linkAndOwnBoards) {
-      BoardModel? board;
+    /// owned board
+    for (String boardId in userData.ownedBoardIds) {
       try {
-        board =
-            await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+        final data = await ref
+            .read(supabaseRepositoryProvider)
+            .getBoardNameAndThumbnail(boardId);
+
+        final boardForCard = BoardModel(
+          boardId: boardId,
+          boardName: data['board_name'] as String,
+          ownerId: '',
+          createdAt: DateTime.now(),
+          thumbnailUrl: data['thumbnail_url'] as String?,
+        );
+
+        tempOwnedCardBoardList.add(CardBoardModel(
+            board: boardForCard, permission: BoardPermission.owner));
+
+        /// カルーセルの画像URLを追加
+        if (data['thumbnail_url'] != null &&
+            tempCarouselImageUrls.length < carouselLimit) {
+          tempCarouselImageUrls.add(data['thumbnail_url']);
+        }
+      } on AppException catch (e) {
+        if (e.type == AppExceptionType.notFound) {
+          print('owned board not found');
+        }
       } catch (e) {
         print('error: $e');
-        continue;
       }
-      if (board.thumbnailUrl != null &&
-          tempCarouselImageUrls.length < carouselLimit) {
-        tempCarouselImageUrls.add(board.thumbnailUrl!);
-      }
-
-      /// permission check
-      final permission = board.ownerId == userData.userId
-          ? BoardPermission.owner
-          : board.editableUserIds.contains(userData.userId)
-              ? BoardPermission.editor
-              : BoardPermission.viewer;
-      tempCardBoardList
-          .add(CardBoardModel(board: board, permission: permission));
     }
+
+    /// linked board
+    final result = await ref.read(sqfliteRepositoryProvider).loadLinkedBoards();
+
+    for (LinkedBoardModel linkedBoard in result) {
+      try {
+        final boardForCard = BoardModel(
+          boardId: linkedBoard.boardId,
+          boardName: linkedBoard.boardName,
+          ownerId: '',
+          createdAt: DateTime.now(),
+          thumbnailUrl: linkedBoard.thumbnailUrl,
+        );
+
+        var editableUserIds = <String>[];
+
+        try {
+          editableUserIds = await ref
+              .read(supabaseRepositoryProvider)
+              .getEditableUserIds(linkedBoard.boardId);
+        } catch (e) {
+          // 権限がない場合
+        }
+
+        /// permission check
+        final permission = editableUserIds.contains(userData.userId)
+            ? BoardPermission.editor
+            : BoardPermission.viewer;
+        tempLinkedCardBoardList = [
+          ...tempLinkedCardBoardList,
+          CardBoardModel(board: boardForCard, permission: permission)
+        ];
+
+        /// カルーセルの画像URLを追加
+        if (linkedBoard.thumbnailUrl != null &&
+            tempCarouselImageUrls.length < carouselLimit) {
+          tempCarouselImageUrls.add(linkedBoard.thumbnailUrl!);
+        }
+      } on AppException catch (e) {
+        if (e.type == AppExceptionType.notFound) {
+          print('linked board not found');
+        }
+      } catch (e) {
+        print('error: $e');
+      }
+    }
+
     state = state.copyWith(
       isLoading: false,
       userModel: userData,
-      cardBoardList: tempCardBoardList,
+      allCardBoardList: [
+        ...tempOwnedCardBoardList.reversed,
+        ...tempLinkedCardBoardList.reversed
+      ],
+      ownedCardBoardList: tempOwnedCardBoardList.reversed.toList(),
+      linkedCardBoardList: tempLinkedCardBoardList.reversed.toList(),
       carouselImageUrls: tempCarouselImageUrls,
     );
   }
@@ -87,6 +143,7 @@ class HomePageViewModel extends _$HomePageViewModel {
       throw Exception('User data is not loaded');
     }
 
+    /// owned boardの場合
     if (userData.ownedBoardIds.contains(boardId)) {
       try {
         /// boardの削除
@@ -102,35 +159,38 @@ class HomePageViewModel extends _$HomePageViewModel {
 
         /// stateの更新
         state = state.copyWith(
-          cardBoardList: state.cardBoardList
+          ownedCardBoardList: state.ownedCardBoardList
               .where((element) => element.board.boardId != boardId)
               .toList(),
         );
+        initialize();
+        return;
       } catch (e) {
-        throw AppException.error('board delete failed',
+        throw AppException.error('owned board delete failed',
             detail: 'owned board delete failed : $e');
       }
     }
 
-    if (userData.linkedBoardIds.contains(boardId)) {
+    /// linked boardの場合
+    else {
       try {
-        final newLinkedBoardIds = userData.linkedBoardIds
-            .where((element) => element != boardId)
-            .toList();
+        /// linked boardの削除
+        final result =
+            await ref.read(sqfliteRepositoryProvider).deleteRow(boardId);
 
-        /// linkedBoardIdsの更新
-        await ref
-            .read(supabaseRepositoryProvider)
-            .updateLinkedBoardIds(userData.userId, newLinkedBoardIds);
+        if (result == -1) {
+          throw Exception();
+        }
 
         /// stateの更新
         state = state.copyWith(
-          cardBoardList: state.cardBoardList
+          linkedCardBoardList: state.linkedCardBoardList
               .where((element) => element.board.boardId != boardId)
               .toList(),
         );
+        initialize();
       } catch (e) {
-        throw AppException.error('board delete failed',
+        throw AppException.error('linked board delete failed',
             detail: 'linked board delete failed : $e');
       }
     }

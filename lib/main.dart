@@ -16,6 +16,7 @@ void main() async {
       url: 'https://mawzoznhibuhrvxxyvtt.supabase.co',
       anonKey:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hd3pvem5oaWJ1aHJ2eHh5dnR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTMzNDQwMTQsImV4cCI6MjAyODkyMDAxNH0.bSTbMeFthbBlWbGlX7XAh5Romh2l8-Cptv-gRC2dX70',
+      debug: false,
     ),
     Future(() async {
       sharedPreferences = await SharedPreferences.getInstance();

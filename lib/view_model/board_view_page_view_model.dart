@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/board/board_model.dart';
+import 'package:membo/models/board/linked_board_model.dart';
 import 'package:membo/models/request/edit_request_model.dart';
 import 'package:membo/models/view_model_state/board_view_page_state.dart';
+import 'package:membo/repositories/sqflite/sqflite_repository.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/state/stream_board_state.dart';
@@ -63,17 +65,18 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     final board =
         await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
 
-    /// editor
-    if (board.editableUserIds.contains(userData.userId)) {
-      return ViewPageUserTypes.editor;
-    }
+    final linkedBoard =
+        await ref.read(sqfliteRepositoryProvider).findById(boardId);
+    if (linkedBoard != null) {
+      /// editor
+      if (board.editableUserIds.contains(userData.userId)) {
+        return ViewPageUserTypes.editor;
+      }
 
-    if (userData.linkedBoardIds.contains(boardId)) {
       /// edit request check
       final existEditRequest = await ref
           .read(supabaseRepositoryProvider)
           .fetchEditRequest(user.id, boardId);
-
       if (existEditRequest != null) {
         /// requestor
         return ViewPageUserTypes.requestedUser;
@@ -107,29 +110,26 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
   }
 
   Future<void> addLinkedBoardId(String newBoardId) async {
-    final user = ref.read(userStateProvider);
-    if (user == null) {
-      throw Exception('User is not loaded');
-    }
-    final userData = await ref
+    /// board nameとthumbnailを取得
+    final data = await ref
         .read(supabaseRepositoryProvider)
-        .fetchUserData(user.id)
-        .catchError((e) {
-      print('error: $e');
-      return null;
-    });
-
-    /// すでにlinkedBoardが存在するか確認
-    if ((userData!.linkedBoardIds).contains(newBoardId)) {
-      throw Exception('Exist linked board');
+        .getBoardNameAndThumbnail(newBoardId);
+    final insertLinkedBoard = LinkedBoardModel(
+      boardId: newBoardId,
+      boardName: data['board_name'],
+      thumbnailUrl: data['thumbnail_url'],
+      createdAt: DateTime.now(),
+    );
+    final result = await ref
+        .read(sqfliteRepositoryProvider)
+        .insertLinkedBoard(insertLinkedBoard);
+    if (result == -1) {
+      throw Exception('Failed to insert linked board');
     }
-    final newLinkedBoardIds = [...(userData.linkedBoardIds), newBoardId];
-    ref
-        .read(supabaseRepositoryProvider)
-        .updateLinkedBoardIds(userData.userId, newLinkedBoardIds);
 
+    final userType = await checkUserType(newBoardId);
     state = state.copyWith(
-      userType: ViewPageUserTypes.linkedUser,
+      userType: userType,
     );
   }
 

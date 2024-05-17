@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -29,8 +28,12 @@ class ConnectPage extends HookConsumerWidget {
       ref.read(connectPageViewModelProvider.notifier).clearBoard();
     }
 
-    void handleView() {
+    void handleCardView() {
       context.go('/view', extra: connectPageState.board!.boardId);
+    }
+
+    void handleCodeSearch() {
+      //
     }
 
     void checkBoard() async {
@@ -64,7 +67,7 @@ class ConnectPage extends HookConsumerWidget {
               context.go('/');
             },
           ),
-          title: Text('Connect', style: lightTextTheme.titleLarge),
+          title: Text('コネクト', style: lightTextTheme.titleLarge),
         ),
         body: Stack(
           children: [
@@ -86,7 +89,7 @@ class ConnectPage extends HookConsumerWidget {
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  'Board ID',
+                                  'ボードID',
                                   style: lightTextTheme.bodyLarge!.copyWith(),
                                 ),
                               ),
@@ -113,7 +116,7 @@ class ConnectPage extends HookConsumerWidget {
                                     )),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'validation error';
+                                    return '入力欄が空です';
                                   }
                                   return null;
                                 },
@@ -125,14 +128,14 @@ class ConnectPage extends HookConsumerWidget {
                                 color: MyColor.greenDark,
                                 child: Center(
                                     child: Text(
-                                  'Search',
+                                  '検索',
                                   style: lightTextTheme.bodyLarge!.copyWith(
                                     color: Colors.white,
                                   ),
                                 )),
                                 onTap: () {
                                   if (formKey.currentState!.validate()) {
-                                    //
+                                    handleCodeSearch();
                                   }
                                 },
                               ),
@@ -174,7 +177,7 @@ class ConnectPage extends HookConsumerWidget {
                           color: MyColor.blue,
                           child: Center(
                               child: Text(
-                            'QR Scan',
+                            'QRスキャン',
                             style: lightTextTheme.bodyLarge!.copyWith(
                               color: Colors.white,
                             ),
@@ -191,7 +194,7 @@ class ConnectPage extends HookConsumerWidget {
                             : ThumbnailCard(
                                 boardModel: connectPageState.board!,
                                 onCancelTap: handleCancel,
-                                onViewTap: handleView),
+                                onViewTap: handleCardView),
                       ],
                     ),
                   ),

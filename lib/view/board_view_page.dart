@@ -69,7 +69,7 @@ class BoardViewPage extends HookConsumerWidget {
             ErrorDialog.show(context, '既に追加済みです');
             return;
           }
-          ErrorDialog.show(context, '追加に失敗しました');
+          ErrorDialog.show(context, '追加に失敗しました : $e');
         }
       }
     }

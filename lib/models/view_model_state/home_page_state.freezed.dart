@@ -18,7 +18,12 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$HomePageState {
   bool get isLoading => throw _privateConstructorUsedError;
   UserModel? get userModel => throw _privateConstructorUsedError;
-  List<CardBoardModel> get cardBoardList => throw _privateConstructorUsedError;
+  List<CardBoardModel> get allCardBoardList =>
+      throw _privateConstructorUsedError;
+  List<CardBoardModel> get ownedCardBoardList =>
+      throw _privateConstructorUsedError;
+  List<CardBoardModel> get linkedCardBoardList =>
+      throw _privateConstructorUsedError;
   List<String> get carouselImageUrls => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -35,7 +40,9 @@ abstract class $HomePageStateCopyWith<$Res> {
   $Res call(
       {bool isLoading,
       UserModel? userModel,
-      List<CardBoardModel> cardBoardList,
+      List<CardBoardModel> allCardBoardList,
+      List<CardBoardModel> ownedCardBoardList,
+      List<CardBoardModel> linkedCardBoardList,
       List<String> carouselImageUrls});
 
   $UserModelCopyWith<$Res>? get userModel;
@@ -56,7 +63,9 @@ class _$HomePageStateCopyWithImpl<$Res, $Val extends HomePageState>
   $Res call({
     Object? isLoading = null,
     Object? userModel = freezed,
-    Object? cardBoardList = null,
+    Object? allCardBoardList = null,
+    Object? ownedCardBoardList = null,
+    Object? linkedCardBoardList = null,
     Object? carouselImageUrls = null,
   }) {
     return _then(_value.copyWith(
@@ -68,9 +77,17 @@ class _$HomePageStateCopyWithImpl<$Res, $Val extends HomePageState>
           ? _value.userModel
           : userModel // ignore: cast_nullable_to_non_nullable
               as UserModel?,
-      cardBoardList: null == cardBoardList
-          ? _value.cardBoardList
-          : cardBoardList // ignore: cast_nullable_to_non_nullable
+      allCardBoardList: null == allCardBoardList
+          ? _value.allCardBoardList
+          : allCardBoardList // ignore: cast_nullable_to_non_nullable
+              as List<CardBoardModel>,
+      ownedCardBoardList: null == ownedCardBoardList
+          ? _value.ownedCardBoardList
+          : ownedCardBoardList // ignore: cast_nullable_to_non_nullable
+              as List<CardBoardModel>,
+      linkedCardBoardList: null == linkedCardBoardList
+          ? _value.linkedCardBoardList
+          : linkedCardBoardList // ignore: cast_nullable_to_non_nullable
               as List<CardBoardModel>,
       carouselImageUrls: null == carouselImageUrls
           ? _value.carouselImageUrls
@@ -103,7 +120,9 @@ abstract class _$$HomePageStateImplCopyWith<$Res>
   $Res call(
       {bool isLoading,
       UserModel? userModel,
-      List<CardBoardModel> cardBoardList,
+      List<CardBoardModel> allCardBoardList,
+      List<CardBoardModel> ownedCardBoardList,
+      List<CardBoardModel> linkedCardBoardList,
       List<String> carouselImageUrls});
 
   @override
@@ -123,7 +142,9 @@ class __$$HomePageStateImplCopyWithImpl<$Res>
   $Res call({
     Object? isLoading = null,
     Object? userModel = freezed,
-    Object? cardBoardList = null,
+    Object? allCardBoardList = null,
+    Object? ownedCardBoardList = null,
+    Object? linkedCardBoardList = null,
     Object? carouselImageUrls = null,
   }) {
     return _then(_$HomePageStateImpl(
@@ -135,9 +156,17 @@ class __$$HomePageStateImplCopyWithImpl<$Res>
           ? _value.userModel
           : userModel // ignore: cast_nullable_to_non_nullable
               as UserModel?,
-      cardBoardList: null == cardBoardList
-          ? _value._cardBoardList
-          : cardBoardList // ignore: cast_nullable_to_non_nullable
+      allCardBoardList: null == allCardBoardList
+          ? _value._allCardBoardList
+          : allCardBoardList // ignore: cast_nullable_to_non_nullable
+              as List<CardBoardModel>,
+      ownedCardBoardList: null == ownedCardBoardList
+          ? _value._ownedCardBoardList
+          : ownedCardBoardList // ignore: cast_nullable_to_non_nullable
+              as List<CardBoardModel>,
+      linkedCardBoardList: null == linkedCardBoardList
+          ? _value._linkedCardBoardList
+          : linkedCardBoardList // ignore: cast_nullable_to_non_nullable
               as List<CardBoardModel>,
       carouselImageUrls: null == carouselImageUrls
           ? _value._carouselImageUrls
@@ -153,9 +182,13 @@ class _$HomePageStateImpl implements _HomePageState {
   const _$HomePageStateImpl(
       {this.isLoading = true,
       this.userModel,
-      final List<CardBoardModel> cardBoardList = const [],
+      final List<CardBoardModel> allCardBoardList = const [],
+      final List<CardBoardModel> ownedCardBoardList = const [],
+      final List<CardBoardModel> linkedCardBoardList = const [],
       final List<String> carouselImageUrls = const []})
-      : _cardBoardList = cardBoardList,
+      : _allCardBoardList = allCardBoardList,
+        _ownedCardBoardList = ownedCardBoardList,
+        _linkedCardBoardList = linkedCardBoardList,
         _carouselImageUrls = carouselImageUrls;
 
   @override
@@ -163,13 +196,34 @@ class _$HomePageStateImpl implements _HomePageState {
   final bool isLoading;
   @override
   final UserModel? userModel;
-  final List<CardBoardModel> _cardBoardList;
+  final List<CardBoardModel> _allCardBoardList;
   @override
   @JsonKey()
-  List<CardBoardModel> get cardBoardList {
-    if (_cardBoardList is EqualUnmodifiableListView) return _cardBoardList;
+  List<CardBoardModel> get allCardBoardList {
+    if (_allCardBoardList is EqualUnmodifiableListView)
+      return _allCardBoardList;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_cardBoardList);
+    return EqualUnmodifiableListView(_allCardBoardList);
+  }
+
+  final List<CardBoardModel> _ownedCardBoardList;
+  @override
+  @JsonKey()
+  List<CardBoardModel> get ownedCardBoardList {
+    if (_ownedCardBoardList is EqualUnmodifiableListView)
+      return _ownedCardBoardList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_ownedCardBoardList);
+  }
+
+  final List<CardBoardModel> _linkedCardBoardList;
+  @override
+  @JsonKey()
+  List<CardBoardModel> get linkedCardBoardList {
+    if (_linkedCardBoardList is EqualUnmodifiableListView)
+      return _linkedCardBoardList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_linkedCardBoardList);
   }
 
   final List<String> _carouselImageUrls;
@@ -184,7 +238,7 @@ class _$HomePageStateImpl implements _HomePageState {
 
   @override
   String toString() {
-    return 'HomePageState(isLoading: $isLoading, userModel: $userModel, cardBoardList: $cardBoardList, carouselImageUrls: $carouselImageUrls)';
+    return 'HomePageState(isLoading: $isLoading, userModel: $userModel, allCardBoardList: $allCardBoardList, ownedCardBoardList: $ownedCardBoardList, linkedCardBoardList: $linkedCardBoardList, carouselImageUrls: $carouselImageUrls)';
   }
 
   @override
@@ -197,7 +251,11 @@ class _$HomePageStateImpl implements _HomePageState {
             (identical(other.userModel, userModel) ||
                 other.userModel == userModel) &&
             const DeepCollectionEquality()
-                .equals(other._cardBoardList, _cardBoardList) &&
+                .equals(other._allCardBoardList, _allCardBoardList) &&
+            const DeepCollectionEquality()
+                .equals(other._ownedCardBoardList, _ownedCardBoardList) &&
+            const DeepCollectionEquality()
+                .equals(other._linkedCardBoardList, _linkedCardBoardList) &&
             const DeepCollectionEquality()
                 .equals(other._carouselImageUrls, _carouselImageUrls));
   }
@@ -207,7 +265,9 @@ class _$HomePageStateImpl implements _HomePageState {
       runtimeType,
       isLoading,
       userModel,
-      const DeepCollectionEquality().hash(_cardBoardList),
+      const DeepCollectionEquality().hash(_allCardBoardList),
+      const DeepCollectionEquality().hash(_ownedCardBoardList),
+      const DeepCollectionEquality().hash(_linkedCardBoardList),
       const DeepCollectionEquality().hash(_carouselImageUrls));
 
   @JsonKey(ignore: true)
@@ -221,7 +281,9 @@ abstract class _HomePageState implements HomePageState {
   const factory _HomePageState(
       {final bool isLoading,
       final UserModel? userModel,
-      final List<CardBoardModel> cardBoardList,
+      final List<CardBoardModel> allCardBoardList,
+      final List<CardBoardModel> ownedCardBoardList,
+      final List<CardBoardModel> linkedCardBoardList,
       final List<String> carouselImageUrls}) = _$HomePageStateImpl;
 
   @override
@@ -229,7 +291,11 @@ abstract class _HomePageState implements HomePageState {
   @override
   UserModel? get userModel;
   @override
-  List<CardBoardModel> get cardBoardList;
+  List<CardBoardModel> get allCardBoardList;
+  @override
+  List<CardBoardModel> get ownedCardBoardList;
+  @override
+  List<CardBoardModel> get linkedCardBoardList;
   @override
   List<String> get carouselImageUrls;
   @override
