@@ -89,10 +89,11 @@ class SupabaseRepository {
   Future<void> updateBoard(BoardModel updatedBoard) async {
     final object = updatedBoard.toJson();
     try {
-      await _client
+      final e = await _client
           .from('boards')
           .update(object)
           .eq('board_id', updatedBoard.boardId);
+      print(e);
     } catch (e) {
       throw AppException.error('Board update error',
           detail: 'updateBoard() :$e');
@@ -200,7 +201,7 @@ class SupabaseRepository {
       final userData = UserModel.fromJson(response);
       return userData;
     } catch (e) {
-      throw AppException.warning('fetch user data failed',
+      throw AppException.error('fetch user data failed',
           detail: 'fetchUserData() : user id -> $id');
     }
   }

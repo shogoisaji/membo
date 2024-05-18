@@ -207,7 +207,8 @@ class AccountPage extends HookConsumerWidget {
                                         borderRadius: BorderRadius.circular(14),
                                       ),
                                       child: Text(
-                                        accountPageState.user!.userType.type
+                                        accountPageState
+                                            .user!.membershipType.type
                                             .toString()
                                             .split('.')[1]
                                             .toUpperCase(),

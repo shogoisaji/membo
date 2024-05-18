@@ -2,8 +2,7 @@ CREATE POLICY select_profiles ON profiles
 FOR SELECT
 TO authenticated
 USING (
-     auth.uid() = user_id OR 
-    (user_name IS NOT NULL AND avatar_url IS NOT NULL)
+  true
 );
 
 CREATE POLICY insert_profiles ON profiles

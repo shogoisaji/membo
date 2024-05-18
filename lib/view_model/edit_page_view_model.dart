@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/models/view_model_state/edit_page_state.dart';
+import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
 import 'package:membo/state/stream_board_state.dart';
@@ -129,7 +131,7 @@ class EditPageViewModel extends _$EditPageViewModel {
     });
   }
 
-  void saveSelectedObject() {
+  Future<void> saveSelectedObject() async {
     if (state.selectedObject == null) {
       return;
     }
@@ -141,29 +143,41 @@ class EditPageViewModel extends _$EditPageViewModel {
 
     /// typeに合わせてrepositoryのメソッドを呼び出し、insert
     try {
+      /// 権限をチェック
+      final user = ref.read(userStateProvider);
+      if (user == null) {
+        throw Exception('User is not signed in');
+      }
+
+      ///　所有者、または編集権限を持っているユーザーのみ書き込み可能
+      if (!board.editableUserIds.contains(user.id) &&
+          board.ownerId != user.id) {
+        throw AppException.error('書き込み権限がありません');
+      }
+
       switch (state.selectedObject!.type) {
         /// 画像の場合
         case ObjectType.localImage:
           if (state.selectedImageFile == null) {
-            throw Exception('select local image is null');
+            throw AppException.error('select local image is null');
           }
-          ref.read(supabaseRepositoryProvider).addImageObject(
+          await ref.read(supabaseRepositoryProvider).addImageObject(
               board, state.selectedObject!, state.selectedImageFile!);
 
         /// テキストの場合
         case ObjectType.text:
           final currentObjects = List<ObjectModel>.from(board.objects);
           currentObjects.add(state.selectedObject!);
+
           final newBoard = board.copyWith(objects: currentObjects);
-          ref
-              .read(supabaseRepositoryProvider)
-              .addTextObject(newBoard, state.selectedObject!);
+
+          await ref.read(supabaseRepositoryProvider).updateBoard(newBoard);
         default:
       }
     } catch (e) {
-      print('Error updating board: $e');
+      clearSelectedObject();
+      rethrow;
     }
-
     clearSelectedObject();
   }
 

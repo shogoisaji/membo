@@ -25,13 +25,11 @@ class HomePageViewModel extends _$HomePageViewModel {
         .read(supabaseRepositoryProvider)
         .fetchUserData(user?.id ?? '')
         .catchError((e) {
-      print('error: $e');
-      return null;
+      throw AppException.error('${e.title}');
     });
 
     if (userData == null) {
-      print('userData is null');
-      return;
+      throw AppException.notFound();
     }
 
     var tempOwnedCardBoardList = <CardBoardModel>[];
