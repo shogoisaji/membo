@@ -28,12 +28,12 @@ CREATE POLICY update_boards_objects ON boards
     FOR UPDATE
     TO authenticated
     USING (
-        (is_public IS TRUE AND auth.uid() = ANY(SELECT (jsonb_array_elements_text(editable_user_ids))::uuid)) OR
-        (auth.uid() = owner_id)
+          (is_public IS TRUE AND auth.uid() IN (SELECT (jsonb_array_elements_text(boards.editable_user_ids))::uuid AS jsonb_array_elements_text))
+          OR auth.uid() = owner_id
     )
     WITH CHECK (
-        (is_public IS TRUE AND auth.uid() = ANY(SELECT (jsonb_array_elements_text(editable_user_ids))::uuid)) OR
-        (auth.uid() = owner_id)
+          (is_public IS TRUE AND auth.uid() IN (SELECT (jsonb_array_elements_text(boards.editable_user_ids))::uuid AS jsonb_array_elements_text))
+          OR auth.uid() = owner_id
     );
 
 CREATE POLICY delete_boards ON boards

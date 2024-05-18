@@ -10,6 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/settings/color.dart';
@@ -557,6 +558,21 @@ class EditToolBar extends HookConsumerWidget {
           .rotateSelectedObject(angle.value);
     }
 
+    void handleInsertObject(BuildContext context) async {
+      try {
+        await ref.read(editPageViewModelProvider.notifier).saveSelectedObject();
+        clearState();
+      } catch (e) {
+        if (context.mounted) {
+          if (e is AppException) {
+            ErrorDialog.show(context, e.title ?? e.toString());
+            return;
+          }
+          ErrorDialog.show(context, e.toString());
+        }
+      }
+    }
+
     /// joystickの入力に対するobjectの移動量のレート（大きい方が多く移動する）
 
     // const double joyStickStrength = moveRate;
@@ -659,10 +675,7 @@ class EditToolBar extends HookConsumerWidget {
                             ),
                             GestureDetector(
                               onTap: () {
-                                ref
-                                    .read(editPageViewModelProvider.notifier)
-                                    .saveSelectedObject();
-                                clearState();
+                                handleInsertObject(context);
                               },
                               child: Container(
                                 width: 50,
@@ -1062,7 +1075,7 @@ class TextInputModal extends HookConsumerWidget {
                                   borderSide:
                                       BorderSide(color: Colors.transparent),
                                 ))),
-                        _colorPicker(
+                        colorPicker(
                             selectedTextColor.value, handleChangeTextColor),
                       ],
                     ),
@@ -1074,18 +1087,18 @@ class TextInputModal extends HookConsumerWidget {
         : const SizedBox.shrink();
   }
 
-  Widget _colorPicker(Color selectedColor, Function(Color) onColorChanged) {
+  Widget colorPicker(Color selectedColor, Function(Color) onColorChanged) {
     return BlockPicker(
       pickerColor: selectedColor, //default color
       onColorChanged: (Color color) {
         onColorChanged(color);
       },
-      layoutBuilder: _customLayoutBuilder, // customize layout
-      itemBuilder: _customItemBuilder, // customize builder
+      layoutBuilder: customLayoutBuilder, // customize layout
+      itemBuilder: customItemBuilder, // customize builder
     );
   }
 
-  Widget _customLayoutBuilder(
+  Widget customLayoutBuilder(
       BuildContext context, List<Color> colors, PickerItem child) {
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
@@ -1099,7 +1112,7 @@ class TextInputModal extends HookConsumerWidget {
     );
   }
 
-  Widget _customItemBuilder(
+  Widget customItemBuilder(
       Color color, bool isCurrentColor, void Function() changeColor) {
     return Container(
       width: 50,

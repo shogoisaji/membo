@@ -89,10 +89,11 @@ class SupabaseRepository {
   Future<void> updateBoard(BoardModel updatedBoard) async {
     final object = updatedBoard.toJson();
     try {
-      await _client
+      final e = await _client
           .from('boards')
           .update(object)
           .eq('board_id', updatedBoard.boardId);
+      print(e);
     } catch (e) {
       throw AppException.error('Board update error',
           detail: 'updateBoard() :$e');
