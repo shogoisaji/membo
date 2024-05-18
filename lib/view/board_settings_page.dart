@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +13,7 @@ import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_list_content.dart';
 import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:membo/widgets/error_dialog.dart';
-import 'package:membo/widgets/hue_ring_custom_picker.dart';
+import 'package:membo/widgets/two_way_dialog.dart';
 
 class BoardSettingsPage extends HookConsumerWidget {
   final String boardId;
@@ -56,9 +57,36 @@ class BoardSettingsPage extends HookConsumerWidget {
           .updateBoardSettings(height: height);
     }
 
-    void handleUpdatePublicState() {
-      ref.read(boardSettingsViewModelProvider.notifier).switchPublic();
-      context.go('/edit', extra: boardId);
+    void handleTapPublic() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return TwoWayDialog(
+            icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+                width: 36,
+                height: 36,
+                colorFilter:
+                    const ColorFilter.mode(MyColor.greenText, BlendMode.srcIn)),
+            title: '公開ステータスを\n変更しますか？',
+            leftButtonText: boardSettingsState.currentBoard?.isPublic == true
+                ? '非公開にする'
+                : '公開する',
+            rightButtonText: 'キャンセル',
+            onLeftButtonPressed: () async {
+              await ref
+                  .read(boardSettingsViewModelProvider.notifier)
+                  .switchPublic();
+              if (context.mounted) {
+                context.go('/edit', extra: boardId);
+                Navigator.of(context).pop();
+              }
+            },
+            onRightButtonPressed: () {
+              Navigator.of(context).pop();
+            },
+          );
+        },
+      );
     }
 
     void saveTempBoardSettings() {
@@ -83,19 +111,42 @@ class BoardSettingsPage extends HookConsumerWidget {
       );
     }
 
-    void deleteBoard() async {
-      try {
-        await ref.read(boardSettingsViewModelProvider.notifier).deleteBoard();
+    void handleTapDelete() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return TwoWayDialog(
+            icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+                width: 36,
+                height: 36,
+                colorFilter:
+                    const ColorFilter.mode(MyColor.greenText, BlendMode.srcIn)),
+            title: 'このボードを\n削除しますか？',
+            leftButtonText: '削除',
+            rightButtonText: 'キャンセル',
+            onLeftButtonPressed: () async {
+              try {
+                await ref
+                    .read(boardSettingsViewModelProvider.notifier)
+                    .deleteBoard();
 
-        if (context.mounted) {
-          CustomSnackBar.show(context, 'ボードを削除しました', MyColor.blue);
-          context.go('/');
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ErrorDialog.show(context, e.toString());
-        }
-      }
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  CustomSnackBar.show(context, 'ボードを削除しました', MyColor.blue);
+                  context.go('/');
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ErrorDialog.show(context, e.toString());
+                }
+              }
+            },
+            onRightButtonPressed: () {
+              Navigator.of(context).pop();
+            },
+          );
+        },
+      );
     }
 
     bool isSaveable() {
@@ -132,41 +183,26 @@ class BoardSettingsPage extends HookConsumerWidget {
           onPressed: () {
             if (isSaveable()) {
               showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  actionsAlignment: MainAxisAlignment.spaceEvenly,
-                  title: const Text('設定変更データを保存していません'),
-                  actions: [
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: MyColor.greenDark,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(99.0),
-                          ),
-                        ),
-                        onPressed: () {
-                          try {
-                            Navigator.of(context).pop();
-                            saveTempBoardSettings();
-                          } catch (e) {
-                            ErrorDialog.show(context, e.toString());
-                          }
+                  context: context,
+                  builder: (context) => TwoWayDialog(
+                        icon: SvgPicture.asset(
+                            'assets/images/svg/circle-question.svg',
+                            width: 36,
+                            height: 36,
+                            colorFilter: const ColorFilter.mode(
+                                MyColor.greenText, BlendMode.srcIn)),
+                        title: '設定変更データを\n保存しますか？',
+                        leftButtonText: '保存する',
+                        rightButtonText: '保存しない',
+                        onLeftButtonPressed: () {
+                          Navigator.of(context).pop();
+                          saveTempBoardSettings();
                         },
-                        child: Text(
-                          '保存する',
-                          style: lightTextTheme.bodyMedium!
-                              .copyWith(color: MyColor.greenSuperLight),
-                        )),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        context.go('/edit', extra: boardId);
-                      },
-                      child: Text('保存しない', style: lightTextTheme.bodyMedium),
-                    ),
-                  ],
-                ),
-              );
+                        onRightButtonPressed: () {
+                          Navigator.of(context).pop();
+                          context.go('/edit', extra: boardId);
+                        },
+                      ));
             } else {
               context.go('/edit', extra: boardId);
             }
@@ -356,8 +392,6 @@ class BoardSettingsPage extends HookConsumerWidget {
                                             style: lightTextTheme.bodyLarge,
                                           ),
                                         ),
-                                  // Text(currentSettings.height.toStringAsFixed(0),
-                                  //     style: lightTextTheme.bodyLarge),
                                 ],
                               ),
                             ],
@@ -382,38 +416,25 @@ class BoardSettingsPage extends HookConsumerWidget {
                                   children: [
                                     Text('Color',
                                         style: lightTextTheme.bodyLarge),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          width: 24.0,
-                                          height: 24.0,
-                                          decoration: BoxDecoration(
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.1),
-                                                spreadRadius: 1,
-                                                blurRadius: 1,
-                                                // offset: const Offset(0, 1),
-                                              ),
-                                            ],
-                                            borderRadius:
-                                                BorderRadius.circular(2.0),
-                                            color: Color(int.parse(
-                                                boardSettingsState
-                                                    .tempBoard!.bgColor)),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4.0),
-                                        Text(
-                                          ColorUtils.colorToString(
-                                            Color(int.parse(boardSettingsState
+                                    Container(
+                                      width: 100,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(3.0),
+                                        color: Color(int.parse(
+                                            boardSettingsState
                                                 .tempBoard!.bgColor)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            spreadRadius: 1,
+                                            blurRadius: 1,
                                           ),
-                                          style: lightTextTheme.bodyLarge,
-                                        ),
-                                      ],
-                                    ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
@@ -462,7 +483,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('State',
+                                  Text('Status',
                                       style: lightTextTheme.bodyLarge),
                                   Row(
                                     children: [
@@ -504,75 +525,41 @@ class BoardSettingsPage extends HookConsumerWidget {
                                 )
                               : const SizedBox.shrink(),
                           const SizedBox(height: 32.0),
-                          CustomButton(
-                            width: double.infinity,
-                            height: 50,
-                            color: MyColor.blueDark,
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text(boardSettingsState
-                                          .currentBoard!.isPublic
-                                      ? 'Would you like to keep this board private?'
-                                      : 'Would you like to make this board public?'),
-                                  actions: [
-                                    ElevatedButton(
-                                        onPressed: () => {
-                                              handleUpdatePublicState(),
-                                              Navigator.of(context).pop(),
-                                            },
-                                        child: Text(boardSettingsState
-                                                .currentBoard!.isPublic
-                                            ? '非公開にする'
-                                            : '公開する')),
-                                    ElevatedButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('キャンセル')),
-                                  ],
-                                ),
-                              );
-                            },
-                            child: Center(
-                                child: Text(
-                                    boardSettingsState.currentBoard!.isPublic
-                                        ? '非公開'
-                                        : '公開',
-                                    style: lightTextTheme.bodyLarge!.copyWith(
-                                        color: MyColor.greenSuperLight))),
-                          ),
+                          boardSettingsState.isOwner
+                              ? CustomButton(
+                                  width: double.infinity,
+                                  height: 50,
+                                  color: MyColor.blueDark,
+                                  onTap: () {
+                                    handleTapPublic();
+                                  },
+                                  child: Center(
+                                      child: Text(
+                                          boardSettingsState
+                                                  .currentBoard!.isPublic
+                                              ? '非公開'
+                                              : '公開',
+                                          style: lightTextTheme.bodyLarge!
+                                              .copyWith(
+                                                  color: MyColor
+                                                      .greenSuperLight))),
+                                )
+                              : const SizedBox.shrink(),
                           const SizedBox(height: 32.0),
-                          CustomButton(
-                            width: double.infinity,
-                            height: 50,
-                            color: MyColor.red,
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text(
-                                      'Are you sure you want to delete this board?'),
-                                  actions: [
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          deleteBoard();
-                                        },
-                                        child: const Text('削除')),
-                                    ElevatedButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('キャンセル')),
-                                  ],
-                                ),
-                              );
-                            },
-                            child: Center(
-                                child: Text('削除',
-                                    style: lightTextTheme.bodyLarge!
-                                        .copyWith(color: Colors.white))),
-                          ),
+                          boardSettingsState.isOwner
+                              ? CustomButton(
+                                  width: double.infinity,
+                                  height: 50,
+                                  color: MyColor.red,
+                                  onTap: () {
+                                    handleTapDelete();
+                                  },
+                                  child: Center(
+                                      child: Text('削除',
+                                          style: lightTextTheme.bodyLarge!
+                                              .copyWith(color: Colors.white))),
+                                )
+                              : const SizedBox.shrink(),
                           const SizedBox(height: 100.0),
                         ],
                       ),
@@ -609,14 +596,14 @@ const itemList = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000];
 class SizeDropDown extends HookConsumerWidget {
   final Function(int) onChanged;
   final int initialSize;
-  final minSize;
-  final maxSize;
+  final int minSize;
+  final int maxSize;
   SizeDropDown(
       {super.key,
       required this.initialSize,
       required this.onChanged,
       required this.minSize,
-      required this.maxSize})
+      this.maxSize = 3000})
       : assert(itemList.contains(initialSize));
 
   @override
@@ -691,15 +678,31 @@ class EditorListModal extends HookConsumerWidget {
           .getRequestors();
     }
 
-    void handleApproveRequest(String requestId) async {
+    void handleApproveRequest(String requestorId) async {
       try {
         await ref
             .read(boardSettingsViewModelProvider.notifier)
-            .approveRequest(requestId);
+            .approveRequest(requestorId);
         await Future.delayed(const Duration(milliseconds: 500));
         initialize();
         if (context.mounted) {
           CustomSnackBar.show(context, 'Request approved', MyColor.blue);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
+      }
+    }
+
+    void handleDenyRequest(String requestorId) async {
+      try {
+        await ref
+            .read(boardSettingsViewModelProvider.notifier)
+            .denyRequest(requestorId);
+        initialize();
+        if (context.mounted) {
+          CustomSnackBar.show(context, 'リクエストを拒否しました', MyColor.blue);
         }
       } catch (e) {
         if (context.mounted) {
@@ -740,11 +743,11 @@ class EditorListModal extends HookConsumerWidget {
                 topLeft: Radius.circular(20.0),
                 topRight: Radius.circular(20.0),
               ),
-              color: MyColor.greenSuperLight),
+              color: MyColor.greenLight),
           constraints: const BoxConstraints(maxWidth: 500),
           child: Column(
             children: [
-              Text('Request List', style: lightTextTheme.bodyLarge),
+              Text('編集者リクエスト', style: lightTextTheme.bodyLarge),
               divider(),
               Expanded(
                 flex: 2,
@@ -769,21 +772,38 @@ class EditorListModal extends HookConsumerWidget {
                             ],
                           ),
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              handleApproveRequest(
-                                  requestors.value[index].userId);
-                            },
-                            child: Text('Approve',
-                                style: lightTextTheme.bodyMedium))
+                        Row(
+                          children: [
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: MyColor.pink,
+                                ),
+                                onPressed: () {
+                                  handleDenyRequest(
+                                      requestors.value[index].userId);
+                                },
+                                child: Text('拒否',
+                                    style: lightTextTheme.bodyMedium)),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: MyColor.blue,
+                                ),
+                                onPressed: () {
+                                  handleApproveRequest(
+                                      requestors.value[index].userId);
+                                },
+                                child: Text('承認',
+                                    style: lightTextTheme.bodyMedium!.copyWith(
+                                        color: MyColor.greenSuperLight))),
+                          ],
+                        )
                       ],
                     );
                   },
                 ),
               ),
               const SizedBox(height: 20.0),
-              Text('Editor List', style: lightTextTheme.bodyLarge),
-
+              Text('編集者一覧', style: lightTextTheme.bodyLarge),
               divider(),
               Expanded(
                 flex: 5,
@@ -811,25 +831,21 @@ class EditorListModal extends HookConsumerWidget {
                             ),
                           ),
                           ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: MyColor.pink,
+                              ),
                               onPressed: () {
                                 handleExcludeEditor(
                                     editors.value[index].userId);
                               },
-                              child: Text('Exclude',
-                                  style: lightTextTheme.bodyMedium))
+                              child:
+                                  Text('拒否', style: lightTextTheme.bodyMedium))
                         ],
                       ),
                     );
                   },
                 ),
               ),
-              // ...editors.map((editor) => Row(
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       children: [
-              //         avatar(editor.avatarUrl),
-              //         Text(editor.userName, style: lightTextTheme.bodyMedium),
-              //       ],
-              //     )),
             ],
           ),
         );
@@ -877,6 +893,9 @@ class BoardColorPicker extends HookConsumerWidget {
               _colorPicker(selectedColor.value, handleChangeColor, h * 0.3),
               const SizedBox(height: 20.0),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MyColor.pink,
+                ),
                 onPressed: () {
                   selectColor(selectedColor.value);
                   hideModal();
@@ -895,12 +914,89 @@ class BoardColorPicker extends HookConsumerWidget {
 
   Widget _colorPicker(
       Color selectedColor, Function(Color) onColorChanged, double height) {
-    return HueRingCustomPicker(
-      colorPickerHeight: height,
+    return BlockPicker(
       pickerColor: selectedColor, //default color
       onColorChanged: (Color color) {
         onColorChanged(color);
       },
+      availableColors: bgColorList,
+      useInShowDialog: false,
+      itemBuilder: customItemBuilder,
     );
   }
+
+  Widget customItemBuilder(
+      Color color, bool isCurrentColor, void Function() changeColor) {
+    return Container(
+      width: 50,
+      height: 50,
+      margin: const EdgeInsets.all(7),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              offset: const Offset(1, 2),
+              blurRadius: 2)
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: changeColor,
+          borderRadius: BorderRadius.circular(50),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 210),
+            opacity: isCurrentColor ? 1 : 0,
+            child: Icon(Icons.done,
+                color: useWhiteForeground(color) ? Colors.white : Colors.black),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static const List<Color> bgColorList = [
+    Color(0xFFFFFFFF),
+    Color(0xFFCCCCCC),
+    Color(0xFFBBBBBB),
+    Color(0xFF999999),
+    Color(0xFFFFE5E5),
+    Color(0xFFFFCCCC),
+    Color(0xFFFFB2B2),
+    Color(0xFFFF9999),
+    Color(0xFFE5FFE5),
+    Color(0xFFCCFFCC),
+    Color(0xFFB2FFB2),
+    Color(0xFF99FF99),
+    Color(0xFFE5E5FF),
+    Color(0xFFCCCCFF),
+    Color(0xFFB2B2FF),
+    Color(0xFF9999FF),
+    Color(0xFFFFFFE5),
+    Color(0xFFFFFFCC),
+    Color(0xFFFFFFB2),
+    Color(0xFFFFFF99),
+    Color(0xFFFFF2E5),
+    Color(0xFFFFE5CC),
+    Color(0xFFFFD9B2),
+    Color(0xFFFFCC99),
+    Color(0xFFF2E5F2),
+    Color(0xFFE5CCE5),
+    Color(0xFFD9B2D9),
+    Color(0xFFCC99CC),
+    Color(0xFFE5FFFF),
+    Color(0xFFCCFFFF),
+    Color(0xFFB2FFFF),
+    Color(0xFF99FFFF),
+    Color(0xFFFFE5F2),
+    Color(0xFFFFCCE5),
+    Color(0xFFFFB2D9),
+    Color(0xFFFF99CC),
+    Color(0xFFF2FFE5),
+    Color(0xFFE5FFCC),
+    Color(0xFFD9FFB2),
+    Color(0xFFCCFF99),
+  ];
 }

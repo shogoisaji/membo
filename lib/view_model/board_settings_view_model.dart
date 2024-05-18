@@ -71,7 +71,7 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     state = state.copyWith(tempBoard: newBoard);
   }
 
-  void switchPublic() async {
+  Future<void> switchPublic() async {
     if (state.tempBoard == null) {
       throw Exception('temp board is not set');
     }
@@ -234,6 +234,22 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     await ref
         .read(supabaseRepositoryProvider)
         .updateEditableUserIds(state.currentBoard!.boardId, newEditableUserIds);
+
+    /// 承認後リクエストを削除
+    await ref
+        .read(supabaseRepositoryProvider)
+        .deleteEditRequest(request.editRequestId);
+  }
+
+  Future<void> denyRequest(String requestorId) async {
+    if (state.currentBoard == null) {
+      throw Exception('current board is not set');
+    }
+    final request = await ref
+        .read(supabaseRepositoryProvider)
+        .fetchEditRequest(requestorId, state.currentBoard!.boardId);
+
+    if (request == null) throw AppException.error('Request not found');
 
     /// 承認後リクエストを削除
     await ref
