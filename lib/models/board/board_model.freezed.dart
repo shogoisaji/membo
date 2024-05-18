@@ -49,6 +49,9 @@ mixin _$BoardModel {
   @JsonKey(name: 'thumbnail_url')
   String? get thumbnailUrl =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'max_image_count')
+  int get maxImageCount =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
 
@@ -77,6 +80,7 @@ abstract class $BoardModelCopyWith<$Res> {
       @JsonKey(name: 'bg_color') String bgColor,
       @JsonKey(name: 'is_public') bool isPublic,
       @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
+      @JsonKey(name: 'max_image_count') int maxImageCount,
       @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
@@ -105,6 +109,7 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
     Object? bgColor = null,
     Object? isPublic = null,
     Object? thumbnailUrl = freezed,
+    Object? maxImageCount = null,
     Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
@@ -156,6 +161,10 @@ class _$BoardModelCopyWithImpl<$Res, $Val extends BoardModel>
           ? _value.thumbnailUrl
           : thumbnailUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      maxImageCount: null == maxImageCount
+          ? _value.maxImageCount
+          : maxImageCount // ignore: cast_nullable_to_non_nullable
+              as int,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -185,6 +194,7 @@ abstract class _$$BoardModelImplCopyWith<$Res>
       @JsonKey(name: 'bg_color') String bgColor,
       @JsonKey(name: 'is_public') bool isPublic,
       @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
+      @JsonKey(name: 'max_image_count') int maxImageCount,
       @JsonKey(name: 'created_at') DateTime createdAt});
 }
 
@@ -211,6 +221,7 @@ class __$$BoardModelImplCopyWithImpl<$Res>
     Object? bgColor = null,
     Object? isPublic = null,
     Object? thumbnailUrl = freezed,
+    Object? maxImageCount = null,
     Object? createdAt = null,
   }) {
     return _then(_$BoardModelImpl(
@@ -262,6 +273,10 @@ class __$$BoardModelImplCopyWithImpl<$Res>
           ? _value.thumbnailUrl
           : thumbnailUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      maxImageCount: null == maxImageCount
+          ? _value.maxImageCount
+          : maxImageCount // ignore: cast_nullable_to_non_nullable
+              as int,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -288,6 +303,7 @@ class _$BoardModelImpl implements _BoardModel {
       @JsonKey(name: 'bg_color') this.bgColor = '0xffffffff',
       @JsonKey(name: 'is_public') this.isPublic = false,
       @JsonKey(name: 'thumbnail_url') this.thumbnailUrl,
+      @JsonKey(name: 'max_image_count') this.maxImageCount = 0,
       @JsonKey(name: 'created_at') required this.createdAt})
       : _objects = objects,
         _editableUserIds = editableUserIds,
@@ -363,12 +379,16 @@ class _$BoardModelImpl implements _BoardModel {
   final String? thumbnailUrl;
 // ignore: invalid_annotation_target
   @override
+  @JsonKey(name: 'max_image_count')
+  final int maxImageCount;
+// ignore: invalid_annotation_target
+  @override
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
   @override
   String toString() {
-    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, editableUserIds: $editableUserIds, editRequestUserIds: $editRequestUserIds, width: $width, height: $height, bgColor: $bgColor, isPublic: $isPublic, thumbnailUrl: $thumbnailUrl, createdAt: $createdAt)';
+    return 'BoardModel(boardId: $boardId, boardName: $boardName, password: $password, objects: $objects, ownerId: $ownerId, editableUserIds: $editableUserIds, editRequestUserIds: $editRequestUserIds, width: $width, height: $height, bgColor: $bgColor, isPublic: $isPublic, thumbnailUrl: $thumbnailUrl, maxImageCount: $maxImageCount, createdAt: $createdAt)';
   }
 
   @override
@@ -394,6 +414,8 @@ class _$BoardModelImpl implements _BoardModel {
                 other.isPublic == isPublic) &&
             (identical(other.thumbnailUrl, thumbnailUrl) ||
                 other.thumbnailUrl == thumbnailUrl) &&
+            (identical(other.maxImageCount, maxImageCount) ||
+                other.maxImageCount == maxImageCount) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -414,6 +436,7 @@ class _$BoardModelImpl implements _BoardModel {
       bgColor,
       isPublic,
       thumbnailUrl,
+      maxImageCount,
       createdAt);
 
   @JsonKey(ignore: true)
@@ -445,6 +468,7 @@ abstract class _BoardModel implements BoardModel {
       @JsonKey(name: 'bg_color') final String bgColor,
       @JsonKey(name: 'is_public') final bool isPublic,
       @JsonKey(name: 'thumbnail_url') final String? thumbnailUrl,
+      @JsonKey(name: 'max_image_count') final int maxImageCount,
       @JsonKey(name: 'created_at')
       required final DateTime createdAt}) = _$BoardModelImpl;
 
@@ -483,6 +507,9 @@ abstract class _BoardModel implements BoardModel {
   @override // ignore: invalid_annotation_target
   @JsonKey(name: 'thumbnail_url')
   String? get thumbnailUrl;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'max_image_count')
+  int get maxImageCount;
   @override // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt;

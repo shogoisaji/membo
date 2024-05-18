@@ -29,6 +29,7 @@ _$BoardModelImpl _$$BoardModelImplFromJson(Map<String, dynamic> json) =>
       bgColor: json['bg_color'] as String? ?? '0xffffffff',
       isPublic: json['is_public'] as bool? ?? false,
       thumbnailUrl: json['thumbnail_url'] as String?,
+      maxImageCount: json['max_image_count'] as int? ?? 0,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
 
@@ -46,5 +47,6 @@ Map<String, dynamic> _$$BoardModelImplToJson(_$BoardModelImpl instance) =>
       'bg_color': instance.bgColor,
       'is_public': instance.isPublic,
       'thumbnail_url': instance.thumbnailUrl,
+      'max_image_count': instance.maxImageCount,
       'created_at': instance.createdAt.toIso8601String(),
     };

@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$EditPageState {
   ObjectModel? get selectedObject => throw _privateConstructorUsedError;
   BoardModel? get boardModel => throw _privateConstructorUsedError;
+  int get currentImageCount => throw _privateConstructorUsedError;
   XFile? get selectedImageFile => throw _privateConstructorUsedError;
   bool get showTextInput => throw _privateConstructorUsedError;
   bool get showInputMenu => throw _privateConstructorUsedError;
@@ -37,6 +38,7 @@ abstract class $EditPageStateCopyWith<$Res> {
   $Res call(
       {ObjectModel? selectedObject,
       BoardModel? boardModel,
+      int currentImageCount,
       XFile? selectedImageFile,
       bool showTextInput,
       bool showInputMenu,
@@ -61,6 +63,7 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
   $Res call({
     Object? selectedObject = freezed,
     Object? boardModel = freezed,
+    Object? currentImageCount = null,
     Object? selectedImageFile = freezed,
     Object? showTextInput = null,
     Object? showInputMenu = null,
@@ -75,6 +78,10 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
           ? _value.boardModel
           : boardModel // ignore: cast_nullable_to_non_nullable
               as BoardModel?,
+      currentImageCount: null == currentImageCount
+          ? _value.currentImageCount
+          : currentImageCount // ignore: cast_nullable_to_non_nullable
+              as int,
       selectedImageFile: freezed == selectedImageFile
           ? _value.selectedImageFile
           : selectedImageFile // ignore: cast_nullable_to_non_nullable
@@ -130,6 +137,7 @@ abstract class _$$EditPageStateImplCopyWith<$Res>
   $Res call(
       {ObjectModel? selectedObject,
       BoardModel? boardModel,
+      int currentImageCount,
       XFile? selectedImageFile,
       bool showTextInput,
       bool showInputMenu,
@@ -154,6 +162,7 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
   $Res call({
     Object? selectedObject = freezed,
     Object? boardModel = freezed,
+    Object? currentImageCount = null,
     Object? selectedImageFile = freezed,
     Object? showTextInput = null,
     Object? showInputMenu = null,
@@ -168,6 +177,10 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
           ? _value.boardModel
           : boardModel // ignore: cast_nullable_to_non_nullable
               as BoardModel?,
+      currentImageCount: null == currentImageCount
+          ? _value.currentImageCount
+          : currentImageCount // ignore: cast_nullable_to_non_nullable
+              as int,
       selectedImageFile: freezed == selectedImageFile
           ? _value.selectedImageFile
           : selectedImageFile // ignore: cast_nullable_to_non_nullable
@@ -194,6 +207,7 @@ class _$EditPageStateImpl implements _EditPageState {
   _$EditPageStateImpl(
       {this.selectedObject,
       this.boardModel,
+      this.currentImageCount = 0,
       this.selectedImageFile,
       this.showTextInput = false,
       this.showInputMenu = false,
@@ -203,6 +217,9 @@ class _$EditPageStateImpl implements _EditPageState {
   final ObjectModel? selectedObject;
   @override
   final BoardModel? boardModel;
+  @override
+  @JsonKey()
+  final int currentImageCount;
   @override
   final XFile? selectedImageFile;
   @override
@@ -216,7 +233,7 @@ class _$EditPageStateImpl implements _EditPageState {
 
   @override
   String toString() {
-    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu, transformationMatrix: $transformationMatrix)';
+    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, currentImageCount: $currentImageCount, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu, transformationMatrix: $transformationMatrix)';
   }
 
   @override
@@ -228,6 +245,8 @@ class _$EditPageStateImpl implements _EditPageState {
                 other.selectedObject == selectedObject) &&
             (identical(other.boardModel, boardModel) ||
                 other.boardModel == boardModel) &&
+            (identical(other.currentImageCount, currentImageCount) ||
+                other.currentImageCount == currentImageCount) &&
             (identical(other.selectedImageFile, selectedImageFile) ||
                 other.selectedImageFile == selectedImageFile) &&
             (identical(other.showTextInput, showTextInput) ||
@@ -239,8 +258,15 @@ class _$EditPageStateImpl implements _EditPageState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, selectedObject, boardModel,
-      selectedImageFile, showTextInput, showInputMenu, transformationMatrix);
+  int get hashCode => Object.hash(
+      runtimeType,
+      selectedObject,
+      boardModel,
+      currentImageCount,
+      selectedImageFile,
+      showTextInput,
+      showInputMenu,
+      transformationMatrix);
 
   @JsonKey(ignore: true)
   @override
@@ -253,6 +279,7 @@ abstract class _EditPageState implements EditPageState {
   factory _EditPageState(
       {final ObjectModel? selectedObject,
       final BoardModel? boardModel,
+      final int currentImageCount,
       final XFile? selectedImageFile,
       final bool showTextInput,
       final bool showInputMenu,
@@ -262,6 +289,8 @@ abstract class _EditPageState implements EditPageState {
   ObjectModel? get selectedObject;
   @override
   BoardModel? get boardModel;
+  @override
+  int get currentImageCount;
   @override
   XFile? get selectedImageFile;
   @override

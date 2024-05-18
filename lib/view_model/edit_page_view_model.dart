@@ -17,10 +17,6 @@ class EditPageViewModel extends _$EditPageViewModel {
   @override
   EditPageState build() => EditPageState();
 
-  // void setSelectedBoardId(String boardId) {
-  //   state = state.copyWith(selectedBoardId: boardId);
-  // }
-
   Matrix4 calcInitialTransform(BoardModel board, double w, double h) {
     final scaleW = w / board.width;
     final scaleH = h / board.height;
@@ -48,16 +44,35 @@ class EditPageViewModel extends _$EditPageViewModel {
     }
   }
 
+  int checkImageCount(BoardModel board) {
+    final imageCount = board.objects
+        .where((element) => element.type == ObjectType.networkImage)
+        .length;
+    return imageCount;
+  }
+
+  void updateImageCount() {
+    final imageCount = state.boardModel!.objects
+        .where((element) => element.type == ObjectType.networkImage)
+        .length;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      state = state.copyWith(currentImageCount: imageCount);
+    });
+  }
+
   Future<void> initialize(String boardId, double w, double h) async {
     final board =
         await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
 
     ref.read(streamBoardIdProvider.notifier).setStreamBoardId(boardId);
 
+    final imageCount = checkImageCount(board);
+
     final matrix = calcInitialTransform(board, w, h);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       state = state.copyWith(
         boardModel: board,
+        currentImageCount: imageCount,
         transformationMatrix: matrix,
       );
     });
@@ -125,9 +140,14 @@ class EditPageViewModel extends _$EditPageViewModel {
     state = state.copyWith(selectedObject: null, selectedImageFile: null);
   }
 
+  /// stream の board を state にセット
   void setBoardModel(BoardModel board) {
+    /// 画像の数をカウント
+    final imageCount = board.objects
+        .where((element) => element.type == ObjectType.networkImage)
+        .length;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      state = state.copyWith(boardModel: board);
+      state = state.copyWith(boardModel: board, currentImageCount: imageCount);
     });
   }
 
@@ -160,6 +180,11 @@ class EditPageViewModel extends _$EditPageViewModel {
         case ObjectType.localImage:
           if (state.selectedImageFile == null) {
             throw AppException.error('select local image is null');
+          }
+
+          /// 画像枚数のチェック
+          if (state.currentImageCount >= state.boardModel!.maxImageCount) {
+            throw AppException.error('画像の枚数上限です');
           }
           await ref.read(supabaseRepositoryProvider).addImageObject(
               board, state.selectedObject!, state.selectedImageFile!);
