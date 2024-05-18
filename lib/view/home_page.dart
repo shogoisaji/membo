@@ -245,8 +245,6 @@ class HomePage extends HookConsumerWidget {
                                                 duration: const Duration(
                                                     milliseconds: 300),
                                                 curve: Curves.easeInOut);
-                                            print(
-                                                'New Board ${textFocusNode.hasFocus}');
                                             textFocusNode.requestFocus();
                                           },
                                         ),
@@ -353,7 +351,8 @@ class HomePage extends HookConsumerWidget {
                           pageController: pageController,
                           focusNode: textFocusNode,
                           membershipType:
-                              homePageState.userModel!.membershipType,
+                              homePageState.userModel?.membershipType ??
+                                  MembershipType(type: MembershipTypes.free),
                           currentBoardCount:
                               homePageState.ownedCardBoardList.length,
                           onTapCancel: () {
