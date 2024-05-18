@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -43,91 +44,95 @@ class SettingsPage extends HookConsumerWidget {
       return null;
     }, const []);
 
-    return Stack(
-      children: [
-        Scaffold(
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, size: 36),
-              onPressed: () {
-                context.go('/');
-              },
-            ),
-            title: Text('設定', style: lightTextTheme.titleLarge),
-          ),
-          body: Stack(
-            children: [
-              BgPaint(width: w, height: h),
-              SafeArea(
-                child: SingleChildScrollView(
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 500),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 16.0),
-                        child: Column(
-                          children: [
-                            spacer(),
-                            ListContentBase(
-                              title: 'アカウント',
-                              onTap: () {
-                                context.go('/account');
-                              },
-                            ),
-                            spacer(),
-                            ListContentBase(
-                              title: 'プライバシーポリシー',
-                              onTap: () {
-                                context.go('/policy');
-                              },
-                            ),
-                            spacer(),
-                            ListContentBase(
-                              title: '利用規約',
-                              onTap: () {
-                                context.go('/terms-of-service');
-                              },
-                            ),
-                            spacer(),
-                            ListContentBase(
-                              title: 'ライセンス',
-                              onTap: () {
-                                context.push('/license');
-                              },
-                            ),
-                            spacer(),
-                            ListContentBase(
-                              title: '問い合わせ',
-                              onTap: inquiryURL,
-                              isWeb: true,
-                            ),
-                            spacer(),
-                            ListContentBase(
-                              title: 'バージョン',
-                              onTap: () {},
-                              tailContent: Padding(
-                                padding: const EdgeInsets.only(right: 10.0),
-                                child: Text(
-                                  appVersion.value,
-                                  style: lightTextTheme.bodyLarge,
-                                ),
-                              ),
-                            ),
-                            spacer(),
-                            const SizedBox(height: 100.0),
-                          ],
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, size: 36),
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            context.go('/');
+          },
+        ),
+        title: Text('設定', style: lightTextTheme.titleLarge),
+      ),
+      body: Stack(
+        children: [
+          BgPaint(width: w, height: h),
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 16.0),
+                    child: Column(
+                      children: [
+                        spacer(),
+                        ListContentBase(
+                          title: 'アカウント',
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            context.go('/account');
+                          },
                         ),
-                      ),
+                        spacer(),
+                        ListContentBase(
+                          title: 'プライバシーポリシー',
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            context.go('/policy');
+                          },
+                        ),
+                        spacer(),
+                        ListContentBase(
+                          title: '利用規約',
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            context.go('/terms-of-service');
+                          },
+                        ),
+                        spacer(),
+                        ListContentBase(
+                          title: 'ライセンス',
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            context.push('/license');
+                          },
+                        ),
+                        spacer(),
+                        ListContentBase(
+                          title: '問い合わせ',
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            inquiryURL();
+                          },
+                          isWeb: true,
+                        ),
+                        spacer(),
+                        ListContentBase(
+                          title: 'バージョン',
+                          onTap: () {},
+                          tailContent: Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: Text(
+                              appVersion.value,
+                              style: lightTextTheme.bodyLarge,
+                            ),
+                          ),
+                        ),
+                        spacer(),
+                        const SizedBox(height: 100.0),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

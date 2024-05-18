@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -204,6 +205,7 @@ class HomePage extends HookConsumerWidget {
                                                 size: 42,
                                               ),
                                               onPressed: () {
+                                                HapticFeedback.lightImpact();
                                                 context.go('/settings');
                                               },
                                             ),
@@ -218,6 +220,7 @@ class HomePage extends HookConsumerWidget {
                                                         BlendMode.srcIn),
                                               ),
                                               onPressed: () {
+                                                HapticFeedback.lightImpact();
                                                 context.go('/connect');
                                               },
                                             ),
@@ -403,7 +406,16 @@ class BoardNameInputContent extends HookWidget {
       fit: StackFit.expand,
       children: [
         Align(
-          alignment: const Alignment(0.0, -0.6),
+            alignment: const Alignment(-0.93, -0.79),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, size: 36),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                onTapCancel();
+              },
+            )),
+        Align(
+          alignment: const Alignment(0.0, -0.5),
           child: ConstrainedBox(
             constraints: const BoxConstraints(
               maxWidth: 300,
