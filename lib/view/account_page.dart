@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
@@ -11,6 +13,7 @@ import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_list_content.dart';
 import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:membo/widgets/error_dialog.dart';
+import 'package:membo/widgets/two_way_dialog.dart';
 
 class AccountPage extends HookConsumerWidget {
   const AccountPage({super.key});
@@ -33,7 +36,7 @@ class AccountPage extends HookConsumerWidget {
         if (context.mounted) {
           Navigator.pop(dialogContext);
           Future.delayed(const Duration(milliseconds: 300), () {
-            CustomSnackBar.show(context, 'Name updated', MyColor.blue);
+            CustomSnackBar.show(context, '名前を更新しました', MyColor.blue);
           });
         }
       } catch (e) {
@@ -41,15 +44,14 @@ class AccountPage extends HookConsumerWidget {
           Navigator.pop(dialogContext);
 
           Future.delayed(const Duration(milliseconds: 300), () {
-            CustomSnackBar.show(
-                context, 'Name update Error', Colors.red.shade400);
+            CustomSnackBar.show(context, '名前の更新に失敗しました', Colors.red.shade400);
           });
         }
       }
     }
 
     Future<void> handleTapNameEdit() async {
-      nameTextController.text = accountPageState.user!.userName;
+      nameTextController.text = '';
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -63,6 +65,10 @@ class AccountPage extends HookConsumerWidget {
                   style: lightTextTheme.bodyLarge,
                   autofocus: true,
                   controller: nameTextController,
+                  decoration: const InputDecoration(
+                    hintText: '8文字以下',
+                    hintStyle: TextStyle(color: Colors.white),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '入力欄が空です';
@@ -76,12 +82,19 @@ class AccountPage extends HookConsumerWidget {
                 Align(
                   alignment: Alignment.bottomRight,
                   child: ElevatedButton(
-                      onPressed: () {
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColor.greenText,
+                      ),
+                      onPressed: () async {
                         if (formKey.currentState!.validate()) {
-                          handleSubmitName(nameTextController.text, context);
+                          await handleSubmitName(
+                              nameTextController.text, context);
                         }
                       },
-                      child: const Text('保存')),
+                      child: Text('保存',
+                          style: lightTextTheme.bodySmall!.copyWith(
+                            color: Colors.white,
+                          ))),
                 )
               ],
             ),
@@ -98,52 +111,66 @@ class AccountPage extends HookConsumerWidget {
         }
       } catch (e) {
         if (context.mounted) {
-          ErrorDialog.show(context, 'Error handleTapEditAvatar : $e');
+          ErrorDialog.show(context, 'アバターの更新に失敗しました');
         }
       }
     }
 
-    void handleTapSignOut() {
-      ref.read(supabaseAuthRepositoryProvider).signOut();
+    void handleTapSignOut(BuildContext context) {
+      showDialog(
+          context: context,
+          builder: (dialogContext) => TwoWayDialog(
+                icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+                    width: 36,
+                    height: 36,
+                    colorFilter: const ColorFilter.mode(
+                        MyColor.greenText, BlendMode.srcIn)),
+                title: 'ログアウトしますか？',
+                leftButtonText: 'ログアウト',
+                rightButtonText: 'キャンセル',
+                onLeftButtonPressed: () async {
+                  Navigator.of(dialogContext).pop();
+                  ref.read(supabaseAuthRepositoryProvider).signOut();
+                },
+                onRightButtonPressed: () {
+                  Navigator.of(dialogContext).pop();
+                },
+              ));
     }
 
     Future<void> handleDeleteAccount() async {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text('アカウントの削除', style: lightTextTheme.titleLarge!),
-          content: Text('本当にこのアカウントを削除しますか?', style: lightTextTheme.bodyLarge),
-          actionsAlignment: MainAxisAlignment.spaceAround,
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: MyColor.red),
-              onPressed: () async {
-                if (accountPageState.user == null) return;
-                try {
-                  await ref
-                      .read(supabaseAuthRepositoryProvider)
-                      .deleteAccount(accountPageState.user!.userId);
-                  if (context.mounted) {
-                    CustomSnackBar.show(context, 'アカウントを削除しました', MyColor.blue);
-                    context.go('/sign-in');
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ErrorDialog.show(context, 'アカウントの削除に失敗しました');
-                  }
-                }
-              },
-              child: Text('削除',
-                  style:
-                      lightTextTheme.bodyLarge!.copyWith(color: Colors.white)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('キャンセル', style: lightTextTheme.bodyLarge),
-            ),
-          ],
+        builder: (dialogContext) => TwoWayDialog(
+          icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+              width: 36,
+              height: 36,
+              colorFilter:
+                  const ColorFilter.mode(MyColor.greenText, BlendMode.srcIn)),
+          title: 'アカウントの削除',
+          content: '本当にこのアカウントを削除しますか?',
+          leftButtonText: '削除',
+          rightButtonText: 'キャンセル',
+          onLeftButtonPressed: () async {
+            Navigator.of(dialogContext).pop();
+            if (accountPageState.user == null) return;
+            try {
+              await ref
+                  .read(supabaseAuthRepositoryProvider)
+                  .deleteAccount(accountPageState.user!.userId);
+              if (context.mounted) {
+                CustomSnackBar.show(context, 'アカウントを削除しました', MyColor.blue);
+                context.go('/sign-in');
+              }
+            } catch (e) {
+              if (context.mounted) {
+                ErrorDialog.show(context, 'アカウントの削除に失敗しました');
+              }
+            }
+          },
+          onRightButtonPressed: () {
+            Navigator.of(dialogContext).pop();
+          },
         ),
       );
     }
@@ -164,6 +191,7 @@ class AccountPage extends HookConsumerWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 36),
             onPressed: () {
+              HapticFeedback.lightImpact();
               context.go('/settings');
             },
           ),
@@ -215,6 +243,14 @@ class AccountPage extends HookConsumerWidget {
                                         style: lightTextTheme.bodyLarge,
                                       ),
                                     ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0),
+                                      child: Text(
+                                        '※名前、アバターは公開されます',
+                                        style: lightTextTheme.bodySmall,
+                                      ),
+                                    ),
                                     CustomListContent(
                                       title: '名前',
                                       titleStyle: lightTextTheme.titleLarge!,
@@ -229,8 +265,13 @@ class AccountPage extends HookConsumerWidget {
                                               ),
                                             ),
                                             InkWell(
-                                              child: const Icon(Icons.edit),
+                                              child: const CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundColor:
+                                                      MyColor.greenDark,
+                                                  child: Icon(Icons.edit)),
                                               onTap: () {
+                                                HapticFeedback.lightImpact();
                                                 handleTapNameEdit();
                                               },
                                             )
@@ -240,30 +281,28 @@ class AccountPage extends HookConsumerWidget {
                                     ),
                                     const SizedBox(height: 20.0),
                                     CustomListContent(
-                                      title: 'マイボード数',
+                                      title: 'マイボード',
                                       titleStyle: lightTextTheme.titleLarge!,
                                       backgroundColor: MyColor.greenLight,
                                       contentWidgets: [
                                         Text(
-                                          (accountPageState.user!.ownedBoardIds)
-                                              .length
-                                              .toString(),
+                                          '${accountPageState.user!.ownedBoardIds.length} / ${accountPageState.user!.membershipType.maxBoardCount}',
                                           style: lightTextTheme.bodyLarge,
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 20.0),
-                                    CustomListContent(
-                                      title: 'リンクボード数',
-                                      titleStyle: lightTextTheme.titleLarge!,
-                                      backgroundColor: MyColor.greenLight,
-                                      contentWidgets: [
-                                        Text(
-                                          'coming soon',
-                                          style: lightTextTheme.bodyLarge,
-                                        ),
-                                      ],
-                                    ),
+                                    // const SizedBox(height: 20.0),
+                                    // CustomListContent(
+                                    //   title: 'リンクボード',
+                                    //   titleStyle: lightTextTheme.titleLarge!,
+                                    //   backgroundColor: MyColor.greenLight,
+                                    //   contentWidgets: [
+                                    //     Text(
+                                    //       'coming soon',
+                                    //       style: lightTextTheme.bodyLarge,
+                                    //     ),
+                                    //   ],
+                                    // ),
 
                                     /// subscription features
                                     ///
@@ -294,7 +333,7 @@ class AccountPage extends HookConsumerWidget {
                                 child: Text('ログアウト',
                                     style: lightTextTheme.titleLarge)),
                             onTap: () {
-                              handleTapSignOut();
+                              handleTapSignOut(context);
                             },
                           ),
                           const SizedBox(height: 32.0),
@@ -336,6 +375,7 @@ class AccountPage extends HookConsumerWidget {
             alignment: Alignment.bottomRight,
             child: InkWell(
               onTap: () {
+                HapticFeedback.lightImpact();
                 handleTapEditAvatar();
               },
               child: Container(
@@ -358,27 +398,6 @@ class AccountPage extends HookConsumerWidget {
               child: const Icon(Icons.person, size: 70),
             ),
           )
-          // Align(
-          //   child: ClipRRect(
-          //     borderRadius: BorderRadius.circular(avatarSize / 2),
-          //     child: Container(
-          //       width: avatarSize,
-          //       height: avatarSize,
-          //       decoration: const BoxDecoration(
-          //         color: MyColor.greenLight,
-          //         shape: BoxShape.circle,
-          //       ),
-          //       child: Image.network(
-          //         avatarUrl ?? '',
-          //         width: avatarSize,
-          //         height: avatarSize,
-          //         fit: BoxFit.cover,
-          //         errorBuilder: (context, error, stackTrace) =>
-          //             _defaultAvatar(avatarSize, color: MyColor.lightRed),
-          //       ),
-          //     ),
-          //   ),
-          // )
         ],
       ),
     );

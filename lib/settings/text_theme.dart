@@ -18,7 +18,7 @@ const lightTextTheme = TextTheme(
     fontWeight: FontWeight.w500,
   ),
   bodySmall: TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
   ),
 );

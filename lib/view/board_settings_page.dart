@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
@@ -181,6 +182,7 @@ class BoardSettingsPage extends HookConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 36),
           onPressed: () {
+            HapticFeedback.lightImpact();
             if (isSaveable()) {
               showDialog(
                   context: context,
@@ -226,6 +228,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                             alignment: Alignment.centerRight,
                             child: ElevatedButton(
                               onPressed: () {
+                                HapticFeedback.lightImpact();
                                 showEditRequestList();
                               },
                               child: SvgPicture.asset(
@@ -247,76 +250,68 @@ class BoardSettingsPage extends HookConsumerWidget {
                                 vertical:
                                     boardSettingsState.isOwner ? 0.0 : 21),
                             contentWidgets: [
-                              GestureDetector(
-                                onTap: () {
-                                  //
-                                },
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Name',
-                                        style: lightTextTheme.bodyLarge),
-                                    const SizedBox(width: 22.0),
-                                    Expanded(
-                                        child: boardSettingsState.isOwner
-                                            ? Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: TextField(
-                                                      maxLength: 10,
-                                                      focusNode: focusNode,
-                                                      textAlign: TextAlign.end,
-                                                      decoration:
-                                                          const InputDecoration(
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Name', style: lightTextTheme.bodyLarge),
+                                  const SizedBox(width: 22.0),
+                                  Expanded(
+                                      child: boardSettingsState.isOwner
+                                          ? Row(
+                                              children: [
+                                                Expanded(
+                                                  child: TextField(
+                                                    maxLength: 10,
+                                                    focusNode: focusNode,
+                                                    textAlign: TextAlign.end,
+                                                    decoration:
+                                                        const InputDecoration(
 
-                                                              /// maxLength のカウンターは表示しない
-                                                              counterText: '',
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .transparent),
-                                                              ),
-                                                              enabledBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .transparent),
-                                                              )),
-                                                      controller:
-                                                          boardNameTextController,
-                                                      onChanged: (value) {
-                                                        ref
-                                                            .read(
-                                                                boardSettingsViewModelProvider
-                                                                    .notifier)
-                                                            .updateBoardSettings(
-                                                                boardName:
-                                                                    value);
-                                                      },
-                                                      style: lightTextTheme
-                                                          .bodyLarge,
-                                                    ),
+                                                            /// maxLength のカウンターは表示しない
+                                                            counterText: '',
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                  color: Colors
+                                                                      .transparent),
+                                                            ),
+                                                            enabledBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                  color: Colors
+                                                                      .transparent),
+                                                            )),
+                                                    controller:
+                                                        boardNameTextController,
+                                                    onChanged: (value) {
+                                                      ref
+                                                          .read(
+                                                              boardSettingsViewModelProvider
+                                                                  .notifier)
+                                                          .updateBoardSettings(
+                                                              boardName: value);
+                                                    },
+                                                    style: lightTextTheme
+                                                        .bodyLarge,
                                                   ),
-                                                  const Icon(
-                                                    Icons.edit,
-                                                    color: MyColor.greenDark,
-                                                  )
-                                                ],
-                                              )
-                                            : Text(
-                                                boardSettingsState
-                                                    .tempBoard!.boardName,
-                                                textAlign: TextAlign.end,
-                                                style: lightTextTheme.bodyLarge!
-                                                    .copyWith(
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
                                                 ),
-                                              )),
-                                  ],
-                                ),
+                                                const Icon(
+                                                  Icons.edit,
+                                                  color: MyColor.greenDark,
+                                                )
+                                              ],
+                                            )
+                                          : Text(
+                                              boardSettingsState
+                                                  .tempBoard!.boardName,
+                                              textAlign: TextAlign.end,
+                                              style: lightTextTheme.bodyLarge!
+                                                  .copyWith(
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            )),
+                                ],
                               ),
                             ],
                           ),
@@ -406,7 +401,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                               GestureDetector(
                                 onTap: () {
                                   if (!boardSettingsState.isOwner) return;
-
+                                  HapticFeedback.lightImpact();
                                   showColorPicker.value =
                                       !showColorPicker.value;
                                 },
@@ -779,6 +774,7 @@ class EditorListModal extends HookConsumerWidget {
                                   backgroundColor: MyColor.pink,
                                 ),
                                 onPressed: () {
+                                  HapticFeedback.lightImpact();
                                   handleDenyRequest(
                                       requestors.value[index].userId);
                                 },
@@ -789,6 +785,7 @@ class EditorListModal extends HookConsumerWidget {
                                   backgroundColor: MyColor.blue,
                                 ),
                                 onPressed: () {
+                                  HapticFeedback.lightImpact();
                                   handleApproveRequest(
                                       requestors.value[index].userId);
                                 },
@@ -835,6 +832,7 @@ class EditorListModal extends HookConsumerWidget {
                                 backgroundColor: MyColor.pink,
                               ),
                               onPressed: () {
+                                HapticFeedback.lightImpact();
                                 handleExcludeEditor(
                                     editors.value[index].userId);
                               },
@@ -897,12 +895,13 @@ class BoardColorPicker extends HookConsumerWidget {
                   backgroundColor: MyColor.pink,
                 ),
                 onPressed: () {
+                  HapticFeedback.lightImpact();
                   selectColor(selectedColor.value);
                   hideModal();
                 },
                 child: Text(
                   'OK',
-                  style: lightTextTheme.bodyLarge,
+                  style: lightTextTheme.titleLarge,
                 ),
               )
             ],

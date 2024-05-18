@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -64,6 +65,7 @@ class ConnectPage extends HookConsumerWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 36),
             onPressed: () {
+              HapticFeedback.lightImpact();
               context.go('/');
             },
           ),

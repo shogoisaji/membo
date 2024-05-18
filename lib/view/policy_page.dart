@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:membo/settings/color.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -26,6 +27,7 @@ class _PolicyPageState extends State<PolicyPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 36),
           onPressed: () {
+            HapticFeedback.lightImpact();
             context.go('/settings');
           },
         ),

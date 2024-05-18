@@ -129,7 +129,10 @@ class EditPage extends HookConsumerWidget {
           backgroundColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 36),
-            onPressed: () => context.go('/'),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              context.go('/');
+            },
           ),
           actions: [
             Padding(
@@ -160,6 +163,7 @@ class EditPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(right: 12.0),
               child: ElevatedButton(
                 onPressed: () {
+                  HapticFeedback.lightImpact();
                   ref
                       .read(editPageViewModelProvider.notifier)
                       .clearSelectedObject();
@@ -172,6 +176,7 @@ class EditPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(right: 12.0),
               child: ElevatedButton(
                 onPressed: () {
+                  HapticFeedback.lightImpact();
                   scaffoldKey.currentState?.openEndDrawer();
                   // Scaffold.of(context).openDrawer();
                 },
@@ -205,29 +210,17 @@ class EditPage extends HookConsumerWidget {
                 ),
                 child: SafeArea(
                   bottom: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // const Padding(
-                      //   padding: EdgeInsets.only(left: 16),
-                      //   child: Text(
-                      //     'Object List',
-                      //     style: TextStyle(
-                      //       color: Colors.white,
-                      //       fontSize: 24,
-                      //     ),
-                      //   ),
-                      // ),
-                      IconButton(
-                        padding: const EdgeInsets.all(12),
-                        icon: const Icon(Icons.arrow_forward,
-                            size: 32, color: Colors.white),
-                        onPressed: () {
-                          scaffoldKey.currentState?.closeEndDrawer();
-                        },
-                      ),
-                    ],
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: IconButton(
+                      padding: const EdgeInsets.all(12),
+                      icon: const Icon(Icons.arrow_forward,
+                          size: 32, color: Colors.white),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        scaffoldKey.currentState?.closeEndDrawer();
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -381,6 +374,7 @@ class DrawerCard extends HookConsumerWidget {
           Expanded(
             child: GestureDetector(
               onTap: () {
+                HapticFeedback.lightImpact();
                 handleCardTap();
               },
               child: Padding(
@@ -503,6 +497,7 @@ class DrawerCard extends HookConsumerWidget {
                                         backgroundColor: Colors.red.shade300,
                                       ),
                                       onPressed: () {
+                                        HapticFeedback.lightImpact();
                                         handleDelete();
                                       },
                                       child: Text('削除',
@@ -516,6 +511,7 @@ class DrawerCard extends HookConsumerWidget {
                                             MyColor.greenSuperLight,
                                       ),
                                       onPressed: () {
+                                        HapticFeedback.lightImpact();
                                         handleDeleteCancel();
                                       },
                                       child: Text('キャンセル',
@@ -534,6 +530,7 @@ class DrawerCard extends HookConsumerWidget {
                 padding: const EdgeInsets.all(8),
                 child: const Icon(Icons.delete)),
             onTap: () {
+              HapticFeedback.lightImpact();
               handleDeleteIconTap();
             },
           )
@@ -687,6 +684,7 @@ class EditToolBar extends HookConsumerWidget {
                           children: [
                             GestureDetector(
                               onTap: () {
+                                HapticFeedback.lightImpact();
                                 ref
                                     .read(editPageViewModelProvider.notifier)
                                     .selectObject(null, null);
@@ -706,6 +704,7 @@ class EditToolBar extends HookConsumerWidget {
                             ),
                             GestureDetector(
                               onTap: () {
+                                HapticFeedback.lightImpact();
                                 handleInsertObject(context);
                               },
                               child: Container(
@@ -736,6 +735,7 @@ class EditToolBar extends HookConsumerWidget {
                               ...moveRateList.map((rate) {
                                 return GestureDetector(
                                   onTap: () {
+                                    HapticFeedback.lightImpact();
                                     moveRate.value = rate.keys.first;
                                   },
                                   child: Container(
@@ -954,6 +954,7 @@ class CustomFloatingButton extends HookConsumerWidget {
                           children: [
                             IconButton(
                               onPressed: () {
+                                HapticFeedback.lightImpact();
                                 handleTextSelect();
                               },
                               icon: const Icon(
@@ -963,6 +964,7 @@ class CustomFloatingButton extends HookConsumerWidget {
                             ),
                             IconButton(
                               onPressed: () async {
+                                HapticFeedback.lightImpact();
                                 if (editPageState.currentImageCount >=
                                     editPageState.boardModel!.maxImageCount) {
                                   return;
@@ -1068,6 +1070,7 @@ class TextInputModal extends HookConsumerWidget {
                                 ),
                                 onPressed: () {
                                   if (textController.text.isEmpty) return;
+                                  HapticFeedback.lightImpact();
                                   ref
                                       .read(editPageViewModelProvider.notifier)
                                       .selectObject(
@@ -1095,7 +1098,7 @@ class TextInputModal extends HookConsumerWidget {
                                   textController.clear();
                                 },
                                 child: Text('OK',
-                                    style: lightTextTheme.bodyMedium!),
+                                    style: lightTextTheme.titleLarge),
                               ),
                             ),
                           ],
@@ -1103,8 +1106,8 @@ class TextInputModal extends HookConsumerWidget {
                         TextField(
                             maxLines: 1,
                             cursorColor: MyColor.pink,
-                            style: TextStyle(
-                                color: selectedTextColor.value, fontSize: 24),
+                            style: lightTextTheme.bodyLarge!.copyWith(
+                                color: selectedTextColor.value, fontSize: 32),
                             textAlign: TextAlign.center,
                             focusNode: focusNode,
                             controller: textController,

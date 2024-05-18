@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 
@@ -27,10 +28,9 @@ class TwoWayDialog extends StatelessWidget {
     return Dialog(
       child: LayoutBuilder(builder: (context, constraints) {
         final width = constraints.maxWidth;
-        print(width);
         return Container(
           width: width,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           constraints: const BoxConstraints(
             maxWidth: 400,
           ),
@@ -57,13 +57,16 @@ class TwoWayDialog extends StatelessWidget {
                   ? Column(
                       children: [
                         icon!,
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                       ],
                     )
                   : const SizedBox.shrink(),
-              Text(
-                title,
-                style: lightTextTheme.titleLarge,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Text(
+                  title,
+                  style: lightTextTheme.titleLarge,
+                ),
               ),
               content != null
                   ? Text(
@@ -76,7 +79,10 @@ class TwoWayDialog extends StatelessWidget {
                 children: [
                   Expanded(
                       child: InkWell(
-                    onTap: () => onLeftButtonPressed(),
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      onLeftButtonPressed();
+                    },
                     child: Container(
                       height: 50,
                       decoration: BoxDecoration(
@@ -105,7 +111,10 @@ class TwoWayDialog extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: InkWell(
-                      onTap: () => onRightButtonPressed(),
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        onRightButtonPressed();
+                      },
                       child: Container(
                           height: 50,
                           decoration: BoxDecoration(

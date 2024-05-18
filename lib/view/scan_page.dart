@@ -110,6 +110,7 @@ class _QrScanPageState extends State<QrScanPage> with WidgetsBindingObserver {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 36),
           onPressed: () {
+            HapticFeedback.lightImpact();
             context.go('/connect');
           },
         ),

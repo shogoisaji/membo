@@ -10,7 +10,7 @@ class CustomLicensePage extends ConsumerWidget {
     return const Scaffold(
       backgroundColor: MyColor.green,
       body: LicensePage(
-        applicationName: 'Membo-',
+        applicationName: 'Membo',
       ),
     );
   }

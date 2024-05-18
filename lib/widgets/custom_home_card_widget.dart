@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -58,7 +59,6 @@ class CustomHomeCardWidget extends HookConsumerWidget {
           .catchError((e) {
         throw Exception('Avatar url is not loaded');
       });
-      print('Avatar url is loaded: $url');
       return url;
     }
 
@@ -66,7 +66,6 @@ class CustomHomeCardWidget extends HookConsumerWidget {
       try {
         ownerAvatarUrl.value = await fetchAvatarUrl(board.ownerId);
       } catch (e) {
-        print('Owner avatar image url is not loaded: $e');
         throw Exception('Owner avatar image url is not loaded');
       }
 
@@ -76,7 +75,6 @@ class CustomHomeCardWidget extends HookConsumerWidget {
           editorAvatarUrlList.value = [...editorAvatarUrlList.value, url];
         });
       } catch (e) {
-        print('Editor avatar image url is not loaded: $e');
         throw Exception('Editor avatar image url is not loaded');
       }
     }
@@ -101,6 +99,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
 
     return GestureDetector(
       onTap: () {
+        HapticFeedback.lightImpact();
         if (animationController.isCompleted) {
           animationController.reverse();
           Future.delayed(const Duration(milliseconds: 300), () {
@@ -190,6 +189,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                       left: 32,
                       child: InkWell(
                         onTap: () {
+                          HapticFeedback.lightImpact();
                           deleteFirstTap.value = !deleteFirstTap.value;
                         },
                         child: Container(
@@ -333,12 +333,16 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                             child: deleteFirstTap.value
                                                 ? DeleteButton(
                                                     onTap: () {
+                                                      HapticFeedback
+                                                          .lightImpact();
                                                       handleTapDelete();
                                                     },
                                                     permission: permission,
                                                   )
                                                 : QrButton(
                                                     onTap: () {
+                                                      HapticFeedback
+                                                          .lightImpact();
                                                       onTapQr();
                                                     },
                                                     permission: permission,
@@ -348,10 +352,14 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                           Expanded(
                                             child: deleteFirstTap.value
                                                 ? DeleteCancelButton(onTap: () {
+                                                    HapticFeedback
+                                                        .lightImpact();
                                                     handleTapDeleteCancel();
                                                   })
                                                 : EditButton(
                                                     onTap: () {
+                                                      HapticFeedback
+                                                          .lightImpact();
                                                       onTapEdit();
                                                     },
                                                     permission: permission,
@@ -369,6 +377,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                           Expanded(
                                             child: ViewButton(
                                               onTap: () {
+                                                HapticFeedback.lightImpact();
                                                 onTapView();
                                               },
                                             ),
@@ -441,7 +450,7 @@ class QrButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (permission == BoardPermission.viewer) {
+        if (permission != BoardPermission.owner) {
           return;
         }
         onTap();
@@ -449,7 +458,7 @@ class QrButton extends StatelessWidget {
       child: Container(
         height: 40,
         decoration: BoxDecoration(
-          color: permission == BoardPermission.viewer
+          color: permission != BoardPermission.owner
               ? Colors.grey.shade400
               : MyColor.blue,
           borderRadius: const BorderRadius.all(

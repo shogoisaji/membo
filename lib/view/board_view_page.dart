@@ -6,8 +6,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/view_model_state/board_view_page_state.dart';
 import 'package:membo/settings/color.dart';
+import 'package:membo/settings/text_theme.dart';
 import 'package:membo/state/stream_board_state.dart';
 import 'package:membo/view_model/board_view_page_view_model.dart';
 import 'package:membo/widgets/board_widget.dart';
@@ -42,19 +44,23 @@ class BoardViewPage extends HookConsumerWidget {
         useTransformationController();
 
     void initialize() async {
-      await ref
-          .read(boardViewPageViewModelProvider.notifier)
-          .initialize(boardId, w, h)
-          .catchError((e) {
+      try {
+        await ref
+            .read(boardViewPageViewModelProvider.notifier)
+            .initialize(boardId, w, h);
+      } on AppException catch (e) {
         if (context.mounted) {
           ErrorDialog.show(
             context,
-            e.toString(),
-            secondaryMessage: 'Please check your network connection.',
+            e.title ?? 'Error',
             onTap: () => context.go('/'),
           );
         }
-      });
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString());
+        }
+      }
     }
 
     void handleAddLinkBoardIds() async {
@@ -194,6 +200,7 @@ class BoardViewPage extends HookConsumerWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 36),
             onPressed: () {
+              HapticFeedback.lightImpact();
               context.go('/');
             },
           ),
@@ -256,9 +263,10 @@ class BoardViewPage extends HookConsumerWidget {
                         backgroundColor: MyColor.green,
                       ),
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         handleAddLinkBoardIds();
                       },
-                      child: const Text('リストに追加'),
+                      child: Text('リストに追加', style: lightTextTheme.bodySmall),
                     ),
                   )
                 : const SizedBox.shrink(),
