@@ -144,34 +144,41 @@ class EditPage extends HookConsumerWidget {
                   width: 30,
                   height: 30,
                 )),
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(99),
-                  border: Border.all(width: 3, color: MyColor.greenText),
-                ),
-                child: Text(
-                  editPageState.boardModel?.isPublic == true ? '公開' : '非公開',
-                  style: lightTextTheme.bodyLarge,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  ref
-                      .read(editPageViewModelProvider.notifier)
-                      .clearSelectedObject();
-                  context.go('/board-settings', extra: boardId);
-                },
-                child: const Icon(Icons.settings),
-              ),
-            ),
+            editPageState.isOwner
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: bgColor,
+                        borderRadius: BorderRadius.circular(99),
+                        border: Border.all(width: 3, color: MyColor.greenText),
+                      ),
+                      child: Text(
+                        editPageState.boardModel?.isPublic == true
+                            ? '公開'
+                            : '非公開',
+                        style: lightTextTheme.bodyLarge,
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            editPageState.isOwner
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        ref
+                            .read(editPageViewModelProvider.notifier)
+                            .clearSelectedObject();
+                        context.go('/board-settings', extra: boardId);
+                      },
+                      child: const Icon(Icons.settings, size: 32),
+                    ),
+                  )
+                : const SizedBox.shrink(),
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: ElevatedButton(
@@ -180,7 +187,7 @@ class EditPage extends HookConsumerWidget {
                   scaffoldKey.currentState?.openEndDrawer();
                   // Scaffold.of(context).openDrawer();
                 },
-                child: const Icon(Icons.format_list_bulleted),
+                child: const Icon(Icons.format_list_bulleted, size: 32),
               ),
             ),
           ],

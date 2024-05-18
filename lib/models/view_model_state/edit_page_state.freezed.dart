@@ -22,6 +22,7 @@ mixin _$EditPageState {
   XFile? get selectedImageFile => throw _privateConstructorUsedError;
   bool get showTextInput => throw _privateConstructorUsedError;
   bool get showInputMenu => throw _privateConstructorUsedError;
+  bool get isOwner => throw _privateConstructorUsedError;
   Matrix4? get transformationMatrix => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -42,6 +43,7 @@ abstract class $EditPageStateCopyWith<$Res> {
       XFile? selectedImageFile,
       bool showTextInput,
       bool showInputMenu,
+      bool isOwner,
       Matrix4? transformationMatrix});
 
   $ObjectModelCopyWith<$Res>? get selectedObject;
@@ -67,6 +69,7 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
     Object? selectedImageFile = freezed,
     Object? showTextInput = null,
     Object? showInputMenu = null,
+    Object? isOwner = null,
     Object? transformationMatrix = freezed,
   }) {
     return _then(_value.copyWith(
@@ -93,6 +96,10 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
       showInputMenu: null == showInputMenu
           ? _value.showInputMenu
           : showInputMenu // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isOwner: null == isOwner
+          ? _value.isOwner
+          : isOwner // ignore: cast_nullable_to_non_nullable
               as bool,
       transformationMatrix: freezed == transformationMatrix
           ? _value.transformationMatrix
@@ -141,6 +148,7 @@ abstract class _$$EditPageStateImplCopyWith<$Res>
       XFile? selectedImageFile,
       bool showTextInput,
       bool showInputMenu,
+      bool isOwner,
       Matrix4? transformationMatrix});
 
   @override
@@ -166,6 +174,7 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
     Object? selectedImageFile = freezed,
     Object? showTextInput = null,
     Object? showInputMenu = null,
+    Object? isOwner = null,
     Object? transformationMatrix = freezed,
   }) {
     return _then(_$EditPageStateImpl(
@@ -193,6 +202,10 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
           ? _value.showInputMenu
           : showInputMenu // ignore: cast_nullable_to_non_nullable
               as bool,
+      isOwner: null == isOwner
+          ? _value.isOwner
+          : isOwner // ignore: cast_nullable_to_non_nullable
+              as bool,
       transformationMatrix: freezed == transformationMatrix
           ? _value.transformationMatrix
           : transformationMatrix // ignore: cast_nullable_to_non_nullable
@@ -211,6 +224,7 @@ class _$EditPageStateImpl implements _EditPageState {
       this.selectedImageFile,
       this.showTextInput = false,
       this.showInputMenu = false,
+      this.isOwner = false,
       this.transformationMatrix});
 
   @override
@@ -229,11 +243,14 @@ class _$EditPageStateImpl implements _EditPageState {
   @JsonKey()
   final bool showInputMenu;
   @override
+  @JsonKey()
+  final bool isOwner;
+  @override
   final Matrix4? transformationMatrix;
 
   @override
   String toString() {
-    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, currentImageCount: $currentImageCount, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu, transformationMatrix: $transformationMatrix)';
+    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, currentImageCount: $currentImageCount, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu, isOwner: $isOwner, transformationMatrix: $transformationMatrix)';
   }
 
   @override
@@ -253,6 +270,7 @@ class _$EditPageStateImpl implements _EditPageState {
                 other.showTextInput == showTextInput) &&
             (identical(other.showInputMenu, showInputMenu) ||
                 other.showInputMenu == showInputMenu) &&
+            (identical(other.isOwner, isOwner) || other.isOwner == isOwner) &&
             (identical(other.transformationMatrix, transformationMatrix) ||
                 other.transformationMatrix == transformationMatrix));
   }
@@ -266,6 +284,7 @@ class _$EditPageStateImpl implements _EditPageState {
       selectedImageFile,
       showTextInput,
       showInputMenu,
+      isOwner,
       transformationMatrix);
 
   @JsonKey(ignore: true)
@@ -283,6 +302,7 @@ abstract class _EditPageState implements EditPageState {
       final XFile? selectedImageFile,
       final bool showTextInput,
       final bool showInputMenu,
+      final bool isOwner,
       final Matrix4? transformationMatrix}) = _$EditPageStateImpl;
 
   @override
@@ -297,6 +317,8 @@ abstract class _EditPageState implements EditPageState {
   bool get showTextInput;
   @override
   bool get showInputMenu;
+  @override
+  bool get isOwner;
   @override
   Matrix4? get transformationMatrix;
   @override
