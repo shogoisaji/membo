@@ -16,6 +16,7 @@ class EditPageState with _$EditPageState {
     XFile? selectedImageFile,
     @Default(false) bool showTextInput,
     @Default(false) bool showInputMenu,
+    @Default(false) bool isOwner,
     Matrix4? transformationMatrix,
   }) = _EditPageState;
 }

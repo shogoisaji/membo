@@ -61,8 +61,18 @@ class EditPageViewModel extends _$EditPageViewModel {
   }
 
   Future<void> initialize(String boardId, double w, double h) async {
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+
     final board =
         await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+
+    /// owner
+    if (user.id == board.ownerId) {
+      state = state.copyWith(isOwner: true);
+    }
 
     ref.read(streamBoardIdProvider.notifier).setStreamBoardId(boardId);
 
@@ -169,9 +179,8 @@ class EditPageViewModel extends _$EditPageViewModel {
         throw Exception('User is not signed in');
       }
 
-      ///　所有者、または編集権限を持っているユーザーのみ書き込み可能
-      if (!board.editableUserIds.contains(user.id) &&
-          board.ownerId != user.id) {
+      /// 所有者、または編集権限を持っているユーザーのみ書き込み可能
+      if (!board.editableUserIds.contains(user.id) && state.isOwner == false) {
         throw AppException.error('書き込み権限がありません');
       }
 
@@ -241,7 +250,6 @@ class EditPageViewModel extends _$EditPageViewModel {
           .read(supabaseRepositoryProvider)
           .fetchUserData(id)
           .catchError((e) {
-        print('error: $e');
         return null;
       });
       if (user == null) {
