@@ -27,7 +27,6 @@ class _QrScanPageState extends State<QrScanPage> with WidgetsBindingObserver {
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
     ]);
 
     controller.start();
@@ -84,9 +83,6 @@ class _QrScanPageState extends State<QrScanPage> with WidgetsBindingObserver {
   Future<void> dispose() async {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
     ]);
 
     // Stop listening to lifecycle changes.

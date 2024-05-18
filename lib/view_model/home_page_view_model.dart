@@ -220,10 +220,12 @@ class HomePageViewModel extends _$HomePageViewModel {
     if (userData == null) {
       throw Exception('User data is not loaded');
     }
+    final maxImageCount = userData.membershipType.maxImageCount;
     final newBoard = BoardModel(
       boardId: const Uuid().v4(),
       boardName: boardName,
       ownerId: user.id,
+      maxImageCount: maxImageCount,
       createdAt: DateTime.now(),
     );
 

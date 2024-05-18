@@ -12,6 +12,7 @@ class EditPageState with _$EditPageState {
   factory EditPageState({
     ObjectModel? selectedObject,
     BoardModel? boardModel,
+    @Default(0) int currentImageCount,
     XFile? selectedImageFile,
     @Default(false) bool showTextInput,
     @Default(false) bool showInputMenu,

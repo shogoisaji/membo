@@ -284,6 +284,31 @@ class EditPage extends HookConsumerWidget {
                     alignment: const Alignment(0, 0.9),
                     child: EditToolBar(width: w, isLoading: isLoading),
                   ),
+                  SafeArea(
+                    child: Align(
+                      alignment: const Alignment(-0.95, -0.99),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: MyColor.greenLight,
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.image,
+                                size: 32, color: MyColor.greenDark),
+                            Text(
+                                ' ${editPageState.currentImageCount}/${editPageState.boardModel!.maxImageCount}',
+                                style: lightTextTheme.bodyMedium!.copyWith(
+                                  color: MyColor.greenDark,
+                                )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ));
   }
@@ -938,12 +963,23 @@ class CustomFloatingButton extends HookConsumerWidget {
                             ),
                             IconButton(
                               onPressed: () async {
+                                if (editPageState.currentImageCount >=
+                                    editPageState.boardModel!.maxImageCount) {
+                                  return;
+                                }
                                 await handleImageSelect();
                               },
-                              icon: const Icon(
-                                Icons.image,
-                                size: 42,
-                              ),
+                              icon: editPageState.currentImageCount >=
+                                      editPageState.boardModel!.maxImageCount
+                                  ? const Icon(
+                                      Icons.image_not_supported_rounded,
+                                      size: 42,
+                                      color: MyColor.green)
+                                  : const Icon(
+                                      Icons.image,
+                                      size: 42,
+                                      color: MyColor.greenText,
+                                    ),
                             ),
                           ],
                         ))
@@ -960,8 +996,8 @@ class CustomFloatingButton extends HookConsumerWidget {
               elevation: 5.0,
               color: MyColor.pink,
               child: const Icon(
-                Icons.add,
-                size: 32,
+                Icons.add_rounded,
+                size: 40,
               ),
               onTap: () {
                 animationController.forward();
