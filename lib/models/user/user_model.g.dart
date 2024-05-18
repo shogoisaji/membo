@@ -15,7 +15,8 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
               .toList() ??
           const [],
       avatarUrl: json['avatar_url'] as String?,
-      userType: UserType.fromJson(json['user_type'] as Map<String, dynamic>),
+      membershipType: MembershipType.fromJson(
+          json['membership_type'] as Map<String, dynamic>),
       createdAt: DateTime.parse(json['created_at'] as String),
     );
 
@@ -25,6 +26,6 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
       'user_name': instance.userName,
       'owned_board_ids': instance.ownedBoardIds,
       'avatar_url': instance.avatarUrl,
-      'user_type': instance.userType,
+      'membership_type': instance.membershipType,
       'created_at': instance.createdAt.toIso8601String(),
     };

@@ -148,7 +148,10 @@ class EditPageViewModel extends _$EditPageViewModel {
       if (user == null) {
         throw Exception('User is not signed in');
       }
-      if (!board.editableUserIds.contains(user.id)) {
+
+      ///　所有者、または編集権限を持っているユーザーのみ書き込み可能
+      if (!board.editableUserIds.contains(user.id) &&
+          board.ownerId != user.id) {
         throw AppException.error('書き込み権限がありません');
       }
 
@@ -175,7 +178,6 @@ class EditPageViewModel extends _$EditPageViewModel {
       clearSelectedObject();
       rethrow;
     }
-
     clearSelectedObject();
   }
 

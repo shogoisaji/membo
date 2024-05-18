@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/models/user/membership_type.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
@@ -192,7 +193,7 @@ class HomePage extends HookConsumerWidget {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       SizedBox(
-                                        width: 150,
+                                        width: 170,
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
@@ -200,7 +201,7 @@ class HomePage extends HookConsumerWidget {
                                             IconButton(
                                               icon: const Icon(
                                                 Icons.settings,
-                                                size: 36,
+                                                size: 42,
                                               ),
                                               onPressed: () {
                                                 context.go('/settings');
@@ -209,8 +210,8 @@ class HomePage extends HookConsumerWidget {
                                             IconButton(
                                               icon: SvgPicture.asset(
                                                 'assets/images/svg/connect.svg',
-                                                width: 36,
-                                                height: 36,
+                                                width: 40,
+                                                height: 40,
                                                 colorFilter:
                                                     const ColorFilter.mode(
                                                         MyColor.greenText,
@@ -348,22 +349,19 @@ class HomePage extends HookConsumerWidget {
                     child: Stack(
                       children: [
                         BgPaint(width: w, height: h),
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: SizedBox(
-                            width: w,
-                            height: appBarHeight + kToolbarHeight,
-                            child: BoardNameInputPage(
-                              pageController: pageController,
-                              focusNode: textFocusNode,
-                              onTapCancel: () {
-                                currentPage.value = 0;
-                              },
-                              onTapCreate: (String boardName) {
-                                handleTapCreate(boardName);
-                              },
-                            ),
-                          ),
+                        BoardNameInputContent(
+                          pageController: pageController,
+                          focusNode: textFocusNode,
+                          membershipType:
+                              homePageState.userModel!.membershipType,
+                          currentBoardCount:
+                              homePageState.ownedCardBoardList.length,
+                          onTapCancel: () {
+                            currentPage.value = 0;
+                          },
+                          onTapCreate: (String boardName) {
+                            handleTapCreate(boardName);
+                          },
                         ),
                       ],
                     ),
@@ -378,16 +376,20 @@ class HomePage extends HookConsumerWidget {
   }
 }
 
-class BoardNameInputPage extends HookWidget {
+class BoardNameInputContent extends HookWidget {
   final PageController pageController;
   final FocusNode focusNode;
+  final MembershipType membershipType;
+  final int currentBoardCount;
   final int maxBoardNameChars = 16;
   final Function() onTapCancel;
   final Function(String) onTapCreate;
-  const BoardNameInputPage(
+  const BoardNameInputContent(
       {super.key,
       required this.pageController,
       required this.focusNode,
+      required this.membershipType,
+      required this.currentBoardCount,
       required this.onTapCancel,
       required this.onTapCreate});
 
@@ -396,113 +398,233 @@ class BoardNameInputPage extends HookWidget {
     final formKey = GlobalKey<FormState>();
     final textController = useTextEditingController();
 
-    return ColoredBox(
-      color: MyColor.pink,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Align(
-            alignment: const Alignment(0.0, 0.9),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 300,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('ボード名', style: lightTextTheme.titleMedium),
-                      Text('$maxBoardNameChars文字以下',
-                          style: lightTextTheme.bodySmall),
-                    ],
-                  ),
-                  Form(
-                    key: formKey,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          // autofocus: true,
-                          focusNode: focusNode,
-                          maxLength: maxBoardNameChars,
-                          controller: textController,
-                          style: lightTextTheme.bodyMedium,
-                          decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
-                              counterText: '',
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(12.0)),
-                                borderSide:
-                                    BorderSide(color: MyColor.greenText),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(12.0)),
-                                borderSide:
-                                    BorderSide(color: MyColor.greenText),
-                              )),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return '入力欄が空欄です';
-                            } else if (value.length > maxBoardNameChars) {
-                              return '$maxBoardNameChars文字以下で入力してください';
-                            }
-                            return null;
-                          },
+    final isBoardMax = currentBoardCount == membershipType.maxBoardCount;
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Align(
+          alignment: const Alignment(0.0, -0.6),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 300,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                isBoardMax
+                    ? Container(
+                        decoration: BoxDecoration(
+                          color: MyColor.red,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 12),
+                        child: Column(
                           children: [
-                            Expanded(
-                              child: CustomButton(
-                                width: 100,
-                                height: 40,
-                                color: MyColor.greenDark,
-                                child: Center(
-                                    child: Text('作成',
-                                        style:
-                                            lightTextTheme.bodyLarge!.copyWith(
-                                          color: Colors.white,
-                                        ))),
-                                onTap: () {
-                                  if (formKey.currentState!.validate()) {
-                                    onTapCreate(textController.text);
-                                  }
-                                },
+                            Text(
+                              'ボードの作成数が上限に達しています',
+                              style: lightTextTheme.bodyMedium!.copyWith(
+                                color: Colors.white,
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: CustomButton(
-                                width: 100,
+                            InkWell(
+                              onTap: onTapCancel,
+                              child: Container(
+                                width: double.infinity,
                                 height: 40,
-                                color: MyColor.greenSuperLight,
-                                onTap: onTapCancel,
+                                margin: const EdgeInsets.only(top: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 child: Center(
-                                    child: Text('キャンセル',
-                                        style:
-                                            lightTextTheme.bodyLarge!.copyWith(
-                                          color: MyColor.greenText,
-                                        ))),
+                                  child: Text(
+                                    '戻る',
+                                    style: lightTextTheme.bodyMedium!.copyWith(
+                                      color: MyColor.red,
+                                    ),
+                                  ),
+                                ),
                               ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('ボード名', style: lightTextTheme.titleMedium),
+                                Text('$maxBoardNameChars文字以下',
+                                    style: lightTextTheme.bodySmall),
+                              ],
+                            ),
+                            TextFormField(
+                              // autofocus: true,
+                              focusNode: focusNode,
+                              maxLength: maxBoardNameChars,
+                              controller: textController,
+                              style: lightTextTheme.bodyMedium,
+                              decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  counterText: '',
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12.0)),
+                                    borderSide:
+                                        BorderSide(color: MyColor.greenText),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12.0)),
+                                    borderSide:
+                                        BorderSide(color: MyColor.greenText),
+                                  )),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return '入力欄が空欄です';
+                                } else if (value.length > maxBoardNameChars) {
+                                  return '$maxBoardNameChars文字以下で入力してください';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Expanded(
+                                  child: CustomButton(
+                                    width: 100,
+                                    height: 40,
+                                    color: MyColor.greenDark,
+                                    child: Center(
+                                        child: Text('作成',
+                                            style: lightTextTheme.bodyLarge!
+                                                .copyWith(
+                                              color: Colors.white,
+                                            ))),
+                                    onTap: () {
+                                      if (formKey.currentState!.validate()) {
+                                        onTapCreate(textController.text);
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: CustomButton(
+                                    width: 100,
+                                    height: 40,
+                                    color: MyColor.greenSuperLight,
+                                    onTap: onTapCancel,
+                                    child: Center(
+                                        child: Text('キャンセル',
+                                            style: lightTextTheme.bodyLarge!
+                                                .copyWith(
+                                              color: MyColor.greenText,
+                                            ))),
+                                  ),
+                                )
+                              ],
                             )
                           ],
-                        )
-                      ],
-                    ),
+                        ),
+                      ),
+                const SizedBox(height: 50),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('マイボード', style: lightTextTheme.bodyMedium),
+                            Row(
+                              children: [
+                                Text('$currentBoardCount',
+                                    style: isBoardMax
+                                        ? lightTextTheme.bodyLarge!.copyWith(
+                                            color: MyColor.red,
+                                          )
+                                        : lightTextTheme.bodyMedium!.copyWith(
+                                            color: MyColor.greenText)),
+                                Text(' / ${membershipType.maxBoardCount}',
+                                    style: lightTextTheme.bodyMedium),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Container(
+                              height: 50,
+                              width: constraints.maxWidth,
+                              padding: const EdgeInsets.all(4.0),
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(14.0)),
+                                border: Border.fromBorderSide(
+                                  BorderSide(
+                                    width: 2,
+                                    color: MyColor.greenText,
+                                  ),
+                                ),
+                                color: MyColor.greenSuperLight,
+                              ),
+                              child: Row(children: [
+                                Expanded(
+                                  flex: currentBoardCount,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: currentBoardCount ==
+                                              membershipType.maxBoardCount
+                                          ? const BorderRadius.all(
+                                              Radius.circular(10.0))
+                                          : const BorderRadius.only(
+                                              topLeft: Radius.circular(10.0),
+                                              bottomLeft: Radius.circular(10.0),
+                                              topRight: Radius.circular(3.0),
+                                              bottomRight: Radius.circular(3.0),
+                                            ),
+                                      color: MyColor.greenText,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: membershipType.maxBoardCount -
+                                      currentBoardCount,
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10.0),
+                                        bottomLeft: Radius.circular(10.0),
+                                      ),
+                                      color: Colors.transparent,
+                                    ),
+                                  ),
+                                ),
+                              ]));
+                        },
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -282,7 +282,7 @@ class EditPage extends HookConsumerWidget {
                   const TextInputModal(),
                   Align(
                     alignment: const Alignment(0, 0.9),
-                    child: EditToolBar(width: w),
+                    child: EditToolBar(width: w, isLoading: isLoading),
                   ),
                 ],
               ));
@@ -521,7 +521,8 @@ class DrawerCard extends HookConsumerWidget {
 class EditToolBar extends HookConsumerWidget {
   final double width;
   final double height = 150;
-  const EditToolBar({super.key, required this.width});
+  final ValueNotifier<bool> isLoading;
+  const EditToolBar({super.key, required this.width, required this.isLoading});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -559,6 +560,9 @@ class EditToolBar extends HookConsumerWidget {
     }
 
     void handleInsertObject(BuildContext context) async {
+      if (isLoading.value) return; // 連打防止
+
+      isLoading.value = true;
       try {
         await ref.read(editPageViewModelProvider.notifier).saveSelectedObject();
         clearState();
@@ -570,6 +574,8 @@ class EditToolBar extends HookConsumerWidget {
           }
           ErrorDialog.show(context, e.toString());
         }
+      } finally {
+        isLoading.value = false;
       }
     }
 

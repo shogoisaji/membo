@@ -201,7 +201,7 @@ class SupabaseRepository {
       final userData = UserModel.fromJson(response);
       return userData;
     } catch (e) {
-      throw AppException.warning('fetch user data failed',
+      throw AppException.error('fetch user data failed',
           detail: 'fetchUserData() : user id -> $id');
     }
   }
