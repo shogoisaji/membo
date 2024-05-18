@@ -13,6 +13,7 @@ import 'package:membo/view_model/board_view_page_view_model.dart';
 import 'package:membo/widgets/board_widget.dart';
 import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:membo/widgets/error_dialog.dart';
+import 'package:membo/widgets/two_way_dialog.dart';
 
 class BoardViewPage extends HookConsumerWidget {
   final String boardId;
@@ -63,6 +64,9 @@ class BoardViewPage extends HookConsumerWidget {
             .addLinkedBoardId(
               boardId,
             );
+        if (context.mounted) {
+          CustomSnackBar.show(context, 'リストに追加しました', MyColor.blue);
+        }
       } catch (e) {
         if (context.mounted) {
           if (e.toString() == 'Exist linked board') {
@@ -78,41 +82,32 @@ class BoardViewPage extends HookConsumerWidget {
       /// linked user 以外はリクエストできない
       if (boardViewPageState.userType != ViewPageUserTypes.linkedUser) return;
       showDialog(
-          context: context,
-          builder: (BuildContext dialogContext) => AlertDialog(
-                title: const Text('編集リクエストをしますか？'),
-                actions: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColor.blue,
-                    ),
-                    onPressed: () async {
-                      Navigator.of(dialogContext).pop();
-                      try {
-                        await ref
-                            .read(boardViewPageViewModelProvider.notifier)
-                            .sendEditRequest(boardId);
-                        if (context.mounted) {
-                          CustomSnackBar.show(
-                              context, '編集リクエストをしました', MyColor.blue);
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ErrorDialog.show(context, '編集リクエストに失敗しました : $e');
-                        }
-                      }
-                    },
-                    child: const Text('リクエスト',
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(dialogContext).pop();
-                    },
-                    child: const Text('キャンセル'),
-                  ),
-                ],
-              ));
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return TwoWayDialog(
+            icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+                width: 36,
+                height: 36,
+                colorFilter:
+                    const ColorFilter.mode(MyColor.greenText, BlendMode.srcIn)),
+            title: '編集者リクエストを\n送りますか？',
+            leftButtonText: 'リクエスト',
+            rightButtonText: 'キャンセル',
+            onLeftButtonPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await ref
+                  .read(boardViewPageViewModelProvider.notifier)
+                  .sendEditRequest(boardId);
+              if (context.mounted) {
+                CustomSnackBar.show(context, 'リクエストを送りました', MyColor.blue);
+              }
+            },
+            onRightButtonPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+          );
+        },
+      );
     }
 
     void handleAfterRequest(BuildContext context) async {
@@ -121,42 +116,33 @@ class BoardViewPage extends HookConsumerWidget {
         return;
       }
       showDialog(
-          context: context,
-          builder: (BuildContext dialogContext) => AlertDialog(
-                title: const Text('リクエスト済みです'),
-                content: const Text('リクエストを取り消しますか？'),
-                actions: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColor.lightRed,
-                    ),
-                    onPressed: () async {
-                      Navigator.of(dialogContext).pop();
-                      try {
-                        await ref
-                            .read(boardViewPageViewModelProvider.notifier)
-                            .cancelRequest(boardId);
-                        if (context.mounted) {
-                          CustomSnackBar.show(
-                              context, 'リクエストを取り消しました', MyColor.blue);
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ErrorDialog.show(context, '取り消しに失敗しました');
-                        }
-                      }
-                    },
-                    child: const Text('取り消す',
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(dialogContext).pop();
-                    },
-                    child: const Text('キャンセル'),
-                  ),
-                ],
-              ));
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return TwoWayDialog(
+            icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+                width: 36,
+                height: 36,
+                colorFilter:
+                    const ColorFilter.mode(MyColor.greenText, BlendMode.srcIn)),
+            title: 'リクエスト済みです',
+            content: 'リクエストを削除しますか？',
+            leftButtonText: '削除',
+            rightButtonText: 'キャンセル',
+            onLeftButtonPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await ref
+                  .read(boardViewPageViewModelProvider.notifier)
+                  .cancelRequest(boardId);
+              if (context.mounted) {
+                CustomSnackBar.show(context, 'リクエストを削除しました', MyColor.blue);
+              }
+            },
+            onRightButtonPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+          );
+        },
+      );
     }
 
     useEffect(() {
