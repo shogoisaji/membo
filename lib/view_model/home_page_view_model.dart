@@ -42,25 +42,24 @@ class HomePageViewModel extends _$HomePageViewModel {
     /// owned board
     for (String boardId in userData.ownedBoardIds) {
       try {
-        final data = await ref
-            .read(supabaseRepositoryProvider)
-            .getBoardNameAndThumbnail(boardId);
+        final board =
+            await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
 
         final boardForCard = BoardModel(
           boardId: boardId,
-          boardName: data['board_name'] as String,
-          ownerId: '',
-          createdAt: DateTime.now(),
-          thumbnailUrl: data['thumbnail_url'] as String?,
+          boardName: board.boardName,
+          ownerId: board.ownerId,
+          createdAt: board.createdAt,
+          thumbnailUrl: board.thumbnailUrl,
         );
 
         tempOwnedCardBoardList.add(CardBoardModel(
             board: boardForCard, permission: BoardPermission.owner));
 
         /// カルーセルの画像URLを追加
-        if (data['thumbnail_url'] != null &&
+        if (board.thumbnailUrl != null &&
             tempCarouselImageUrls.length < carouselLimit) {
-          tempCarouselImageUrls.add(data['thumbnail_url']);
+          tempCarouselImageUrls.add(board.thumbnailUrl!);
         }
       } on AppException catch (e) {
         if (e.type == AppExceptionType.notFound) {
@@ -75,14 +74,30 @@ class HomePageViewModel extends _$HomePageViewModel {
     final result = await ref.read(sqfliteRepositoryProvider).loadLinkedBoards();
 
     for (LinkedBoardModel linkedBoard in result) {
+      BoardModel? boardForCard;
       try {
-        final boardForCard = BoardModel(
-          boardId: linkedBoard.boardId,
-          boardName: linkedBoard.boardName,
-          ownerId: '',
-          createdAt: DateTime.now(),
-          thumbnailUrl: linkedBoard.thumbnailUrl,
-        );
+        try {
+          /// ボードデータを取得できるか試す
+          final board = await ref
+              .read(supabaseRepositoryProvider)
+              .getBoardById(linkedBoard.boardId);
+          boardForCard = BoardModel(
+            boardId: board.boardId,
+            boardName: board.boardName,
+            ownerId: board.ownerId,
+            createdAt: board.createdAt,
+            thumbnailUrl: board.thumbnailUrl,
+          );
+        } catch (e) {
+          /// ボードデータを取得できない場合
+          boardForCard = BoardModel(
+            boardId: linkedBoard.boardId,
+            boardName: linkedBoard.boardName,
+            ownerId: '',
+            createdAt: DateTime.now(),
+            thumbnailUrl: linkedBoard.thumbnailUrl,
+          );
+        }
 
         var editableUserIds = <String>[];
 

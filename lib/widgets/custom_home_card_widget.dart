@@ -52,12 +52,14 @@ class CustomHomeCardWidget extends HookConsumerWidget {
     );
 
     Future<String> fetchAvatarUrl(String userId) async {
-      return await ref
+      final url = await ref
           .read(supabaseRepositoryProvider)
           .fetchAvatarImageUrl(userId)
           .catchError((e) {
         throw Exception('Avatar url is not loaded');
       });
+      print('Avatar url is loaded: $url');
+      return url;
     }
 
     void initialize() async {
