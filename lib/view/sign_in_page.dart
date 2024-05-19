@@ -42,6 +42,22 @@ class SignInPage extends HookConsumerWidget {
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
 
+    void handleSignInWithGoogle() async {
+      animationController.reset();
+
+      shutterColor.value = googleColor;
+      animationController.forward();
+
+      try {
+        await ref.read(supabaseAuthRepositoryProvider).signInWithGoogle();
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, 'Error signing in with Google');
+        }
+      }
+      animationController.reverse();
+    }
+
     void handleSignInWithApple() async {
       animationController.reset();
 
@@ -53,7 +69,10 @@ class SignInPage extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ErrorDialog.show(
-              context, 'Error signing in with Apple ${e.toString()}');
+              context, 'Error signing in with Apple ${e.toString()}',
+              onTapFunction: () {
+            context.go('/sign-in');
+          });
         }
       }
       animationController.reverse();
@@ -133,7 +152,10 @@ class SignInPage extends HookConsumerWidget {
                                             } catch (e) {
                                               if (context.mounted) {
                                                 ErrorDialog.show(context,
-                                                    'Error signing in with Google');
+                                                    'Error signing in with Google',
+                                                    onTapFunction: () {
+                                                  context.go('/sign-in');
+                                                });
                                               }
                                             }
                                             animationController.reverse();
@@ -213,14 +235,6 @@ class SignInPage extends HookConsumerWidget {
                                 ),
                               ),
                             ),
-                            Align(
-                                alignment: const Alignment(0, 0.9),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    context.go('/');
-                                  },
-                                  child: const Text('test'),
-                                )),
                           ],
                         ),
                       ),

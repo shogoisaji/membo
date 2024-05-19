@@ -47,13 +47,21 @@ class BoardViewPage extends HookConsumerWidget {
       try {
         await ref
             .read(boardViewPageViewModelProvider.notifier)
-            .initialize(boardId, w, h);
+            .initialize(boardId, w, h)
+            .timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
+              context.go('/sign-in');
+            });
+          },
+        );
       } on AppException catch (e) {
         if (context.mounted) {
           ErrorDialog.show(
             context,
             e.title ?? 'Error',
-            onTap: () => context.go('/'),
+            onTapFunction: () => context.go('/'),
           );
         }
       } catch (e) {

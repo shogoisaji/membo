@@ -4,10 +4,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 
-/// onTap : null -> Navigator.pop(context)
+/// onTap : default Navigator.pop
 class ErrorDialog {
   static void show(BuildContext context, String message,
-      {String? secondaryMessage, Function()? onTap}) {
+      {String? secondaryMessage, Function()? onTapFunction}) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -63,7 +63,7 @@ class ErrorDialog {
                       onTap: () {
                         HapticFeedback.lightImpact();
                         Navigator.pop(dialogContext);
-                        onTap != null ? onTap() : Navigator.pop(context);
+                        onTapFunction != null ? onTapFunction() : null;
                       },
                       child: Container(
                         height: 50,

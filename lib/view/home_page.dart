@@ -6,7 +6,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/user/membership_type.dart';
+import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
@@ -36,7 +38,31 @@ class HomePage extends HookConsumerWidget {
     final homePageState = ref.watch(homePageViewModelProvider);
 
     void init() async {
-      ref.read(homePageViewModelProvider.notifier).initialize();
+      try {
+        await ref.read(homePageViewModelProvider.notifier).initialize().timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
+              context.go('/sign-in');
+            });
+          },
+        );
+      } on AppException catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString(), onTapFunction: () {
+            ref.read(supabaseAuthRepositoryProvider).signOut();
+            context.go('/sign-in');
+          });
+        }
+        rethrow;
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.toString(), onTapFunction: () {
+            ref.read(supabaseAuthRepositoryProvider).signOut();
+            context.go('/sign-in');
+          });
+        }
+      }
     }
 
     void handleTapQr(String boardId) {

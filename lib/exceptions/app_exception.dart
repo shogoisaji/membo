@@ -1,6 +1,7 @@
 enum AppExceptionType {
   exist,
   notFound,
+  critical,
   error,
   warning,
   unknown,
@@ -21,6 +22,9 @@ class AppException implements Exception {
 
   factory AppException.notFound() =>
       AppException(type: AppExceptionType.notFound);
+
+  factory AppException.critical(String title, {String? detail}) => AppException(
+      title: title, detail: detail, type: AppExceptionType.critical);
 
   factory AppException.error(String title, {String? detail}) =>
       AppException(title: title, detail: detail, type: AppExceptionType.error);
