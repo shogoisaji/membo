@@ -32,8 +32,18 @@ class BoardSettingsPage extends HookConsumerWidget {
 
     final isFirstTextInput = useState(true);
 
-    void initialize() {
-      ref.read(boardSettingsViewModelProvider.notifier).initializeLoad(boardId);
+    Future<void> initialize() async {
+      await ref
+          .read(boardSettingsViewModelProvider.notifier)
+          .initializeLoad(boardId)
+          .timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
+            context.go('/sign-in');
+          });
+        },
+      );
     }
 
     void handleHideModal() {

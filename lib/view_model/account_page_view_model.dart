@@ -13,7 +13,7 @@ class AccountPageViewModel extends _$AccountPageViewModel {
   @override
   AccountPageState build() => const AccountPageState();
 
-  void initializeLoad() async {
+  Future<void> initializeLoad() async {
     final user = ref.read(userStateProvider);
     if (user == null) {
       throw Exception('User is not loaded');

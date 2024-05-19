@@ -202,7 +202,7 @@ class SupabaseRepository {
       final userData = UserModel.fromJson(response);
       return userData;
     } catch (e) {
-      throw AppException.error('fetch user data failed',
+      throw AppException.error('ユーザーデータの取得に失敗しました',
           detail: 'fetchUserData() : user id -> $id');
     }
   }
@@ -217,7 +217,7 @@ class SupabaseRepository {
           .single();
       return response;
     } catch (e) {
-      throw AppException.warning('fetch user data failed',
+      throw AppException.warning('ユーザーデータの取得に失敗しました',
           detail: 'fetchUserData() : user id -> $id');
     }
   }

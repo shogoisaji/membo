@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +24,7 @@ import 'package:membo/view_model/edit_page_view_model.dart';
 import 'package:membo/widgets/board_widget.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/error_dialog.dart';
+import 'package:membo/widgets/two_way_dialog.dart';
 import 'package:uuid/uuid.dart';
 import 'package:membo/string.dart';
 
@@ -60,16 +62,14 @@ class EditPage extends HookConsumerWidget {
       await ref
           .read(editPageViewModelProvider.notifier)
           .initialize(boardId, w, h)
-          .catchError((e) {
-        if (context.mounted) {
-          ErrorDialog.show(
-            context,
-            e.toString(),
-            secondaryMessage: 'Please check your network connection.',
-            onTap: () => context.go('/'),
-          );
-        }
-      });
+          .timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
+            context.go('/sign-in');
+          });
+        },
+      );
     }
 
     useEffect(() {
@@ -608,218 +608,330 @@ class EditToolBar extends HookConsumerWidget {
       }
     }
 
-    /// joystickの入力に対するobjectの移動量のレート（大きい方が多く移動する）
-
-    // const double joyStickStrength = moveRate;
-
     return editPageState.selectedObject == null
         ? const SizedBox.shrink()
         : Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Row(
+              SafeArea(
+                bottom: false,
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
-                        onPanUpdate: (details) {
-                          final scaleDelta = -details.delta.dy * 0.003;
-                          scaleSelectedObject(scaleDelta);
-                        },
-                        child: Container(
-                          width: width / 4 > 100 ? 100 : width / 4,
-                          height: height,
-                          decoration: BoxDecoration(
-                            color: MyColor.greenSuperLight,
-                            borderRadius: BorderRadius.circular(99),
-                            border:
-                                Border.all(width: 6, color: MyColor.greenDark),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                offset: const Offset(1, 1),
-                                blurRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.zoom_out_map,
-                            size: 36,
-                            color: MyColor.blue,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      GestureDetector(
-                        onPanUpdate: (details) {
-                          rotateSelectedObject(details.delta.dy * 0.005);
-                        },
-                        child: Container(
-                          width: width / 4 > 100 ? 100 : width / 4,
-                          height: height,
-                          decoration: BoxDecoration(
-                            color: MyColor.greenSuperLight,
-                            borderRadius: BorderRadius.circular(99),
-                            border:
-                                Border.all(width: 6, color: MyColor.greenDark),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                offset: const Offset(1, 1),
-                                blurRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.refresh,
-                            size: 36,
-                            color: MyColor.blue,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: height,
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                ref
-                                    .read(editPageViewModelProvider.notifier)
-                                    .selectObject(null, null);
-                                clearState();
-                              },
-                              child: Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: MyColor.greenSuperLight,
-                                    borderRadius: BorderRadius.circular(99),
-                                    border: Border.all(
-                                        width: 5, color: MyColor.greenDark),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onPanUpdate: (details) {
+                              final scaleDelta = -details.delta.dy * 0.003;
+                              scaleSelectedObject(scaleDelta);
+                            },
+                            child: Container(
+                              width: width / 4 > 100 ? 100 : width / 4,
+                              height: height,
+                              decoration: BoxDecoration(
+                                color: MyColor.greenSuperLight,
+                                borderRadius: BorderRadius.circular(99),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: MyColor.greenDark,
+                                    blurRadius: 1,
+                                    spreadRadius: 3,
                                   ),
-                                  child: const Icon(Icons.clear,
-                                      color: MyColor.blue)),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                handleInsertObject(context);
-                              },
-                              child: Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: MyColor.greenSuperLight,
-                                  borderRadius: BorderRadius.circular(99),
-                                  border: Border.all(
-                                      width: 5, color: MyColor.greenDark),
-                                ),
-                                child: const Icon(Icons.done),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: MyColor.greenSuperLight,
-                            borderRadius: BorderRadius.circular(99),
-                            border:
-                                Border.all(width: 5, color: MyColor.greenDark),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ...moveRateList.map((rate) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-                                    moveRate.value = rate.keys.first;
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(7),
-                                    decoration: BoxDecoration(
-                                      color: rate.keys.first == moveRate.value
-                                          ? MyColor.pink
-                                          : MyColor.greenSuperLight,
-                                      shape: BoxShape.circle,
-                                      // border: Border.all(
-                                      //     width: 2, color: MyColor.greenDark),
-                                    ),
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  Align(
                                     child: SvgPicture.asset(
-                                      rate.values.first,
-                                      width: 30,
-                                      height: 30,
+                                      'assets/images/svg/vertical.svg',
+                                      width: 40,
+                                      height: 100,
                                       colorFilter: const ColorFilter.mode(
                                           MyColor.blue, BlendMode.srcIn),
                                     ),
                                   ),
-                                );
-                              }),
-                            ],
+                                  Align(
+                                    child: SvgPicture.asset(
+                                      'assets/images/svg/scale.svg',
+                                      width: 40,
+                                      height: 40,
+                                      colorFilter: const ColorFilter.mode(
+                                          MyColor.blue, BlendMode.srcIn),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: height,
-                          height: height,
-                          child: Joystick(
-                            base: Container(
+                          const SizedBox(width: 16),
+                          GestureDetector(
+                            onPanUpdate: (details) {
+                              rotateSelectedObject(details.delta.dy * 0.005);
+                            },
+                            child: Container(
+                              width: width / 4 > 100 ? 100 : width / 4,
+                              height: height,
                               decoration: BoxDecoration(
                                 color: MyColor.greenSuperLight,
-                                shape: BoxShape.circle,
-                                // borderRadius: BorderRadius.circular(99),
-                                border: Border.all(
-                                    width: 6, color: MyColor.greenDark),
-                                boxShadow: [
+                                borderRadius: BorderRadius.circular(99),
+                                boxShadow: const [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    offset: const Offset(1, 1),
-                                    blurRadius: 2,
+                                    color: MyColor.greenDark,
+                                    blurRadius: 1,
+                                    spreadRadius: 3,
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  Align(
+                                    child: SvgPicture.asset(
+                                      'assets/images/svg/vertical.svg',
+                                      width: 40,
+                                      height: 100,
+                                      colorFilter: const ColorFilter.mode(
+                                          MyColor.blue, BlendMode.srcIn),
+                                    ),
+                                  ),
+                                  Align(
+                                    child: SvgPicture.asset(
+                                      'assets/images/svg/rotate.svg',
+                                      width: 40,
+                                      height: 40,
+                                      colorFilter: const ColorFilter.mode(
+                                          MyColor.blue, BlendMode.srcIn),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                            stick: Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: MyColor.pink,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    offset: const Offset(1, 1),
-                                    blurRadius: 2,
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.games,
-                                color: MyColor.blue,
-                                size: 36,
-                              ),
-                            ),
-                            period: const Duration(milliseconds: 5),
-                            listener: (details) {
-                              moveSelectedObject(Offset(
-                                  details.x * moveRate.value,
-                                  details.y * moveRate.value));
-                            },
                           ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: height + 100,
+                        width: height,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        HapticFeedback.lightImpact();
+                                        ref
+                                            .read(editPageViewModelProvider
+                                                .notifier)
+                                            .selectObject(null, null);
+                                        clearState();
+                                      },
+                                      child: Container(
+                                          height: 70,
+                                          decoration: BoxDecoration(
+                                            color: MyColor.lightRed,
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.3),
+                                                offset: const Offset(-1, -1),
+                                                blurRadius: 3,
+                                              ),
+                                            ],
+                                          ),
+                                          margin:
+                                              const EdgeInsets.only(left: 2),
+                                          padding:
+                                              const EdgeInsets.only(top: 6),
+                                          alignment: Alignment.topCenter,
+                                          child: const Icon(Icons.clear_rounded,
+                                              color: MyColor.greenSuperLight,
+                                              size: 30)),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          HapticFeedback.lightImpact();
+                                          handleInsertObject(context);
+                                        },
+                                        child: Container(
+                                            height: 70,
+                                            decoration: BoxDecoration(
+                                              color: MyColor.blue,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topRight: Radius.circular(10),
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.3),
+                                                  offset: const Offset(1, -1),
+                                                  blurRadius: 3,
+                                                ),
+                                              ],
+                                            ),
+                                            margin:
+                                                const EdgeInsets.only(right: 2),
+                                            padding:
+                                                const EdgeInsets.only(top: 6),
+                                            alignment: Alignment.topCenter,
+                                            child: const Icon(
+                                                Icons.done_rounded,
+                                                color: MyColor.greenSuperLight,
+                                                size: 30))),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      offset: const Offset(1, -2),
+                                      blurRadius: 3,
+                                      spreadRadius: 2,
+                                    ),
+                                    const BoxShadow(
+                                      color: MyColor.greenDark,
+                                      blurRadius: 1,
+                                      spreadRadius: 3,
+                                    ),
+                                  ],
+                                  color: MyColor.greenDark,
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(99),
+                                    bottomRight: Radius.circular(99),
+                                    topLeft: Radius.circular(36),
+                                    topRight: Radius.circular(36),
+                                  ),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                            color: MyColor.greenSuperLight,
+                                            borderRadius:
+                                                BorderRadius.circular(99),
+                                            // border: Border.all(
+                                            //     width: 5, color: MyColor.greenDark),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              ...moveRateList.map((rate) {
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    HapticFeedback
+                                                        .lightImpact();
+                                                    moveRate.value =
+                                                        rate.keys.first;
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(7),
+                                                    decoration: BoxDecoration(
+                                                      color: rate.keys.first ==
+                                                              moveRate.value
+                                                          ? MyColor.pink
+                                                          : MyColor
+                                                              .greenSuperLight,
+                                                      shape: BoxShape.circle,
+                                                      // border: Border.all(
+                                                      //     width: 2, color: MyColor.greenDark),
+                                                    ),
+                                                    child: SvgPicture.asset(
+                                                      rate.values.first,
+                                                      width: 30,
+                                                      height: 30,
+                                                      colorFilter:
+                                                          const ColorFilter
+                                                              .mode(
+                                                              MyColor.blue,
+                                                              BlendMode.srcIn),
+                                                    ),
+                                                  ),
+                                                );
+                                              }),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        SizedBox(
+                                          width: height,
+                                          height: height,
+                                          child: Joystick(
+                                            base: Container(
+                                              decoration: const BoxDecoration(
+                                                color: MyColor.greenSuperLight,
+                                                shape: BoxShape.circle,
+                                              ),
+                                            ),
+                                            stick: Container(
+                                              width: 60,
+                                              height: 60,
+                                              decoration: BoxDecoration(
+                                                color: MyColor.pink,
+                                                shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.3),
+                                                    offset: const Offset(1, 1),
+                                                    blurRadius: 2,
+                                                  ),
+                                                ],
+                                              ),
+                                              child: const Icon(
+                                                Icons.games,
+                                                color: MyColor.blue,
+                                                size: 36,
+                                              ),
+                                            ),
+                                            period:
+                                                const Duration(milliseconds: 5),
+                                            listener: (details) {
+                                              moveSelectedObject(Offset(
+                                                  details.x * moveRate.value,
+                                                  details.y * moveRate.value));
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ],
           );
@@ -912,9 +1024,35 @@ class CustomFloatingButton extends HookConsumerWidget {
         ref
             .read(editPageViewModelProvider.notifier)
             .selectObject(selectedObject, image);
+      } on PlatformException catch (e) {
+        if (context.mounted) {
+          if (e.code == 'photo_access_denied') {
+            showDialog(
+                context: context,
+                builder: (context) => TwoWayDialog(
+                      title: '画像にアクセスできません',
+                      leftButtonText: '設定画面',
+                      rightButtonText: '戻る',
+                      onLeftButtonPressed: () {
+                        AppSettings.openAppSettings();
+                        Navigator.of(context).pop();
+                      },
+                      onRightButtonPressed: () => Navigator.of(context).pop(),
+                    ));
+          } else {
+            ErrorDialog.show(
+              context,
+              '画像ギャラリーにアクセスできません',
+            );
+          }
+        }
+        return;
       } catch (e) {
         if (context.mounted) {
-          ErrorDialog.show(context, e.toString());
+          ErrorDialog.show(
+            context,
+            '画像ギャラリーにアクセスできません',
+          );
         }
         return;
       }

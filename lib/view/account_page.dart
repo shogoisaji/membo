@@ -175,8 +175,24 @@ class AccountPage extends HookConsumerWidget {
       );
     }
 
-    void initialize() {
-      ref.read(accountPageViewModelProvider.notifier).initializeLoad();
+    Future<void> initialize() async {
+      try {
+        await ref
+            .read(accountPageViewModelProvider.notifier)
+            .initializeLoad()
+            .timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
+              context.go('/sign-in');
+            });
+          },
+        );
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, '通信状況を確認してください');
+        }
+      }
     }
 
     useEffect(() {

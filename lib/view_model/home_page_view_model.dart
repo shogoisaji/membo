@@ -18,7 +18,7 @@ class HomePageViewModel extends _$HomePageViewModel {
   HomePageState build() => const HomePageState();
 
   /// TODO:user dataのselectを指定してソートして取得した方が良いかも
-  void initialize() async {
+  Future<void> initialize() async {
     final user = ref.read(userStateProvider);
 
     final userData = await ref

@@ -235,15 +235,6 @@ class EditPageViewModel extends _$EditPageViewModel {
     state = state.copyWith(showTextInput: false);
   }
 
-  // void updateBoardSettings(BoardSettingsModel settings) {
-  //   if (state.boardModel == null) {
-  //     throw Exception('Board is not set');
-  //   }
-  //   state = state.copyWith(
-  //       boardModel: state.boardModel!.copyWith(settings: settings));
-  //   ref.read(supabaseRepositoryProvider).updateBoard(state.boardModel!);
-  // }
-
   Future<String> getObjectCreatorName(String id) async {
     try {
       final user = await ref
