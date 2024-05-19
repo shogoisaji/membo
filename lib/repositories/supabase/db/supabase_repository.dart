@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/models/notice/public_notices_model.dart';
 import 'package:membo/models/request/edit_request_model.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
@@ -362,6 +363,20 @@ class SupabaseRepository {
     } catch (e) {
       throw AppException.error('Edit request delete error',
           detail: 'deleteEditRequest() :$e');
+    }
+  }
+
+  ///----------------------------------------
+  /// Public Notice
+  ///----------------------------------------
+  Future<PublicNoticesModel> fetchPublicNotices() async {
+    try {
+      final response =
+          await _client.from('public_notices').select().eq('id', 1).single();
+      return PublicNoticesModel.fromJson(response);
+    } catch (e) {
+      throw AppException.warning('Public notices fetch error',
+          detail: 'fetchPublicNotices() :$e');
     }
   }
 }

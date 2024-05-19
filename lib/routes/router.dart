@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:membo/settings/color.dart';
-import 'package:membo/state/navigation_state.dart';
 import 'package:membo/view/account_page.dart';
 import 'package:membo/view/board_settings_page.dart';
 import 'package:membo/view/connect_page.dart';
@@ -200,11 +199,6 @@ GoRouter router(RouterRef ref) {
     final signedIn = ref.watch(userStateProvider) != null ? true : false;
 
     if (signedIn && page == PagePath.signIn) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref
-            .read(bottomNavigationStateProvider.notifier)
-            .setRoute(PagePath.home);
-      });
       return PagePath.home;
     } else if (!signedIn) {
       return PagePath.signIn;
