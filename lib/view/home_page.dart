@@ -43,13 +43,14 @@ class HomePage extends HookConsumerWidget {
           const Duration(seconds: 5),
           onTimeout: () {
             ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
+              ref.read(supabaseAuthRepositoryProvider).signOut();
               context.go('/sign-in');
             });
           },
         );
       } on AppException catch (e) {
         if (context.mounted) {
-          ErrorDialog.show(context, e.toString(), onTapFunction: () {
+          ErrorDialog.show(context, e.title, onTapFunction: () {
             ref.read(supabaseAuthRepositoryProvider).signOut();
             context.go('/sign-in');
           });
@@ -133,25 +134,28 @@ class HomePage extends HookConsumerWidget {
 
     final List<Widget> carouselImageSliders = homePageState.carouselImageUrls
         .map((imageUrl) => CachedNetworkImage(
-            imageUrl: imageUrl,
-            width: double.infinity,
-            height: double.infinity,
-            imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    ),
+              imageUrl: imageUrl,
+              width: double.infinity,
+              height: double.infinity,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
                   ),
                 ),
-            placeholder: (context, url) =>
-                const ColoredBox(color: MyColor.pink),
-            errorWidget: (context, url, error) => Image.asset(
-                  'assets/images/logo.png',
-                  fit: BoxFit.contain,
-                  width: double.infinity,
-                  height: double.infinity,
-                )))
+              ),
+              placeholder: (context, url) =>
+                  const ColoredBox(color: MyColor.pink),
+              errorWidget: (context, url, error) => SvgPicture.asset(
+                'assets/images/svg/title.svg',
+                fit: BoxFit.contain,
+                width: 100,
+                height: 100,
+                colorFilter:
+                    const ColorFilter.mode(MyColor.greenText, BlendMode.srcIn),
+              ),
+            ))
         .toList();
 
     return Scaffold(
@@ -176,11 +180,13 @@ class HomePage extends HookConsumerWidget {
                             children: [
                               CarouselSlider(
                                 items: [
-                                  Image.asset(
-                                    'assets/images/logo.png',
+                                  SvgPicture.asset(
+                                    'assets/images/svg/title.svg',
                                     fit: BoxFit.contain,
-                                    width: double.infinity,
-                                    height: double.infinity,
+                                    width: 100,
+                                    height: 100,
+                                    colorFilter: const ColorFilter.mode(
+                                        MyColor.greenText, BlendMode.srcIn),
                                   ),
                                   ...carouselImageSliders
                                 ],

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/gen/fonts.gen.dart';
@@ -26,42 +27,78 @@ class BoardWidget extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
+          // color: MyColor.lightBrown,
+          width: board.width.toDouble(),
           margin: EdgeInsets.only(left: boardBasePadding),
-          padding:
-              const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 0),
-          decoration: BoxDecoration(
-              color: MyColor.lightRed,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  blurRadius: 8,
-                  spreadRadius: 5,
-                  offset: const Offset(5, 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 20, bottom: 0),
+                decoration: BoxDecoration(
+                    color: MyColor.lightRed,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        blurRadius: 8,
+                        spreadRadius: 5,
+                        offset: const Offset(5, 10),
+                      ),
+                    ],
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(32),
+                        topRight: Radius.circular(32))),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: MyColor.lightBrown,
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(22),
+                        topRight: Radius.circular(22)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        blurRadius: 5,
+                        spreadRadius: 3,
+                        offset: const Offset(5, 5),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      board.boardName,
+                      style: lightTextTheme.bodyLarge!.copyWith(fontSize: 54),
+                    ),
+                  ),
                 ),
-              ],
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-            decoration: BoxDecoration(
-              color: MyColor.lightBrown,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(22), topRight: Radius.circular(22)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  blurRadius: 5,
-                  spreadRadius: 3,
-                  offset: const Offset(5, 5),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                board.boardName,
-                style: lightTextTheme.bodyLarge!.copyWith(fontSize: 54),
               ),
-            ),
+              const SizedBox(width: 40),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final effectiveWidth = constraints.maxWidth;
+                    return Text(
+                      '${board.thatDay.year}.${board.thatDay.month}.${board.thatDay.day}',
+                      style: TextStyle(
+                        height: 0.75,
+                        color: MyColor.lightBrown,
+                        fontSize: (effectiveWidth / 6.5).clamp(30.0, 80.0),
+                        fontWeight: FontWeight.w900,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 5,
+                            offset: const Offset(5, 5),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
         Container(

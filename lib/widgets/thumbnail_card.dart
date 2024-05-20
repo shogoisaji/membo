@@ -6,14 +6,12 @@ import 'package:membo/settings/text_theme.dart';
 
 class ThumbnailCard extends StatelessWidget {
   final BoardModel boardModel;
-  final String? thumbnailImageUrl;
   final Function() onViewTap;
   final Function() onCancelTap;
 
   const ThumbnailCard(
       {super.key,
       required this.boardModel,
-      this.thumbnailImageUrl,
       required this.onViewTap,
       required this.onCancelTap});
 
@@ -22,7 +20,7 @@ class ThumbnailCard extends StatelessWidget {
     final w = MediaQuery.sizeOf(context).width;
 
     return SizedBox(
-      width: (w * 0.7).clamp(200, 400),
+      width: (w * 0.6).clamp(200, 300),
       child: AspectRatio(
         aspectRatio: 3 / 4,
         child: Container(
@@ -35,9 +33,9 @@ class ThumbnailCard extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
-                  offset: const Offset(1, 2),
-                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.2),
+                  offset: const Offset(1, 3),
+                  blurRadius: 2,
                 ),
               ],
             ),
@@ -54,15 +52,16 @@ class ThumbnailCard extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                    child: Image.network(thumbnailImageUrl ?? "",
+                    child: Image.network(boardModel.thumbnailUrl ?? "",
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
-                        errorBuilder: (context, url, error) => Image.asset(
-                              'assets/images/logo.png',
-                              fit: BoxFit.contain,
-                              width: double.infinity,
-                              height: double.infinity,
+                        errorBuilder: (context, url, error) => SvgPicture.asset(
+                              'assets/images/svg/title.svg',
+                              width: 100,
+                              height: 100,
+                              colorFilter: const ColorFilter.mode(
+                                  MyColor.greenText, BlendMode.srcIn),
                             ))),
                 Container(
                   padding:

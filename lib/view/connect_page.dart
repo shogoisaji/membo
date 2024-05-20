@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/view_model/connect_page_view_model.dart';
@@ -30,11 +31,30 @@ class ConnectPage extends HookConsumerWidget {
     }
 
     void handleCardView() {
+      if (connectPageState.board == null) return;
       context.go('/view', extra: connectPageState.board!.boardId);
     }
 
-    void handleCodeSearch() {
-      //
+    void handleCodeSearch() async {
+      if (textController.text.isEmpty) return;
+      final boardId = textController.text.replaceAllMapped(
+        RegExp(r'^(.{8})(.{4})(.{4})(.{4})(.{12})$'),
+        (Match m) => '${m[1]}-${m[2]}-${m[3]}-${m[4]}-${m[5]}',
+      );
+      try {
+        await ref
+            .read(connectPageViewModelProvider.notifier)
+            .checkBoardExist(boardId);
+        textController.clear();
+      } on AppException catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, e.title);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, "$e");
+        }
+      }
     }
 
     void checkBoard() async {
@@ -69,7 +89,7 @@ class ConnectPage extends HookConsumerWidget {
               context.go('/');
             },
           ),
-          title: Text('コネクト', style: lightTextTheme.titleLarge),
+          // title: Text('共有', style: lightTextTheme.titleLarge),
         ),
         body: Stack(
           children: [
@@ -83,7 +103,17 @@ class ConnectPage extends HookConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 30),
+                        Text(
+                          'ID or QR でボードを共有',
+                          style: lightTextTheme.bodyLarge!.copyWith(),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '"ブックマーク"に追加することでいつでも閲覧可能',
+                          style: lightTextTheme.bodyLarge!.copyWith(),
+                        ),
+                        const SizedBox(height: 30),
                         Form(
                           key: formKey,
                           child: Column(
@@ -153,19 +183,19 @@ class ConnectPage extends HookConsumerWidget {
                             const SizedBox(width: 10),
                             Expanded(
                               child: Container(
-                                height: 1,
+                                height: 2,
                                 color: MyColor.greenText,
                               ),
                             ),
                             const SizedBox(width: 10),
                             Text(
                               'or',
-                              style: lightTextTheme.bodyLarge,
+                              style: lightTextTheme.titleLarge,
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Container(
-                                height: 1,
+                                height: 2,
                                 color: MyColor.greenText,
                               ),
                             ),
@@ -188,21 +218,53 @@ class ConnectPage extends HookConsumerWidget {
                             context.go('/qr-scan');
                           },
                         ),
-                        const SizedBox(height: 40),
 
                         /// scanned board
-                        connectPageState.board == null
-                            ? const SizedBox.shrink()
-                            : ThumbnailCard(
-                                boardModel: connectPageState.board!,
-                                onCancelTap: handleCancel,
-                                onViewTap: handleCardView),
+                        // connectPageState.board == null
+                        //     ? const SizedBox.shrink()
+                        //     : ThumbnailCard(
+                        //         boardModel: connectPageState.board!,
+                        //         onCancelTap: handleCancel,
+                        //         onViewTap: handleCardView),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
+
+            /// searched board
+            connectPageState.board == null
+                ? const SizedBox.shrink()
+                : GestureDetector(
+                    onTap: () {
+                      handleCancel();
+                    },
+                    child: Container(
+                      width: w,
+                      height: h,
+                      color: Colors.black.withOpacity(0.5),
+                      child: Align(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'ボードが見つかりました',
+                              style: lightTextTheme.titleLarge!.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 25),
+                            ThumbnailCard(
+                                boardModel: connectPageState.board!,
+                                onCancelTap: handleCancel,
+                                onViewTap: handleCardView),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

@@ -49,6 +49,7 @@ class HomePageViewModel extends _$HomePageViewModel {
           boardId: boardId,
           boardName: board.boardName,
           ownerId: board.ownerId,
+          thatDay: board.thatDay,
           createdAt: board.createdAt,
           thumbnailUrl: board.thumbnailUrl,
         );
@@ -85,15 +86,18 @@ class HomePageViewModel extends _$HomePageViewModel {
             boardId: board.boardId,
             boardName: board.boardName,
             ownerId: board.ownerId,
+            thatDay: board.thatDay,
             createdAt: board.createdAt,
             thumbnailUrl: board.thumbnailUrl,
           );
         } catch (e) {
           /// ボードデータを取得できない場合
+          /// ローカルデータ以外は仮のデータ
           boardForCard = BoardModel(
             boardId: linkedBoard.boardId,
             boardName: linkedBoard.boardName,
             ownerId: '',
+            thatDay: DateTime.now(),
             createdAt: DateTime.now(),
             thumbnailUrl: linkedBoard.thumbnailUrl,
           );
@@ -226,6 +230,7 @@ class HomePageViewModel extends _$HomePageViewModel {
       boardName: boardName,
       ownerId: user.id,
       maxImageCount: maxImageCount,
+      thatDay: DateTime.now(),
       createdAt: DateTime.now(),
     );
 

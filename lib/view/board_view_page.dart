@@ -60,7 +60,7 @@ class BoardViewPage extends HookConsumerWidget {
         if (context.mounted) {
           ErrorDialog.show(
             context,
-            e.title ?? 'Error',
+            e.title,
             onTapFunction: () => context.go('/'),
           );
         }

@@ -20,18 +20,23 @@ PublicNoticesModel _$PublicNoticesModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$PublicNoticesModel {
-  int get id => throw _privateConstructorUsedError;
+  int get id =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'is_active')
-  bool get isActive => throw _privateConstructorUsedError;
+  bool get isActive =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'notice_code')
   int get noticeCode => throw _privateConstructorUsedError;
   String? get notice1 => throw _privateConstructorUsedError;
   String? get notice2 => throw _privateConstructorUsedError;
-  String? get notice3 => throw _privateConstructorUsedError;
+  String? get notice3 =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'app_url')
-  String? get appUrl => throw _privateConstructorUsedError;
+  String? get appUrl =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'updated_at')
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
 
@@ -224,9 +229,11 @@ class _$PublicNoticesModelImpl implements _PublicNoticesModel {
 
   @override
   final int id;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'is_active')
   final bool isActive;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'notice_code')
   final int noticeCode;
@@ -236,12 +243,15 @@ class _$PublicNoticesModelImpl implements _PublicNoticesModel {
   final String? notice2;
   @override
   final String? notice3;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'app_url')
   final String? appUrl;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
+// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
@@ -309,10 +319,10 @@ abstract class _PublicNoticesModel implements PublicNoticesModel {
 
   @override
   int get id;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'is_active')
   bool get isActive;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'notice_code')
   int get noticeCode;
   @override
@@ -321,13 +331,13 @@ abstract class _PublicNoticesModel implements PublicNoticesModel {
   String? get notice2;
   @override
   String? get notice3;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'app_url')
   String? get appUrl;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
-  @override
+  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override

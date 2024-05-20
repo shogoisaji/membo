@@ -11,9 +11,11 @@ extension StringExtension on String {
     return "${dateParts[0]}/${dateParts[1]}/${dateParts[2]} ${timeParts[0]}:${timeParts[1]}";
   }
 
-  // "2023-04-15T00:00:00.000" -> "2023.04.15"
+  /// "2023-04-15T00:00:00.000" -> "2023.04.15"
   String toYMDString() {
-    final regex = RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}$');
+    final regex = RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+(Z|)$');
+    // final regex = RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$');
+    // final regex = RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}$');
     if (!regex.hasMatch(this)) {
       throw FormatException("対象の文字列はDateTimeを文字列に変換した形式である必要があります: $this");
     }

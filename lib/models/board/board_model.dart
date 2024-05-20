@@ -35,6 +35,8 @@ class BoardModel with _$BoardModel {
     // ignore: invalid_annotation_target
     @JsonKey(name: 'max_image_count') @Default(0) int maxImageCount,
     // ignore: invalid_annotation_target
+    @JsonKey(name: 'that_day') required DateTime thatDay,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'created_at') required DateTime createdAt,
   }) = _BoardModel;
 

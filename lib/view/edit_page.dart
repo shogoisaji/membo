@@ -598,7 +598,7 @@ class EditToolBar extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           if (e is AppException) {
-            ErrorDialog.show(context, e.title ?? e.toString());
+            ErrorDialog.show(context, e.title);
             return;
           }
           ErrorDialog.show(context, e.toString());

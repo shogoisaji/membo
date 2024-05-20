@@ -5,7 +5,6 @@ import 'package:membo/view/account_page.dart';
 import 'package:membo/view/board_settings_page.dart';
 import 'package:membo/view/connect_page.dart';
 import 'package:membo/view/custom_license_page.dart';
-import 'package:membo/view/edit_list_page.dart';
 import 'package:membo/view/edit_page.dart';
 import 'package:membo/view/board_view_page.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
@@ -23,7 +22,6 @@ class PagePath {
   static const home = '/';
   static const signIn = '/sign-in';
   static const boardEdit = '/edit';
-  static const boardEditList = '/edit-list';
   static const boardView = '/view';
   static const boardSettings = '/board-settings';
   static const connect = '/connect';
@@ -48,7 +46,7 @@ CustomTransitionPage buildPageWithDefaultTransition<T>({
     transitionsBuilder: (context, animation, secondaryAnimation, child) =>
         SlideTransition(
       position: Tween<Offset>(
-              begin: const Offset(0.03, -0.005), end: const Offset(0, 0))
+              begin: const Offset(0.01, 0.005), end: const Offset(0, 0))
           .animate(animation),
       child: child,
     ),
@@ -98,14 +96,6 @@ GoRouter router(RouterRef ref) {
             context: context,
             state: state,
             child: const HomePage(),
-          ),
-        ),
-        GoRoute(
-          path: PagePath.boardEditList,
-          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-            context: context,
-            state: state,
-            child: const EditListPage(),
           ),
         ),
         GoRoute(
