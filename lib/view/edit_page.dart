@@ -239,9 +239,8 @@ class EditPage extends HookConsumerWidget {
                     ...objectList.map((object) {
                       return DrawerCard(
                         object: object,
-                        onTap: () {
-                          //
-                        },
+                        currentUserId: ref.read(userStateProvider)!.id,
+                        isOwner: editPageState.isOwner,
                       );
                     }),
                     const SizedBox(height: 32),
@@ -315,15 +314,24 @@ class EditPage extends HookConsumerWidget {
 }
 
 class DrawerCard extends HookConsumerWidget {
-  final Function onTap;
+  final String currentUserId;
   final ObjectModel object;
-  const DrawerCard({super.key, required this.onTap, required this.object});
+  final bool isOwner;
+  const DrawerCard(
+      {super.key,
+      required this.object,
+      required this.currentUserId,
+      required this.isOwner});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTaped = useState(false);
     final isDeleteTaped = useState(false);
     final creatorName = useState('');
+
+    bool deleteCheck() {
+      return object.creatorId == currentUserId || isOwner;
+    }
 
     void handleCardTap() async {
       isTaped.value = !isTaped.value;
@@ -332,7 +340,8 @@ class DrawerCard extends HookConsumerWidget {
           .getObjectCreatorName(object.creatorId);
     }
 
-    void handleDeleteIconTap() async {
+    void handleTapDeleteIcon() async {
+      if (!deleteCheck()) return;
       isTaped.value = true;
       isDeleteTaped.value = true;
       creatorName.value = await ref
@@ -535,10 +544,14 @@ class DrawerCard extends HookConsumerWidget {
             child: Container(
                 color: Colors.transparent,
                 padding: const EdgeInsets.all(8),
-                child: const Icon(Icons.delete)),
+                child: Icon(
+                  Icons.delete,
+                  color: deleteCheck() ? MyColor.greenText : MyColor.green,
+                )),
             onTap: () {
+              if (!deleteCheck()) return;
               HapticFeedback.lightImpact();
-              handleDeleteIconTap();
+              handleTapDeleteIcon();
             },
           )
         ]),

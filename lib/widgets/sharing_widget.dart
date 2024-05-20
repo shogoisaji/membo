@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
+import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class SharingWidget extends StatelessWidget {
@@ -53,6 +55,7 @@ class SharingWidget extends StatelessWidget {
                 onPressed: () {
                   Clipboard.setData(
                       ClipboardData(text: boardId.replaceAll('-', '')));
+                  CustomSnackBar.show(context, 'IDをコピーしました', MyColor.blue);
                 },
                 child: Text(
                   'IDをコピー',

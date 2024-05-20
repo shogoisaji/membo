@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/settings/color.dart';
@@ -69,9 +70,15 @@ class ThumbnailCard extends StatelessWidget {
                   height: 60,
                   child: Row(
                     children: [
-                      Expanded(child: CancelButton(onTap: onCancelTap)),
+                      Expanded(child: CancelButton(onTap: () {
+                        HapticFeedback.lightImpact();
+                        onCancelTap();
+                      })),
                       const SizedBox(width: 10),
-                      Expanded(child: ViewButton(onTap: onViewTap)),
+                      Expanded(child: ViewButton(onTap: () {
+                        HapticFeedback.lightImpact();
+                        onViewTap();
+                      })),
                     ],
                   ),
                 )
