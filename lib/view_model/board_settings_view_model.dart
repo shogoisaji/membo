@@ -241,6 +241,10 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     await ref
         .read(supabaseRepositoryProvider)
         .deleteEditRequest(request.editRequestId);
+
+    state = state.copyWith(
+        tempBoard:
+            state.tempBoard!.copyWith(editableUserIds: newEditableUserIds));
   }
 
   Future<void> denyRequest(String requestorId) async {

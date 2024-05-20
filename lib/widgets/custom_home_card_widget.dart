@@ -167,7 +167,8 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                             color: permission == BoardPermission.owner
                                 ? MyColor.lightRed
                                 : permission == BoardPermission.editor
-                                    ? MyColor.lightBlue
+                                    ? const Color.fromARGB(255, 89, 84, 233)
+                                    // ? MyColor.lightBlue
                                     : null),
                       )),
                   Positioned(
