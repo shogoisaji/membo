@@ -84,7 +84,7 @@ class SupabaseAuthRepository {
   }
 
   // Apple login
-  Future<void> signInWithApple() async {
+  Future<AuthResponse> signInWithApple() async {
     if (!Platform.isIOS) {
       throw const AuthException(
           'Apple Sign In is only available on iOS devices.');
@@ -92,19 +92,13 @@ class SupabaseAuthRepository {
     final rawNonce = _client.auth.generateRawNonce();
     final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
-    AuthorizationCredentialAppleID? credential;
-    try {
-      credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        nonce: hashedNonce,
-      );
-    } catch (e) {
-      /// Apple Sign In canceled!
-      return;
-    }
+    final credential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      nonce: hashedNonce,
+    );
 
     final idToken = credential.identityToken;
     if (idToken == null) {
@@ -112,16 +106,11 @@ class SupabaseAuthRepository {
           'Could not find ID Token from generated credential.');
     }
 
-    try {
-      await _client.auth.signInWithIdToken(
-        provider: OAuthProvider.apple,
-        idToken: idToken,
-        nonce: rawNonce,
-      );
-    } catch (e) {
-      throw AppException.error('Sign in に失敗しました',
-          detail: 'Apple Sign In failed on Supabase. $e');
-    }
+    return _client.auth.signInWithIdToken(
+      provider: OAuthProvider.apple,
+      idToken: idToken,
+      nonce: rawNonce,
+    );
   }
 
 // Sign out

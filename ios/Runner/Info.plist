@@ -38,6 +38,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>QRコードを使用するためにカメラを使用する必要があります</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>編集画像を選択するためにフォトライブラリーへのアクセス許可が必要です</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -57,9 +61,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>編集画像を選択するためにフォトライブラリーへのアクセス許可が必要です</string>
-	<key>NSCameraUsageDescription</key>
-	<string>QRコードを使用するためにカメラを使用する必要があります</string>
 </dict>
 </plist>

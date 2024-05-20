@@ -208,6 +208,7 @@ class BoardSettingsPage extends HookConsumerWidget {
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        title: Text('ボード設定', style: lightTextTheme.titleLarge),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 36),
           onPressed: () {
@@ -858,6 +859,7 @@ class EditorListModal extends HookConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               avatar(requestors.value[index].avatarUrl),
+                              const SizedBox(width: 6.0),
                               Expanded(
                                 child: Text(
                                   requestors.value[index].userName,
@@ -918,6 +920,7 @@ class EditorListModal extends HookConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 avatar(editors.value[index].avatarUrl),
+                                const SizedBox(width: 6.0),
                                 Expanded(
                                   child: Text(
                                     editors.value[index].userName,

@@ -79,7 +79,7 @@ class BoardViewPage extends HookConsumerWidget {
               boardId,
             );
         if (context.mounted) {
-          CustomSnackBar.show(context, 'リストに追加しました', MyColor.blue);
+          CustomSnackBar.show(context, 'ブックマークに追加しました', MyColor.blue);
         }
       } catch (e) {
         if (context.mounted) {
@@ -104,7 +104,7 @@ class BoardViewPage extends HookConsumerWidget {
                 height: 36,
                 colorFilter:
                     const ColorFilter.mode(MyColor.greenText, BlendMode.srcIn)),
-            title: '編集者リクエストを\n送りますか？',
+            title: '編集リクエストを\n送りますか？',
             leftButtonText: 'リクエスト',
             rightButtonText: 'キャンセル',
             onLeftButtonPressed: () async {
@@ -269,12 +269,14 @@ class BoardViewPage extends HookConsumerWidget {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: MyColor.green,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                       ),
                       onPressed: () {
                         HapticFeedback.lightImpact();
                         handleAddLinkBoardIds();
                       },
-                      child: Text('リストに追加', style: lightTextTheme.bodySmall),
+                      child: Text('ブックマークに追加', style: lightTextTheme.bodySmall),
                     ),
                   )
                 : const SizedBox.shrink(),
