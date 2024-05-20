@@ -55,6 +55,7 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
       int? width,
       int? height,
       String? color,
+      DateTime? thatDay,
       String? password,
       bool? isPublic}) {
     if (state.tempBoard == null) {
@@ -65,6 +66,7 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
       width: width ?? state.tempBoard!.width,
       height: height ?? state.tempBoard!.height,
       bgColor: color ?? state.tempBoard!.bgColor,
+      thatDay: thatDay ?? state.tempBoard!.thatDay,
       password: password ?? state.tempBoard!.password,
       isPublic: isPublic ?? state.tempBoard!.isPublic,
     );

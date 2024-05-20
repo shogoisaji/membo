@@ -1,10 +1,12 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/models/notice/public_notices_model.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
@@ -14,6 +16,7 @@ import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/error_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignInPage extends HookConsumerWidget {
   const SignInPage({super.key});
@@ -21,13 +24,47 @@ class SignInPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final noticeData = useState<PublicNoticesModel?>(null);
+    final isChecked = useState(false);
+
     Future<void> fetchPublicNotices() async {
-      noticeData.value =
-          await ref.read(supabaseRepositoryProvider).fetchPublicNotices();
+      try {
+        noticeData.value =
+            await ref.read(supabaseRepositoryProvider).fetchPublicNotices();
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
+            Future.delayed(const Duration(seconds: 2), () {
+              fetchPublicNotices();
+            });
+          });
+        }
+      }
     }
 
-    const Color googleColor = Color.fromARGB(255, 127, 210, 227);
-    const Color appleColor = Color.fromARGB(255, 247, 189, 144);
+    Future<void> policyURL() async {
+      final Uri url = Uri.parse('https://membo.vercel.app/privacy-policy');
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url);
+      } else {
+        if (context.mounted) {
+          ErrorDialog.show(context, 'Could not launch $url');
+        }
+      }
+    }
+
+    Future<void> termsURL() async {
+      final Uri url = Uri.parse('https://membo.vercel.app/terms-of-service');
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url);
+      } else {
+        if (context.mounted) {
+          ErrorDialog.show(context, 'Could not launch $url');
+        }
+      }
+    }
+
+    const Color googleColor = MyColor.superLightBlue;
+    const Color appleColor = MyColor.lightYellow;
     final shutterColor = useState<Color>(googleColor);
     final user = ref.watch(userStateProvider);
 
@@ -43,6 +80,8 @@ class SignInPage extends HookConsumerWidget {
     final h = MediaQuery.sizeOf(context).height;
 
     void handleSignInWithGoogle() async {
+      if (!isChecked.value) return;
+
       animationController.reset();
 
       shutterColor.value = googleColor;
@@ -59,6 +98,8 @@ class SignInPage extends HookConsumerWidget {
     }
 
     void handleSignInWithApple() async {
+      if (!isChecked.value) return;
+
       animationController.reset();
 
       shutterColor.value = appleColor;
@@ -68,8 +109,7 @@ class SignInPage extends HookConsumerWidget {
         await ref.read(supabaseAuthRepositoryProvider).signInWithApple();
       } catch (e) {
         if (context.mounted) {
-          ErrorDialog.show(
-              context, 'Error signing in with Apple ${e.toString()}',
+          ErrorDialog.show(context, 'Error signing in with Apple',
               onTapFunction: () {
             context.go('/sign-in');
           });
@@ -89,154 +129,192 @@ class SignInPage extends HookConsumerWidget {
         noticeData.value == null
             ? const SizedBox.shrink()
             : Scaffold(
-                appBar: AppBar(),
+                // appBar: AppBar(),
                 body: noticeData.value!.noticeCode != 100
                     ? NoticeDialog(onTap: () {
                         fetchPublicNotices();
                       })
-                    : SafeArea(
-                        bottom: false,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                    : Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 30.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 SizedBox(
-                                  height: 120,
-                                  child: Stack(
-                                    children: [
-                                      Align(
-                                        alignment: const Alignment(0.5, -0.95),
-                                        child: Lottie.asset(
-                                          Assets.lotties.hello,
-                                          width: 100,
-                                          height: 100,
-                                          fit: BoxFit.cover,
-                                        ),
+                                  height: 200,
+                                  child: SvgPicture.asset(
+                                    'assets/images/svg/title.svg',
+                                    width: 100,
+                                    height: 100,
+                                    colorFilter: const ColorFilter.mode(
+                                        MyColor.greenDark, BlendMode.srcIn),
+                                  ),
+                                ),
+                                Column(
+                                  children: [
+                                    CustomButton(
+                                      width: 300,
+                                      height: 60,
+                                      color: googleColor,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 20, right: 14),
+                                            child: SvgPicture.asset(
+                                              Assets.images.icons
+                                                  .googleOfficialSvg,
+                                              width: 30,
+                                              height: 30,
+                                            ),
+                                          ),
+                                          Text('Sign In with Google',
+                                              style: lightTextTheme.bodyLarge),
+                                        ],
                                       ),
-                                      Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: CustomButton(
-                                          width: 300,
-                                          height: 60,
-                                          color: googleColor,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: 70,
-                                                child: SvgPicture.asset(
-                                                  Assets.images.icons
-                                                      .googleOfficialSvg,
-                                                  width: 30,
-                                                  height: 30,
+                                      onTap: () async {
+                                        handleSignInWithGoogle();
+                                      },
+                                    ),
+                                    const SizedBox(height: 45),
+                                    CustomButton(
+                                      width: 300,
+                                      height: 60,
+                                      color: appleColor,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 20, right: 14),
+                                            child: SvgPicture.asset(
+                                              Assets.images.icons
+                                                  .appleOfficialSvg,
+                                              width: 30,
+                                              height: 30,
+                                            ),
+                                          ),
+                                          Text('Sign In with Apple',
+                                              style: lightTextTheme.bodyLarge),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        handleSignInWithApple();
+                                      },
+                                    ),
+                                    const SizedBox(height: 50),
+                                    ConstrainedBox(
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 300,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Checkbox(
+                                            value: isChecked.value,
+                                            onChanged: (bool? value) {
+                                              isChecked.value = value ?? false;
+                                            },
+                                          ),
+                                          Expanded(
+                                            child: Expanded(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  style:
+                                                      lightTextTheme.bodySmall,
+                                                  children: [
+                                                    TextSpan(
+                                                      text: '利用規約',
+                                                      style: lightTextTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 44, 87, 206),
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                      ),
+                                                      recognizer:
+                                                          TapGestureRecognizer()
+                                                            ..onTap = () async {
+                                                              await termsURL();
+                                                            },
+                                                    ),
+                                                    const TextSpan(text: ' と '),
+                                                    TextSpan(
+                                                      text: 'プライバシーポリシー',
+                                                      style: lightTextTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 44, 87, 206),
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                      ),
+                                                      recognizer:
+                                                          TapGestureRecognizer()
+                                                            ..onTap = () async {
+                                                              await policyURL();
+                                                            },
+                                                    ),
+                                                    const TextSpan(
+                                                        text: 'に同意する'),
+                                                  ],
                                                 ),
                                               ),
-                                              Text('Sign In with Google',
-                                                  style:
-                                                      lightTextTheme.bodyLarge),
-                                            ],
-                                          ),
-                                          onTap: () async {
-                                            animationController.reset();
-
-                                            shutterColor.value = googleColor;
-                                            animationController.forward();
-                                            try {
-                                              await ref
-                                                  .read(
-                                                      supabaseAuthRepositoryProvider)
-                                                  .signInWithGoogle();
-                                            } catch (e) {
-                                              if (context.mounted) {
-                                                ErrorDialog.show(context,
-                                                    'Error signing in with Google',
-                                                    onTapFunction: () {
-                                                  context.go('/sign-in');
-                                                });
-                                              }
-                                            }
-                                            animationController.reverse();
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 50),
-                                CustomButton(
-                                  width: 300,
-                                  height: 60,
-                                  color: appleColor,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 70,
-                                        child: SvgPicture.asset(
-                                          Assets.images.icons.appleOfficialSvg,
-                                          width: 30,
-                                          height: 30,
-                                        ),
-                                      ),
-                                      Text('Sign In with Apple',
-                                          style: lightTextTheme.bodyLarge),
-                                    ],
-                                  ),
-                                  onTap: () async {
-                                    handleSignInWithApple();
-                                    // animationController.reset();
-
-                                    // shutterColor.value = appleColor;
-                                    // animationController.forward();
-
-                                    // try {
-                                    //   await ref
-                                    //       .read(supabaseAuthRepositoryProvider)
-                                    //       .signInWithApple();
-                                    // } catch (e) {
-                                    //   if (context.mounted) {
-                                    //     ErrorDialog.show(
-                                    //         context, 'Error signing in with Apple');
-                                    //   }
-                                    // }
-                                    // animationController.reverse();
-                                  },
-                                ),
-                              ],
-                            ),
-                            AnimatedBuilder(
-                              animation: animation,
-                              builder: (context, _) => IgnorePointer(
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    Positioned(
-                                      bottom: 0,
-                                      left: w / 2 * (animation.value - 1) * 1.1,
-                                      child: CustomPaint(
-                                        size: Size(w, h),
-                                        painter: BgCustomPainter(
-                                            shutterColor.value, true),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: 0,
-                                      left: w / 2 * (1 - animation.value) * 1.1,
-                                      child: CustomPaint(
-                                        size: Size(w, h),
-                                        painter: BgCustomPainter(
-                                            shutterColor.value, false),
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
+                              ],
+                            ),
+                          ),
+                          AnimatedBuilder(
+                            animation: animation,
+                            builder: (context, _) => IgnorePointer(
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  Positioned(
+                                    bottom: 0,
+                                    left: w / 2 * (animation.value - 1) * 1.1,
+                                    child: CustomPaint(
+                                      size: Size(w, h),
+                                      painter: BgCustomPainter(
+                                          shutterColor.value, true),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    left: w / 2 * (1 - animation.value) * 1.1,
+                                    child: CustomPaint(
+                                      size: Size(w, h),
+                                      painter: BgCustomPainter(
+                                          shutterColor.value, false),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
               ),
       ],
@@ -358,12 +436,12 @@ class BgCustomPainter extends CustomPainter {
     double width = size.width;
     double height = size.height;
 
-    double waveHeight = height / 5;
+    double waveHeight = height / 4;
 
     if (isLeft) {
       path.moveTo(0, 0);
       path.lineTo(width / 2, 0);
-      for (int i = 0; i < 5; i++) {
+      for (int i = 0; i < 4; i++) {
         double x = width / 2;
         double startY = waveHeight * i;
         double endY = waveHeight * (i + 1);
@@ -382,7 +460,7 @@ class BgCustomPainter extends CustomPainter {
     } else {
       path.moveTo(width, 0);
       path.lineTo(width / 2, 0);
-      for (int i = 0; i < 5; i++) {
+      for (int i = 0; i < 4; i++) {
         double x = width / 2;
         double startY = waveHeight * i;
         double endY = waveHeight * (i + 1);

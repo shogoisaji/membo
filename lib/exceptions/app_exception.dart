@@ -9,19 +9,20 @@ enum AppExceptionType {
 
 class AppException implements Exception {
   AppException({
-    this.title,
+    required this.title,
     this.detail,
     required this.type,
   });
 
-  final String? title;
+  final String title;
   final String? detail;
   final AppExceptionType type;
 
-  factory AppException.exist() => AppException(type: AppExceptionType.exist);
+  factory AppException.exist() =>
+      AppException(title: '', type: AppExceptionType.exist);
 
   factory AppException.notFound() =>
-      AppException(type: AppExceptionType.notFound);
+      AppException(title: '', type: AppExceptionType.notFound);
 
   factory AppException.critical(String title, {String? detail}) => AppException(
       title: title, detail: detail, type: AppExceptionType.critical);
@@ -33,8 +34,8 @@ class AppException implements Exception {
       title: title, detail: detail, type: AppExceptionType.warning);
 
   factory AppException.unknown() =>
-      AppException(type: AppExceptionType.unknown);
+      AppException(title: '', type: AppExceptionType.unknown);
 
   @override
-  String toString() => '${title ?? ''}${detail != null ? ', $detail' : ''}';
+  String toString() => title;
 }

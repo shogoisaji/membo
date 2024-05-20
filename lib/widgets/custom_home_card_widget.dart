@@ -171,8 +171,8 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                     : null),
                       )),
                   Positioned(
-                      top: 7,
-                      left: 7,
+                      top: 5,
+                      left: 5,
                       child: Icon(
                         permission == BoardPermission.owner
                             ? Icons.star
@@ -180,7 +180,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                 ? Icons.edit
                                 : null,
                         color: MyColor.greenSuperLight,
-                        size: 20,
+                        size: 24,
                       )),
 
                   /// delete label
@@ -696,8 +696,8 @@ class LabelPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
     final shadowPaint = Paint()
       ..color =
-          color != null ? Colors.black.withOpacity(0.5) : Colors.transparent
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5)
+          color != null ? Colors.black.withOpacity(0.6) : Colors.transparent
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.5)
       ..style = PaintingStyle.fill;
 
     final path = Path()

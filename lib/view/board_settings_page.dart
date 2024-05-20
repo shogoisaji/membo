@@ -7,10 +7,12 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
+import 'package:membo/string.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/view_model/board_settings_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
+import 'package:membo/widgets/custom_date_picker.dart';
 import 'package:membo/widgets/custom_list_content.dart';
 import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:membo/widgets/error_dialog.dart';
@@ -66,6 +68,23 @@ class BoardSettingsPage extends HookConsumerWidget {
       ref
           .read(boardSettingsViewModelProvider.notifier)
           .updateBoardSettings(height: height);
+    }
+
+    Future<void> handleTapDate() async {
+      final DateTime? datePicked = await showCustomDatePicker(
+        context: context,
+        initialDate: boardSettingsState.tempBoard != null
+            ? boardSettingsState.tempBoard!.thatDay
+            : DateTime.now(),
+        firstDate: DateTime(2024),
+        lastDate: DateTime.now(),
+      );
+
+      if (datePicked == null) return;
+
+      ref
+          .read(boardSettingsViewModelProvider.notifier)
+          .updateBoardSettings(thatDay: datePicked);
     }
 
     void handleTapPublic() {
@@ -271,43 +290,115 @@ class BoardSettingsPage extends HookConsumerWidget {
                                           ? Row(
                                               children: [
                                                 Expanded(
-                                                  child: TextField(
-                                                    maxLength: 10,
-                                                    focusNode: focusNode,
-                                                    textAlign: TextAlign.end,
-                                                    decoration:
-                                                        const InputDecoration(
-
-                                                            /// maxLength のカウンターは表示しない
-                                                            counterText: '',
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide: BorderSide(
-                                                                  color: Colors
-                                                                      .transparent),
-                                                            ),
-                                                            enabledBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide: BorderSide(
-                                                                  color: Colors
-                                                                      .transparent),
-                                                            )),
-                                                    controller:
-                                                        boardNameTextController,
-                                                    onChanged: (value) {
-                                                      ref
-                                                          .read(
-                                                              boardSettingsViewModelProvider
-                                                                  .notifier)
-                                                          .updateBoardSettings(
-                                                              boardName: value);
-                                                    },
-                                                    style: lightTextTheme
-                                                        .bodyLarge,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 6.0),
+                                                    child: TextField(
+                                                      maxLength: 10,
+                                                      focusNode: focusNode,
+                                                      textAlignVertical:
+                                                          TextAlignVertical
+                                                              .bottom,
+                                                      textAlign: TextAlign.end,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              helperStyle:
+                                                                  TextStyle(
+                                                                fontSize: 16,
+                                                              ),
+                                                              contentPadding:
+                                                                  EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          0),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Colors
+                                                                        .transparent),
+                                                              ),
+                                                              enabledBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Colors
+                                                                        .transparent),
+                                                              )),
+                                                      controller:
+                                                          boardNameTextController,
+                                                      onChanged: (value) {
+                                                        ref
+                                                            .read(
+                                                                boardSettingsViewModelProvider
+                                                                    .notifier)
+                                                            .updateBoardSettings(
+                                                                boardName:
+                                                                    value);
+                                                      },
+                                                      style: lightTextTheme
+                                                          .bodyLarge,
+                                                    ),
                                                   ),
                                                 ),
                                                 const Icon(
                                                   Icons.edit,
+                                                  color: MyColor.greenDark,
+                                                )
+                                              ],
+                                            )
+                                          : Text(
+                                              boardSettingsState
+                                                  .tempBoard!.boardName,
+                                              textAlign: TextAlign.end,
+                                              style: lightTextTheme.bodyLarge!
+                                                  .copyWith(
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            )),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20.0),
+                          CustomListContent(
+                            titleIcon: const Icon(Icons.calendar_month),
+                            title: '日付',
+                            titleStyle: lightTextTheme.bodyLarge!,
+                            backgroundColor: MyColor.greenLight,
+                            contentWidgets: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Date', style: lightTextTheme.bodyLarge),
+                                  const SizedBox(width: 22.0),
+                                  Expanded(
+                                      child: boardSettingsState.isOwner
+                                          ? Row(
+                                              children: [
+                                                Expanded(
+                                                    child: GestureDetector(
+                                                  onTap: () {
+                                                    handleTapDate();
+                                                  },
+                                                  child: Text(
+                                                    boardSettingsState
+                                                        .tempBoard!.thatDay
+                                                        .toIso8601String()
+                                                        .toYMDString(),
+                                                    textAlign: TextAlign.end,
+                                                    style: lightTextTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                )),
+                                                const SizedBox(width: 10.0),
+                                                const Icon(
+                                                  Icons.edit_calendar_outlined,
                                                   color: MyColor.greenDark,
                                                 )
                                               ],
@@ -752,7 +843,7 @@ class EditorListModal extends HookConsumerWidget {
           constraints: const BoxConstraints(maxWidth: 500),
           child: Column(
             children: [
-              Text('編集者リクエスト', style: lightTextTheme.bodyLarge),
+              Text('編集リクエスト', style: lightTextTheme.bodyLarge),
               divider(),
               Expanded(
                 flex: 2,
