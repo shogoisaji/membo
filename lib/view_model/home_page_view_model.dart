@@ -50,6 +50,7 @@ class HomePageViewModel extends _$HomePageViewModel {
           boardName: board.boardName,
           ownerId: board.ownerId,
           thatDay: board.thatDay,
+          editableUserIds: board.editableUserIds,
           createdAt: board.createdAt,
           thumbnailUrl: board.thumbnailUrl,
         );
@@ -87,6 +88,7 @@ class HomePageViewModel extends _$HomePageViewModel {
             boardName: board.boardName,
             ownerId: board.ownerId,
             thatDay: board.thatDay,
+            editableUserIds: board.editableUserIds,
             createdAt: board.createdAt,
             thumbnailUrl: board.thumbnailUrl,
           );
