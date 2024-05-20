@@ -1,6 +1,7 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/models/view_model_state/account_page_state.dart';
+import 'package:membo/repositories/sqflite/sqflite_repository.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
@@ -103,5 +104,34 @@ class AccountPageViewModel extends _$AccountPageViewModel {
     } catch (e) {
       throw Exception('Error updateAvatar(): $e');
     }
+  }
+
+  Future<void> deleteAccount() async {
+    final userId = state.user?.userId;
+    if (userId == null) {
+      throw Exception('userId is not set');
+    }
+    final userData =
+        await ref.read(supabaseRepositoryProvider).fetchUserData(userId);
+    if (userData == null) {
+      throw Exception('User is not loaded');
+    }
+
+    /// owned board を全て削除
+    for (final boardId in userData.ownedBoardIds) {
+      /// 画像の削除
+      final board =
+          await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+      await ref.read(supabaseStorageProvider).deleteImageFolder(board);
+
+      /// Board削除
+      await ref.read(supabaseRepositoryProvider).deleteBoard(boardId);
+    }
+
+    /// Edge Function "delete-user"を呼び出す
+    await ref.read(supabaseAuthRepositoryProvider).deleteAccount(userId);
+
+    /// SQFliteのデータを全て削除
+    await ref.read(sqfliteRepositoryProvider).deleteAllRows();
   }
 }

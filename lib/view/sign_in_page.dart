@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +22,6 @@ class SignInPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final noticeData = useState<PublicNoticesModel?>(null);
-    final isChecked = useState(false);
 
     Future<void> fetchPublicNotices() async {
       try {
@@ -80,8 +77,6 @@ class SignInPage extends HookConsumerWidget {
     final h = MediaQuery.sizeOf(context).height;
 
     void handleSignInWithGoogle() async {
-      if (!isChecked.value) return;
-
       animationController.reset();
 
       shutterColor.value = googleColor;
@@ -98,8 +93,6 @@ class SignInPage extends HookConsumerWidget {
     }
 
     void handleSignInWithApple() async {
-      if (!isChecked.value) return;
-
       animationController.reset();
 
       shutterColor.value = appleColor;
@@ -217,12 +210,6 @@ class SignInPage extends HookConsumerWidget {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Checkbox(
-                                            value: isChecked.value,
-                                            onChanged: (bool? value) {
-                                              isChecked.value = value ?? false;
-                                            },
-                                          ),
                                           Expanded(
                                             child: Expanded(
                                               child: RichText(
@@ -272,7 +259,8 @@ class SignInPage extends HookConsumerWidget {
                                                             },
                                                     ),
                                                     const TextSpan(
-                                                        text: 'に同意する'),
+                                                        text:
+                                                            'に同意してサインインをお願いします'),
                                                   ],
                                                 ),
                                               ),

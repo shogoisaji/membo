@@ -148,4 +148,14 @@ class SqfliteRepository {
       throw Exception('削除に失敗しました');
     }
   }
+
+  /// delete all rows 削除が成功した場合は1を返す
+  Future<int> deleteAllRows() async {
+    try {
+      Database db = await instance.database;
+      return await db.delete(linkedBoardTable);
+    } catch (e) {
+      throw Exception('削除に失敗しました');
+    }
+  }
 }
