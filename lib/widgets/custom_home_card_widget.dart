@@ -52,28 +52,31 @@ class CustomHomeCardWidget extends HookConsumerWidget {
       curve: Curves.easeInOut,
     );
 
-    Future<String> fetchAvatarUrl(String userId) async {
-      final url = await ref
-          .read(supabaseRepositoryProvider)
-          .fetchAvatarImageUrl(userId)
-          .catchError((e) {
-        throw Exception('Avatar url is not loaded');
-      });
-      return url;
+    Future<List<String>> fetchAvatarUrls(List<String> userIds) async {
+      final urls = <String>[];
+      for (final userId in userIds) {
+        final url = await ref
+            .read(supabaseRepositoryProvider)
+            .fetchAvatarImageUrl(userId)
+            .catchError((_) {
+          return '-';
+        });
+        urls.add(url);
+      }
+      return urls;
     }
 
     void initialize() async {
       try {
-        ownerAvatarUrl.value = await fetchAvatarUrl(board.ownerId);
+        ownerAvatarUrl.value = await fetchAvatarUrls([board.ownerId])
+            .then((value) => value.isNotEmpty ? value.first : null);
       } catch (e) {
         throw Exception('Owner avatar image url is not loaded');
       }
 
       try {
-        board.editableUserIds.map((userId) async {
-          final url = await fetchAvatarUrl(userId);
-          editorAvatarUrlList.value = [...editorAvatarUrlList.value, url];
-        });
+        editorAvatarUrlList.value =
+            await fetchAvatarUrls(board.editableUserIds);
       } catch (e) {
         throw Exception('Editor avatar image url is not loaded');
       }
@@ -93,9 +96,6 @@ class CustomHomeCardWidget extends HookConsumerWidget {
       initialize();
       return null;
     }, const []);
-
-    const tempAvatar =
-        'https://mawzoznhibuhrvxxyvtt.supabase.co/storage/v1/object/public/public_image/baf22f22-41d9-4313-9599-a55ca1514099/f0c413e1-e6c7-47b8-823e-2ae37edfa486.webp';
 
     return GestureDetector(
       onTap: () {
@@ -291,6 +291,7 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                     ...editorAvatarUrlList.value
                                         .map((url) => Row(
                                               children: [
+                                                const SizedBox(width: 10),
                                                 CircleAvatar(
                                                   radius: editorAvatarRadius,
                                                   foregroundImage:
@@ -302,17 +303,6 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                                 ),
                                               ],
                                             )),
-                                    const SizedBox(width: 10),
-                                    const CircleAvatar(
-                                      radius: editorAvatarRadius,
-                                      foregroundImage: NetworkImage(tempAvatar),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    const CircleAvatar(
-                                      radius: editorAvatarRadius,
-                                      foregroundImage: NetworkImage(tempAvatar),
-                                    ),
-                                    const SizedBox(width: 10),
                                   ],
                                 ),
                               ),
