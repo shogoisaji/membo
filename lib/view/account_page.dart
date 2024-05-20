@@ -156,8 +156,9 @@ class AccountPage extends HookConsumerWidget {
             if (accountPageState.user == null) return;
             try {
               await ref
-                  .read(supabaseAuthRepositoryProvider)
-                  .deleteAccount(accountPageState.user!.userId);
+                  .read(accountPageViewModelProvider.notifier)
+                  .deleteAccount();
+
               if (context.mounted) {
                 CustomSnackBar.show(context, 'アカウントを削除しました', MyColor.blue);
                 context.go('/sign-in');
