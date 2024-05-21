@@ -3,7 +3,8 @@ import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/board_permission.dart';
 import 'package:membo/models/board/linked_board_model.dart';
 import 'package:membo/models/view_model_state/home_page_state.dart';
-import 'package:membo/repositories/sqflite/sqflite_repository.dart';
+import 'package:membo/repositories/shared_preferences/shared_preferences_key.dart';
+import 'package:membo/repositories/shared_preferences/shared_preferences_repository.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -73,7 +74,8 @@ class HomePageViewModel extends _$HomePageViewModel {
     }
 
     /// linked board
-    final result = await ref.read(sqfliteRepositoryProvider).loadLinkedBoards();
+    // final result = await ref.read(sqfliteRepositoryProvider).loadLinkedBoards();
+    final result = userData.linkedBoards;
 
     for (LinkedBoardModel linkedBoard in result) {
       BoardModel? boardForCard;
@@ -138,8 +140,14 @@ class HomePageViewModel extends _$HomePageViewModel {
       }
     }
 
+    /// check first login
+    final isFirst = ref
+        .read(sharedPreferencesRepositoryProvider)
+        .fetch<bool>(SharedPreferencesKey.isFirst);
+
     state = state.copyWith(
       isLoading: false,
+      isFirst: isFirst ?? true,
       userModel: userData,
       allCardBoardList: [
         ...tempOwnedCardBoardList.reversed,
@@ -149,6 +157,12 @@ class HomePageViewModel extends _$HomePageViewModel {
       linkedCardBoardList: tempLinkedCardBoardList.reversed.toList(),
       carouselImageUrls: tempCarouselImageUrls,
     );
+  }
+
+  void firstLogin() {
+    ref
+        .read(sharedPreferencesRepositoryProvider)
+        .save<bool>(SharedPreferencesKey.isFirst, false);
   }
 
   Future<void> deleteBoardFromCard(String boardId) async {
@@ -194,12 +208,15 @@ class HomePageViewModel extends _$HomePageViewModel {
     else {
       try {
         /// linked boardの削除
-        final result =
-            await ref.read(sqfliteRepositoryProvider).deleteRow(boardId);
-
-        if (result == -1) {
-          throw Exception();
-        }
+        final newLinkedBoards = userData.linkedBoards
+            .where((element) => element.boardId != boardId)
+            .toList();
+        await ref
+            .read(supabaseRepositoryProvider)
+            .updateLinkedBoards(user.id, newLinkedBoards)
+            .catchError((e) {
+          throw Exception('update linked boards failed');
+        });
 
         /// stateの更新
         state = state.copyWith(

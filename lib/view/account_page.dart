@@ -205,9 +205,14 @@ class AccountPage extends HookConsumerWidget {
         resizeToAvoidBottomInset: false,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          title: Text('アカウント', style: lightTextTheme.titleLarge),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 36),
             onPressed: () {
+              if (accountPageState.user!.userName == '') {
+                ErrorDialog.show(context, '名前を入力してください');
+                return;
+              }
               HapticFeedback.lightImpact();
               context.go('/settings');
             },
@@ -246,9 +251,9 @@ class AccountPage extends HookConsumerWidget {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 12.0, vertical: 4.0),
                                       decoration: BoxDecoration(
-                                        color: MyColor.green,
-                                        border: Border.all(
-                                            color: MyColor.greenText, width: 2),
+                                        color: MyColor.greenDark,
+                                        // border: Border.all(
+                                        //     color: MyColor.greenText, width: 2),
                                         borderRadius: BorderRadius.circular(14),
                                       ),
                                       child: Text(
@@ -257,7 +262,10 @@ class AccountPage extends HookConsumerWidget {
                                             .toString()
                                             .split('.')[1]
                                             .toUpperCase(),
-                                        style: lightTextTheme.bodyLarge,
+                                        style:
+                                            lightTextTheme.bodyLarge!.copyWith(
+                                          color: MyColor.greenSuperLight,
+                                        ),
                                       ),
                                     ),
                                     Padding(

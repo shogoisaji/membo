@@ -14,6 +14,10 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      linkedBoards: (json['linked_boards'] as List<dynamic>?)
+              ?.map((e) => LinkedBoardModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       avatarUrl: json['avatar_url'] as String?,
       membershipType: MembershipType.fromJson(
           json['membership_type'] as Map<String, dynamic>),
@@ -25,6 +29,7 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
       'user_id': instance.userId,
       'user_name': instance.userName,
       'owned_board_ids': instance.ownedBoardIds,
+      'linked_boards': instance.linkedBoards,
       'avatar_url': instance.avatarUrl,
       'membership_type': instance.membershipType,
       'created_at': instance.createdAt.toIso8601String(),

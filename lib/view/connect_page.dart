@@ -82,6 +82,7 @@ class ConnectPage extends HookConsumerWidget {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          title: Text('共有', style: lightTextTheme.titleLarge),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 36),
             onPressed: () {

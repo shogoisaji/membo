@@ -1,5 +1,5 @@
 enum SharedPreferencesKey {
-  linkedBoards('linkedBoards'),
+  isFirst('isFirst'),
   isDarkMode('isDarkMode'),
   isHaptic('isHaptic'),
   language('language'),

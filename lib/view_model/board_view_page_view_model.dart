@@ -5,7 +5,6 @@ import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/linked_board_model.dart';
 import 'package:membo/models/request/edit_request_model.dart';
 import 'package:membo/models/view_model_state/board_view_page_state.dart';
-import 'package:membo/repositories/sqflite/sqflite_repository.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/state/stream_board_state.dart';
@@ -65,9 +64,9 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
     final board =
         await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
 
-    final linkedBoard =
-        await ref.read(sqfliteRepositoryProvider).findById(boardId);
-    if (linkedBoard != null) {
+    final linkedBoardIds = userData.linkedBoards.map((e) => e.boardId).toList();
+
+    if (linkedBoardIds.contains(boardId)) {
       /// editor
       if (board.editableUserIds.contains(userData.userId)) {
         return ViewPageUserTypes.editor;
@@ -110,6 +109,16 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
   }
 
   Future<void> addLinkedBoardId(String newBoardId) async {
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+    final userData =
+        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    if (userData == null) {
+      throw Exception('User is not loaded');
+    }
+
     /// board nameとthumbnailを取得
     final data = await ref
         .read(supabaseRepositoryProvider)
@@ -120,12 +129,15 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
       thumbnailUrl: data['thumbnail_url'],
       createdAt: DateTime.now(),
     );
-    final result = await ref
-        .read(sqfliteRepositoryProvider)
-        .insertLinkedBoard(insertLinkedBoard);
-    if (result == -1) {
-      throw Exception('Failed to insert linked board');
-    }
+    final newLikedBoards = [...userData.linkedBoards, insertLinkedBoard];
+
+    /// user data に追加
+    await ref
+        .read(supabaseRepositoryProvider)
+        .updateLinkedBoards(user.id, newLikedBoards)
+        .catchError((e) {
+      throw Exception('update linked boards failed');
+    });
 
     final userType = await checkUserType(newBoardId);
     state = state.copyWith(

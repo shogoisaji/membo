@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/board/board_model.dart';
+import 'package:membo/models/board/linked_board_model.dart';
 import 'package:membo/models/board/object/object_model.dart';
 import 'package:membo/models/notice/public_notices_model.dart';
 import 'package:membo/models/request/edit_request_model.dart';
@@ -244,6 +245,19 @@ class SupabaseRepository {
           .update({'owned_board_ids': newOwnedBoardIds}).eq('user_id', userId);
     } catch (e) {
       throw AppException.error('Owned board ids update error',
+          detail: 'updateOwnedBoardIds() :$e');
+    }
+  }
+
+  Future<void> updateLinkedBoards(
+      String userId, List<LinkedBoardModel> newLinkedBoards) async {
+    final json = newLinkedBoards.map((e) => e.toJson()).toList();
+    try {
+      await _client
+          .from('profiles')
+          .update({'linked_boards': json}).eq('user_id', userId);
+    } catch (e) {
+      throw AppException.error('Linked boards update error',
           detail: 'updateOwnedBoardIds() :$e');
     }
   }

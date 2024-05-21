@@ -1,7 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/models/view_model_state/account_page_state.dart';
-import 'package:membo/repositories/sqflite/sqflite_repository.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
@@ -132,6 +131,6 @@ class AccountPageViewModel extends _$AccountPageViewModel {
     await ref.read(supabaseAuthRepositoryProvider).deleteAccount(userId);
 
     /// SQFliteのデータを全て削除
-    await ref.read(sqfliteRepositoryProvider).deleteAllRows();
+    // await ref.read(sqfliteRepositoryProvider).deleteAllRows();
   }
 }
