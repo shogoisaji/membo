@@ -136,7 +136,7 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
       /// Board削除
       await ref.read(supabaseRepositoryProvider).deleteBoard(board.boardId);
 
-      /// userのlinkedBoardsからBoardを削除
+      /// userのownedBoardIdsからBoardを削除
       final removedOwnedBoardIds = userData.ownedBoardIds
           .where((element) => element != board.boardId)
           .toList();

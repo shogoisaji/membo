@@ -10,6 +10,7 @@ import 'package:membo/view/board_view_page.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/view/policy_page.dart';
 import 'package:membo/view/scan_page.dart';
+import 'package:membo/view/sign_up_page.dart';
 import 'package:membo/view/terms_of_service_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:membo/view/sign_in_page.dart';
@@ -21,6 +22,7 @@ part 'router.g.dart';
 class PagePath {
   static const home = '/';
   static const signIn = '/sign-in';
+  static const signUp = '/sign-up';
   static const boardEdit = '/edit';
   static const boardView = '/view';
   static const boardSettings = '/board-settings';
@@ -62,12 +64,8 @@ GoRouter router(RouterRef ref) {
       builder: (_, __) => const SignInPage(),
     ),
     GoRoute(
-      path: PagePath.publicPolicy,
-      pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-        context: context,
-        state: state,
-        child: const PolicyPage(),
-      ),
+      path: PagePath.signUp,
+      builder: (_, __) => const SignUpPage(),
     ),
     ShellRoute(
       builder: (_, __, child) => Scaffold(
@@ -190,6 +188,8 @@ GoRouter router(RouterRef ref) {
 
     if (signedIn && page == PagePath.signIn) {
       return PagePath.home;
+    } else if (!signedIn && page == PagePath.signUp) {
+      return PagePath.signUp;
     } else if (!signedIn) {
       return PagePath.signIn;
     } else {

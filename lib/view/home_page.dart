@@ -12,6 +12,7 @@ import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
+import 'package:membo/widgets/app_hint_dailog.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_home_card_widget.dart';
@@ -37,7 +38,7 @@ class HomePage extends HookConsumerWidget {
 
     final homePageState = ref.watch(homePageViewModelProvider);
 
-    void init() async {
+    void initialize() async {
       try {
         await ref.read(homePageViewModelProvider.notifier).initialize().timeout(
           const Duration(seconds: 5),
@@ -48,6 +49,16 @@ class HomePage extends HookConsumerWidget {
             });
           },
         );
+
+        /// hint dialog
+        if (context.mounted) {
+          if (homePageState.isFirst) {
+            AppHintDialog.show(context, () {
+              ref.read(homePageViewModelProvider.notifier).firstLogin();
+              context.go('/account');
+            });
+          }
+        }
       } on AppException catch (e) {
         if (context.mounted) {
           ErrorDialog.show(context, e.title, onTapFunction: () {
@@ -118,7 +129,7 @@ class HomePage extends HookConsumerWidget {
     }
 
     useEffect(() {
-      init();
+      initialize();
 
       /// currentPageを監視して変更があればpageを切り替える（board name input page）
       currentPage.addListener(() {

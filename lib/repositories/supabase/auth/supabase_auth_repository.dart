@@ -6,8 +6,6 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:membo/env/env.dart';
-import 'package:membo/exceptions/app_exception.dart';
-import 'package:membo/repositories/sqflite/sqflite_repository.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -90,6 +88,7 @@ class SupabaseAuthRepository {
       throw const AuthException(
           'Apple Sign In is only available on iOS devices.');
     }
+
     final rawNonce = _client.auth.generateRawNonce();
     final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
@@ -123,6 +122,29 @@ class SupabaseAuthRepository {
     /// Edge Function "delete-user"を呼び出す
     await _client.functions.invoke("delete-user");
     signOut();
+  }
+
+  /// sign in with email
+  Future<void> signInWithEmail(String email, String password) async {
+    await _client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  /// sign up with email
+  Future<void> signUpWithEmail(String email, String password) async {
+    debugPrint('signUpWithEmail : $email, $password');
+    try {
+      await _client.auth.signUp(
+        email: email,
+        password: password,
+      );
+    } on AuthException catch (e) {
+      throw AuthApiException(e.message);
+    } catch (e) {
+      throw AuthApiException(e.toString());
+    }
   }
 }
 

@@ -10,6 +10,7 @@ part 'home_page_state.freezed.dart';
 class HomePageState with _$HomePageState {
   const factory HomePageState({
     @Default(true) bool isLoading,
+    @Default(true) bool isFirst,
     UserModel? userModel,
     @Default([]) List<CardBoardModel> allCardBoardList,
     @Default([]) List<CardBoardModel> ownedCardBoardList,
