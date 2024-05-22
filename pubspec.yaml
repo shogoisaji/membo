@@ -2,8 +2,8 @@ name: membo
 description: "membo"
 publish_to: "none"
 
-# 2024.5.21 -> 1.0.0+7
-version: 1.0.0+7
+# 2024.5.22 -> 1.0.0+9
+version: 1.0.0+9
 
 environment:
   sdk: ">=3.3.2 <4.0.0"

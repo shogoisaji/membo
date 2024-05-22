@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -139,11 +140,14 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                   Align(
                     alignment: Alignment.topCenter,
                     child: board.thumbnailUrl != null
-                        ? Image.network(board.thumbnailUrl!,
+                        ? CachedNetworkImage(
+                            imageUrl: board.thumbnailUrl!,
                             fit: BoxFit.cover,
                             width: width,
                             height: height,
-                            errorBuilder: (context, url, error) => Image.asset(
+                            placeholder: (context, url) =>
+                                ColoredBox(color: Colors.grey.shade200),
+                            errorWidget: (context, url, error) => Image.asset(
                                   'assets/images/logo.png',
                                   fit: BoxFit.contain,
                                   width: double.infinity,
@@ -258,14 +262,22 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                   Positioned(
                     bottom: contentHeight - ownerAvatarRadius,
                     right: positionXFromRight - ownerAvatarRadius,
-                    child: CircleAvatar(
-                      radius: ownerAvatarRadius,
-                      foregroundImage: ownerAvatarUrl.value != null
-                          ? NetworkImage(ownerAvatarUrl.value!)
-                          : null,
-                      child: const Icon(
-                        Icons.person,
-                        size: 30,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(ownerAvatarRadius),
+                      child: ColoredBox(
+                        color: MyColor.greenText,
+                        child: CachedNetworkImage(
+                          imageUrl: ownerAvatarUrl.value ?? '',
+                          fit: BoxFit.cover,
+                          width: ownerAvatarRadius * 2,
+                          height: ownerAvatarRadius * 2,
+                          placeholder: (context, url) =>
+                              ColoredBox(color: Colors.grey.shade200),
+                          errorWidget: (context, url, error) => const Icon(
+                              Icons.person,
+                              size: 30,
+                              color: MyColor.greenSuperLight),
+                        ),
                       ),
                     ),
                   ),
@@ -309,21 +321,37 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
                                   children: [
-                                    ...editorAvatarUrlList.value
-                                        .map((url) => Row(
-                                              children: [
-                                                const SizedBox(width: 10),
-                                                CircleAvatar(
-                                                  radius: editorAvatarRadius,
-                                                  foregroundImage:
-                                                      NetworkImage(url),
-                                                  child: const Icon(
-                                                    Icons.person,
-                                                    size: 30,
-                                                  ),
+                                    ...editorAvatarUrlList.value.map((url) =>
+                                        Row(
+                                          children: [
+                                            const SizedBox(width: 10),
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      editorAvatarRadius),
+                                              child: ColoredBox(
+                                                color: MyColor.greenText,
+                                                child: CachedNetworkImage(
+                                                  imageUrl: url,
+                                                  fit: BoxFit.cover,
+                                                  width: editorAvatarRadius * 2,
+                                                  height:
+                                                      editorAvatarRadius * 2,
+                                                  placeholder: (context, url) =>
+                                                      ColoredBox(
+                                                          color: Colors
+                                                              .grey.shade200),
+                                                  errorWidget: (context, url,
+                                                          error) =>
+                                                      const Icon(Icons.person,
+                                                          size: 30,
+                                                          color: MyColor
+                                                              .greenSuperLight),
                                                 ),
-                                              ],
-                                            )),
+                                              ),
+                                            ),
+                                          ],
+                                        )),
                                   ],
                                 ),
                               ),

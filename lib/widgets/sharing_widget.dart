@@ -55,7 +55,7 @@ class SharingWidget extends StatelessWidget {
                 onPressed: () {
                   Clipboard.setData(
                       ClipboardData(text: boardId.replaceAll('-', '')));
-                  CustomSnackBar.show(context, 'IDをコピーしました', MyColor.blue);
+                  CustomSnackBar.show(context, 'IDをコピーしました', MyColor.lightBlue);
                 },
                 child: Text(
                   'IDをコピー',

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
+import 'package:membo/widgets/app_hint_dailog.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -75,6 +76,16 @@ class SettingsPage extends HookConsumerWidget {
                           onTap: () {
                             HapticFeedback.lightImpact();
                             context.go('/account');
+                          },
+                        ),
+                        spacer(),
+                        ListContentBase(
+                          title: 'ヒント',
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            AppHintDialog.show(context, () {
+                              //
+                            });
                           },
                         ),
                         spacer(),

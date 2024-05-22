@@ -114,7 +114,7 @@ class HomePage extends HookConsumerWidget {
             .read(homePageViewModelProvider.notifier)
             .deleteBoardFromCard(boardId);
         if (context.mounted) {
-          CustomSnackBar.show(context, 'Board deleted', MyColor.blue);
+          CustomSnackBar.show(context, 'ボードを削除しました', MyColor.blue);
         }
       } catch (e) {
         if (context.mounted) {
@@ -248,101 +248,75 @@ class HomePage extends HookConsumerWidget {
                                       ],
                                     ),
                                   ),
-                                  child: Stack(
-                                    children: [
-                                      SafeArea(
-                                        child: Positioned(
-                                          child: IconButton(
-                                            icon: const Icon(
-                                              Icons.help_outline,
-                                              size: 30,
-                                              color: MyColor.green,
-                                            ),
-                                            onPressed: () {
-                                              HapticFeedback.lightImpact();
-                                              AppHintDialog.show(context, () {
-                                                //
-                                              });
+                                  child: Align(
+                                    alignment: const Alignment(0.0, 0.88),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          width: 170,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.settings,
+                                                  size: 42,
+                                                ),
+                                                onPressed: () {
+                                                  HapticFeedback.lightImpact();
+                                                  context.go('/settings');
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: SvgPicture.asset(
+                                                  'assets/images/svg/connect.svg',
+                                                  width: 40,
+                                                  height: 40,
+                                                  colorFilter:
+                                                      const ColorFilter.mode(
+                                                          MyColor.greenText,
+                                                          BlendMode.srcIn),
+                                                ),
+                                                onPressed: () {
+                                                  HapticFeedback.lightImpact();
+                                                  context.go('/connect');
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 12.0),
+                                          child: CustomButton(
+                                            width: 160,
+                                            height: 42,
+                                            color: MyColor.lightBlue,
+                                            child: Center(
+                                                child: Text(
+                                              'ボード作成',
+                                              style: lightTextTheme.bodyLarge!
+                                                  .copyWith(
+                                                color: Colors.white,
+                                              ),
+                                            )),
+                                            onTap: () {
+                                              currentPage.value = 1;
+                                              pageController.nextPage(
+                                                  duration: const Duration(
+                                                      milliseconds: 300),
+                                                  curve: Curves.easeInOut);
+                                              textFocusNode.requestFocus();
                                             },
                                           ),
                                         ),
-                                      ),
-                                      Align(
-                                        alignment: const Alignment(0.0, 0.88),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            SizedBox(
-                                              width: 170,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.settings,
-                                                      size: 42,
-                                                    ),
-                                                    onPressed: () {
-                                                      HapticFeedback
-                                                          .lightImpact();
-                                                      context.go('/settings');
-                                                    },
-                                                  ),
-                                                  IconButton(
-                                                    icon: SvgPicture.asset(
-                                                      'assets/images/svg/connect.svg',
-                                                      width: 40,
-                                                      height: 40,
-                                                      colorFilter:
-                                                          const ColorFilter
-                                                              .mode(
-                                                              MyColor.greenText,
-                                                              BlendMode.srcIn),
-                                                    ),
-                                                    onPressed: () {
-                                                      HapticFeedback
-                                                          .lightImpact();
-                                                      context.go('/connect');
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 12.0),
-                                              child: CustomButton(
-                                                width: 160,
-                                                height: 42,
-                                                color: MyColor.lightBlue,
-                                                child: Center(
-                                                    child: Text(
-                                                  'ボード作成',
-                                                  style: lightTextTheme
-                                                      .bodyLarge!
-                                                      .copyWith(
-                                                    color: Colors.white,
-                                                  ),
-                                                )),
-                                                onTap: () {
-                                                  currentPage.value = 1;
-                                                  pageController.nextPage(
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                      curve: Curves.easeInOut);
-                                                  textFocusNode.requestFocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
