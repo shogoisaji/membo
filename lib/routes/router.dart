@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:membo/settings/color.dart';
 import 'package:membo/view/account_page.dart';
 import 'package:membo/view/board_settings_page.dart';
 import 'package:membo/view/connect_page.dart';
@@ -69,24 +68,16 @@ GoRouter router(RouterRef ref) {
     ),
     ShellRoute(
       builder: (_, __, child) => Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: MyColor.green,
           body: Stack(
-            fit: StackFit.expand,
+        fit: StackFit.expand,
+        children: [
+          Stack(
             children: [
-              Stack(
-                children: [
-                  child,
-
-                  /// 画面下部にナビゲーションバーを表示
-                  // const Align(
-                  //   alignment: Alignment.bottomCenter,
-                  //   child: CustomBottomNav(),
-                  // ),
-                ],
-              )
+              child,
             ],
-          )),
+          )
+        ],
+      )),
       routes: [
         GoRoute(
           path: PagePath.home,

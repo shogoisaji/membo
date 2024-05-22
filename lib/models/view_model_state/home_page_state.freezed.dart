@@ -17,7 +17,6 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$HomePageState {
   bool get isLoading => throw _privateConstructorUsedError;
-  bool get isFirst => throw _privateConstructorUsedError;
   UserModel? get userModel => throw _privateConstructorUsedError;
   List<CardBoardModel> get allCardBoardList =>
       throw _privateConstructorUsedError;
@@ -40,7 +39,6 @@ abstract class $HomePageStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool isLoading,
-      bool isFirst,
       UserModel? userModel,
       List<CardBoardModel> allCardBoardList,
       List<CardBoardModel> ownedCardBoardList,
@@ -64,7 +62,6 @@ class _$HomePageStateCopyWithImpl<$Res, $Val extends HomePageState>
   @override
   $Res call({
     Object? isLoading = null,
-    Object? isFirst = null,
     Object? userModel = freezed,
     Object? allCardBoardList = null,
     Object? ownedCardBoardList = null,
@@ -75,10 +72,6 @@ class _$HomePageStateCopyWithImpl<$Res, $Val extends HomePageState>
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isFirst: null == isFirst
-          ? _value.isFirst
-          : isFirst // ignore: cast_nullable_to_non_nullable
               as bool,
       userModel: freezed == userModel
           ? _value.userModel
@@ -126,7 +119,6 @@ abstract class _$$HomePageStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool isLoading,
-      bool isFirst,
       UserModel? userModel,
       List<CardBoardModel> allCardBoardList,
       List<CardBoardModel> ownedCardBoardList,
@@ -149,7 +141,6 @@ class __$$HomePageStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? isLoading = null,
-    Object? isFirst = null,
     Object? userModel = freezed,
     Object? allCardBoardList = null,
     Object? ownedCardBoardList = null,
@@ -160,10 +151,6 @@ class __$$HomePageStateImplCopyWithImpl<$Res>
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isFirst: null == isFirst
-          ? _value.isFirst
-          : isFirst // ignore: cast_nullable_to_non_nullable
               as bool,
       userModel: freezed == userModel
           ? _value.userModel
@@ -194,7 +181,6 @@ class __$$HomePageStateImplCopyWithImpl<$Res>
 class _$HomePageStateImpl implements _HomePageState {
   const _$HomePageStateImpl(
       {this.isLoading = true,
-      this.isFirst = true,
       this.userModel,
       final List<CardBoardModel> allCardBoardList = const [],
       final List<CardBoardModel> ownedCardBoardList = const [],
@@ -208,9 +194,6 @@ class _$HomePageStateImpl implements _HomePageState {
   @override
   @JsonKey()
   final bool isLoading;
-  @override
-  @JsonKey()
-  final bool isFirst;
   @override
   final UserModel? userModel;
   final List<CardBoardModel> _allCardBoardList;
@@ -255,7 +238,7 @@ class _$HomePageStateImpl implements _HomePageState {
 
   @override
   String toString() {
-    return 'HomePageState(isLoading: $isLoading, isFirst: $isFirst, userModel: $userModel, allCardBoardList: $allCardBoardList, ownedCardBoardList: $ownedCardBoardList, linkedCardBoardList: $linkedCardBoardList, carouselImageUrls: $carouselImageUrls)';
+    return 'HomePageState(isLoading: $isLoading, userModel: $userModel, allCardBoardList: $allCardBoardList, ownedCardBoardList: $ownedCardBoardList, linkedCardBoardList: $linkedCardBoardList, carouselImageUrls: $carouselImageUrls)';
   }
 
   @override
@@ -265,7 +248,6 @@ class _$HomePageStateImpl implements _HomePageState {
             other is _$HomePageStateImpl &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
-            (identical(other.isFirst, isFirst) || other.isFirst == isFirst) &&
             (identical(other.userModel, userModel) ||
                 other.userModel == userModel) &&
             const DeepCollectionEquality()
@@ -282,7 +264,6 @@ class _$HomePageStateImpl implements _HomePageState {
   int get hashCode => Object.hash(
       runtimeType,
       isLoading,
-      isFirst,
       userModel,
       const DeepCollectionEquality().hash(_allCardBoardList),
       const DeepCollectionEquality().hash(_ownedCardBoardList),
@@ -299,7 +280,6 @@ class _$HomePageStateImpl implements _HomePageState {
 abstract class _HomePageState implements HomePageState {
   const factory _HomePageState(
       {final bool isLoading,
-      final bool isFirst,
       final UserModel? userModel,
       final List<CardBoardModel> allCardBoardList,
       final List<CardBoardModel> ownedCardBoardList,
@@ -308,8 +288,6 @@ abstract class _HomePageState implements HomePageState {
 
   @override
   bool get isLoading;
-  @override
-  bool get isFirst;
   @override
   UserModel? get userModel;
   @override

@@ -24,7 +24,7 @@ class ErrorDialog {
               decoration: BoxDecoration(
                 color: MyColor.greenLight,
                 border: Border.all(
-                    width: 5,
+                    width: 1,
                     color: MyColor.greenText,
                     strokeAlign: BorderSide.strokeAlignCenter),
                 borderRadius: const BorderRadius.all(Radius.circular(24)),
@@ -33,6 +33,11 @@ class ErrorDialog {
                     color: Colors.black.withOpacity(0.3),
                     offset: const Offset(0, 5),
                     blurRadius: 5,
+                  ),
+                  const BoxShadow(
+                    color: MyColor.greenText,
+                    blurRadius: 1,
+                    spreadRadius: 1,
                   ),
                 ],
               ),
