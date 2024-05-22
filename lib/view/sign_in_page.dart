@@ -578,7 +578,6 @@ class EmailSignUpModal extends HookConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        print('sfa');
         FocusScope.of(context).unfocus();
       },
       child: Container(

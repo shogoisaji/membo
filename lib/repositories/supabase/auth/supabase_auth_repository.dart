@@ -134,7 +134,6 @@ class SupabaseAuthRepository {
 
   /// sign up with email
   Future<void> signUpWithEmail(String email, String password) async {
-    debugPrint('signUpWithEmail : $email, $password');
     try {
       await _client.auth.signUp(
         email: email,

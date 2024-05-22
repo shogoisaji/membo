@@ -61,7 +61,7 @@ class SupabaseStorage {
           "Exception: Error deleting board: type 'Null' is not a subtype of type 'Map<dynamic, dynamic>'") {
         return null;
       }
-      throw Exception('Error uploading XFile image: $e');
+      throw Exception('Error uploading XFile image');
     }
   }
 
@@ -73,10 +73,10 @@ class SupabaseStorage {
       if (res.isEmpty) {
         throw Exception('image delete failed: $path');
       }
-    } on PostgrestException catch (error) {
-      print('Error deleting image: ${error.message}');
+    } on PostgrestException catch (_) {
+      throw Exception('Error deleting image : PostgrestException');
     } catch (e) {
-      print('error -: $e');
+      throw Exception('Error deleting image');
     }
   }
 
@@ -88,10 +88,10 @@ class SupabaseStorage {
       if (res.isEmpty) {
         throw Exception('image delete failed: $path');
       }
-    } on PostgrestException catch (error) {
-      print('Error deleting image: ${error.message}');
+    } on PostgrestException catch (_) {
+      throw Exception('Error deleting image : PostgrestException');
     } catch (e) {
-      print('error -: $e');
+      throw Exception('Error deleting image');
     }
   }
 
@@ -106,7 +106,7 @@ class SupabaseStorage {
         }
       }
     } catch (e) {
-      print('image folder delete failed');
+      throw Exception('Error deleting image folder');
     }
   }
 }

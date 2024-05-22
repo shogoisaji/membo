@@ -36,7 +36,7 @@ class AccountPage extends HookConsumerWidget {
         if (context.mounted) {
           Navigator.pop(dialogContext);
           Future.delayed(const Duration(milliseconds: 300), () {
-            CustomSnackBar.show(context, '名前を更新しました', MyColor.blue);
+            CustomSnackBar.show(context, '名前を更新しました', MyColor.lightBlue);
           });
         }
       } catch (e) {
@@ -107,7 +107,7 @@ class AccountPage extends HookConsumerWidget {
       try {
         await ref.read(accountPageViewModelProvider.notifier).updateAvatar();
         if (context.mounted) {
-          CustomSnackBar.show(context, 'アバターが更新されました', MyColor.blue);
+          CustomSnackBar.show(context, 'アバターが更新されました', MyColor.lightBlue);
         }
       } catch (e) {
         if (context.mounted) {
@@ -160,7 +160,7 @@ class AccountPage extends HookConsumerWidget {
                   .deleteAccount();
 
               if (context.mounted) {
-                CustomSnackBar.show(context, 'アカウントを削除しました', MyColor.blue);
+                CustomSnackBar.show(context, 'アカウントを削除しました', MyColor.lightBlue);
                 context.go('/sign-in');
               }
             } catch (e) {

@@ -35,13 +35,12 @@ class SignUpPage extends HookConsumerWidget {
           await ref.read(supabaseAuthRepositoryProvider).signUpWithEmail(
               emailController.text, passwordFirstController.text);
           if (context.mounted) {
-            CustomSnackBar.show(context, '確認メールを送信しました', MyColor.blue);
+            CustomSnackBar.show(context, '確認メールを送信しました', MyColor.lightBlue);
             context.go('/sigh-in');
           }
         } catch (e) {
           if (context.mounted) {
             ErrorDialog.show(context, 'Error signing up with Email');
-            print(e);
           }
         } finally {
           isLoading.value = false;

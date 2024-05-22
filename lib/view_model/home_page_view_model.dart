@@ -69,7 +69,7 @@ class HomePageViewModel extends _$HomePageViewModel {
           print('owned board not found');
         }
       } catch (e) {
-        print('error: $e');
+        //
       }
     }
 
@@ -136,7 +136,7 @@ class HomePageViewModel extends _$HomePageViewModel {
           print('linked board not found');
         }
       } catch (e) {
-        print('error: $e');
+        //
       }
     }
 

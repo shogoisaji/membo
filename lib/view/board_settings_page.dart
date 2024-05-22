@@ -162,7 +162,7 @@ class BoardSettingsPage extends HookConsumerWidget {
 
                 if (context.mounted) {
                   Navigator.of(context).pop();
-                  CustomSnackBar.show(context, 'ボードを削除しました', MyColor.blue);
+                  CustomSnackBar.show(context, 'ボードを削除しました', MyColor.lightBlue);
                   context.go('/');
                 }
               } catch (e) {
@@ -799,7 +799,7 @@ class EditorListModal extends HookConsumerWidget {
         await Future.delayed(const Duration(milliseconds: 500));
         initialize();
         if (context.mounted) {
-          CustomSnackBar.show(context, 'リクエストを承認しました', MyColor.blue);
+          CustomSnackBar.show(context, 'リクエストを承認しました', MyColor.lightBlue);
         }
       } catch (e) {
         if (context.mounted) {
@@ -815,7 +815,7 @@ class EditorListModal extends HookConsumerWidget {
             .denyRequest(requestorId);
         initialize();
         if (context.mounted) {
-          CustomSnackBar.show(context, 'リクエストを拒否しました', MyColor.blue);
+          CustomSnackBar.show(context, 'リクエストを拒否しました', MyColor.lightBlue);
         }
       } catch (e) {
         if (context.mounted) {
@@ -831,7 +831,7 @@ class EditorListModal extends HookConsumerWidget {
             .excludeEditor(excludeEditorId);
         initialize();
         if (context.mounted) {
-          CustomSnackBar.show(context, '編集者を除外しました', MyColor.blue);
+          CustomSnackBar.show(context, '編集者を除外しました', MyColor.lightBlue);
         }
       } catch (e) {
         if (context.mounted) {
