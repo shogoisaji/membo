@@ -167,10 +167,12 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                             color: permission == BoardPermission.owner
                                 ? MyColor.lightRed
                                 : permission == BoardPermission.editor
-                                    ? const Color.fromARGB(255, 89, 84, 233)
+                                    ? const Color.fromARGB(255, 72, 90, 255)
                                     // ? MyColor.lightBlue
                                     : null),
                       )),
+
+                  /// permission icon
                   Positioned(
                       top: 5,
                       left: 5,
@@ -183,6 +185,24 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                         color: MyColor.greenSuperLight,
                         size: 24,
                       )),
+
+                  /// bookmark label
+                  permission == BoardPermission.owner
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          top: 5,
+                          right: 5,
+                          child: Icon(Icons.bookmark_rounded,
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  blurRadius: 2,
+                                  spreadRadius: 1,
+                                  offset: const Offset(1, 1),
+                                ),
+                              ],
+                              color: MyColor.greenDark,
+                              size: 30)),
 
                   /// delete label
                   Positioned(

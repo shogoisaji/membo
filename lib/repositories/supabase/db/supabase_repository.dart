@@ -142,7 +142,7 @@ class SupabaseRepository {
       final board = BoardModel.fromJson(response[0]);
       return board;
     } catch (e) {
-      throw AppException.error('Boardを取得できませんでした',
+      throw AppException.error('ボードを取得できませんでした',
           detail: 'getBoardById() : board id -> $id');
     }
   }
@@ -160,7 +160,7 @@ class SupabaseRepository {
     } on AppException catch (_) {
       rethrow;
     } catch (e) {
-      throw AppException.warning('Boardを取得できませんでした',
+      throw AppException.warning('ボードを取得できませんでした',
           detail: 'getBoardNameAndThumbnail() : board id -> $id');
     }
   }
