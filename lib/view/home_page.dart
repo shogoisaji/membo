@@ -29,6 +29,8 @@ class HomePage extends HookConsumerWidget {
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
 
+    final isLoading = useState(true);
+
     final pageController = usePageController();
     final textFocusNode = useFocusNode();
 
@@ -39,6 +41,7 @@ class HomePage extends HookConsumerWidget {
     final homePageState = ref.watch(homePageViewModelProvider);
 
     void initialize() async {
+      isLoading.value = true;
       try {
         await ref.read(homePageViewModelProvider.notifier).initialize().timeout(
           const Duration(seconds: 5),
@@ -78,6 +81,8 @@ class HomePage extends HookConsumerWidget {
             context.go('/sign-in');
           });
         }
+      } finally {
+        isLoading.value = false;
       }
     }
 
@@ -132,6 +137,11 @@ class HomePage extends HookConsumerWidget {
       }
     }
 
+    Future<void> handleRefresh() async {
+      //
+      initialize();
+    }
+
     useEffect(() {
       initialize();
 
@@ -179,191 +189,205 @@ class HomePage extends HookConsumerWidget {
       body: Stack(
         children: [
           BgPaint(width: w, height: h),
-          homePageState.isLoading
+          isLoading.value
               ? const Center(child: CircularProgressIndicator())
-              : CustomScrollView(
-                  slivers: [
-                    SliverAppBar(
-                      stretch: true,
-                      expandedHeight: appBarHeight,
-                      flexibleSpace: FlexibleSpaceBar(
-                        background: Container(
-                          color: MyColor.pink,
-                          height: double.infinity,
-                          width: double.infinity,
-                          child: Stack(
-                            children: [
-                              CarouselSlider(
-                                items: [
-                                  SvgPicture.asset(
-                                    'assets/images/svg/title.svg',
-                                    fit: BoxFit.contain,
-                                    width: 100,
-                                    height: 100,
-                                    colorFilter: const ColorFilter.mode(
-                                        MyColor.greenText, BlendMode.srcIn),
+              : RefreshIndicator(
+                  color: MyColor.greenText,
+                  backgroundColor: MyColor.pink,
+                  displacement: 300,
+                  onRefresh: handleRefresh,
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverAppBar(
+                        stretch: false,
+                        expandedHeight: appBarHeight,
+                        flexibleSpace: FlexibleSpaceBar(
+                          background: Container(
+                            color: MyColor.pink,
+                            height: double.infinity,
+                            width: double.infinity,
+                            child: Stack(
+                              children: [
+                                CarouselSlider(
+                                  items: [
+                                    SvgPicture.asset(
+                                      'assets/images/svg/title.svg',
+                                      fit: BoxFit.contain,
+                                      width: 100,
+                                      height: 100,
+                                      colorFilter: const ColorFilter.mode(
+                                          MyColor.greenText, BlendMode.srcIn),
+                                    ),
+                                    ...carouselImageSliders
+                                  ],
+                                  options: CarouselOptions(
+                                    height: double.infinity,
+                                    viewportFraction: 1.0,
+                                    autoPlay: true,
+                                    autoPlayInterval:
+                                        const Duration(milliseconds: 3500),
                                   ),
-                                  ...carouselImageSliders
-                                ],
-                                options: CarouselOptions(
+                                ),
+                                Container(
+                                  width: double.infinity,
                                   height: double.infinity,
-                                  viewportFraction: 1.0,
-                                  autoPlay: true,
-                                  autoPlayInterval:
-                                      const Duration(milliseconds: 3500),
-                                ),
-                              ),
-                              Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.transparent,
-                                      Colors.transparent,
-                                      Colors.transparent,
-                                      Colors.transparent,
-                                      MyColor.pink.withOpacity(0.1),
-                                      MyColor.pink.withOpacity(0.7),
-                                      MyColor.pink,
-                                      MyColor.pink,
-                                    ],
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.transparent,
+                                        Colors.transparent,
+                                        Colors.transparent,
+                                        MyColor.pink.withOpacity(0.1),
+                                        MyColor.pink.withOpacity(0.7),
+                                        MyColor.pink,
+                                        MyColor.pink,
+                                      ],
+                                    ),
+                                  ),
+                                  child: Align(
+                                    alignment: const Alignment(0.0, 0.88),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          width: 170,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.settings,
+                                                  size: 42,
+                                                ),
+                                                onPressed: () {
+                                                  HapticFeedback.lightImpact();
+                                                  context.go('/settings');
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: SvgPicture.asset(
+                                                  'assets/images/svg/connect.svg',
+                                                  width: 40,
+                                                  height: 40,
+                                                  colorFilter:
+                                                      const ColorFilter.mode(
+                                                          MyColor.greenText,
+                                                          BlendMode.srcIn),
+                                                ),
+                                                onPressed: () {
+                                                  HapticFeedback.lightImpact();
+                                                  context.go('/connect');
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 12.0),
+                                          child: CustomButton(
+                                            width: 160,
+                                            height: 42,
+                                            color: MyColor.lightBlue,
+                                            child: Center(
+                                                child: Text(
+                                              'ボード作成',
+                                              style: lightTextTheme.bodyLarge!
+                                                  .copyWith(
+                                                color: Colors.white,
+                                              ),
+                                            )),
+                                            onTap: () {
+                                              currentPage.value = 1;
+                                              pageController.nextPage(
+                                                  duration: const Duration(
+                                                      milliseconds: 300),
+                                                  curve: Curves.easeInOut);
+                                              textFocusNode.requestFocus();
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                child: Align(
-                                  alignment: const Alignment(0.0, 0.88),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      SizedBox(
-                                        width: 170,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.settings,
-                                                size: 42,
-                                              ),
-                                              onPressed: () {
-                                                HapticFeedback.lightImpact();
-                                                context.go('/settings');
-                                              },
-                                            ),
-                                            IconButton(
-                                              icon: SvgPicture.asset(
-                                                'assets/images/svg/connect.svg',
-                                                width: 40,
-                                                height: 40,
-                                                colorFilter:
-                                                    const ColorFilter.mode(
-                                                        MyColor.greenText,
-                                                        BlendMode.srcIn),
-                                              ),
-                                              onPressed: () {
-                                                HapticFeedback.lightImpact();
-                                                context.go('/connect');
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 12.0),
-                                        child: CustomButton(
-                                          width: 160,
-                                          height: 42,
-                                          color: MyColor.lightBlue,
-                                          child: Center(
-                                              child: Text(
-                                            'ボード作成',
-                                            style: lightTextTheme.bodyLarge!
-                                                .copyWith(
-                                              color: Colors.white,
-                                            ),
-                                          )),
-                                          onTap: () {
-                                            currentPage.value = 1;
-                                            pageController.nextPage(
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                                curve: Curves.easeInOut);
-                                            textFocusNode.requestFocus();
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 12),
-                      sliver: SliverGrid(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          // childAspectRatio: 1.0,
-                          mainAxisExtent: 250,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            return LayoutBuilder(
-                              builder: (context, constraints) {
-                                return CustomHomeCardWidget(
-                                  board: homePageState
-                                      .allCardBoardList[index].board,
-                                  width: constraints.maxWidth,
-                                  height: constraints.maxHeight,
-                                  imageUrl: homePageState
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 12),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            // childAspectRatio: 1.0,
+                            mainAxisExtent: 250,
+                          ),
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              return LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return CustomHomeCardWidget(
+                                    board: homePageState
+                                        .allCardBoardList[index].board,
+                                    width: constraints.maxWidth,
+                                    height: constraints.maxHeight,
+                                    imageUrl: homePageState
+                                            .allCardBoardList[index]
+                                            .board
+                                            .thumbnailUrl ??
+                                        '',
+                                    onTapQr: () {
+                                      handleTapQr(homePageState
                                           .allCardBoardList[index]
                                           .board
-                                          .thumbnailUrl ??
-                                      '',
-                                  onTapQr: () {
-                                    handleTapQr(homePageState
-                                        .allCardBoardList[index].board.boardId);
-                                  },
-                                  onTapView: () {
-                                    handleTapView(homePageState
-                                        .allCardBoardList[index].board.boardId);
-                                  },
-                                  onTapEdit: () {
-                                    handleTapEdit(homePageState
-                                        .allCardBoardList[index].board.boardId);
-                                  },
-                                  onTapDelete: () {
-                                    handleTapDelete(homePageState
-                                        .allCardBoardList[index].board.boardId);
-                                  },
-                                  permission: homePageState
-                                      .allCardBoardList[index].permission,
-                                );
-                              },
-                            );
-                          },
-                          childCount: homePageState.allCardBoardList.length,
+                                          .boardId);
+                                    },
+                                    onTapView: () {
+                                      handleTapView(homePageState
+                                          .allCardBoardList[index]
+                                          .board
+                                          .boardId);
+                                    },
+                                    onTapEdit: () {
+                                      handleTapEdit(homePageState
+                                          .allCardBoardList[index]
+                                          .board
+                                          .boardId);
+                                    },
+                                    onTapDelete: () {
+                                      handleTapDelete(homePageState
+                                          .allCardBoardList[index]
+                                          .board
+                                          .boardId);
+                                    },
+                                    permission: homePageState
+                                        .allCardBoardList[index].permission,
+                                  );
+                                },
+                              );
+                            },
+                            childCount: homePageState.allCardBoardList.length,
+                          ),
                         ),
                       ),
-                    ),
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: 150),
-                    ),
-                  ],
+                      const SliverToBoxAdapter(
+                        child: SizedBox(height: 150),
+                      ),
+                    ],
+                  ),
                 ),
 
           /// show QR code

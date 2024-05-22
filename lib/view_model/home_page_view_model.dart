@@ -141,7 +141,6 @@ class HomePageViewModel extends _$HomePageViewModel {
     }
 
     state = state.copyWith(
-      isLoading: false,
       userModel: userData,
       allCardBoardList: [
         ...tempOwnedCardBoardList.reversed,
