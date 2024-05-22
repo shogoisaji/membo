@@ -50,9 +50,13 @@ class HomePage extends HookConsumerWidget {
           },
         );
 
+        final isFirst = await ref
+            .read(homePageViewModelProvider.notifier)
+            .checkFirstLogin();
+
         /// hint dialog
         if (context.mounted) {
-          if (homePageState.isFirst) {
+          if (isFirst) {
             AppHintDialog.show(context, () {
               ref.read(homePageViewModelProvider.notifier).firstLogin();
               context.go('/account');

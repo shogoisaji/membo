@@ -140,14 +140,8 @@ class HomePageViewModel extends _$HomePageViewModel {
       }
     }
 
-    /// check first login
-    final isFirst = ref
-        .read(sharedPreferencesRepositoryProvider)
-        .fetch<bool>(SharedPreferencesKey.isFirst);
-
     state = state.copyWith(
       isLoading: false,
-      isFirst: isFirst ?? true,
       userModel: userData,
       allCardBoardList: [
         ...tempOwnedCardBoardList.reversed,
@@ -159,8 +153,15 @@ class HomePageViewModel extends _$HomePageViewModel {
     );
   }
 
-  void firstLogin() {
-    ref
+  Future<bool> checkFirstLogin() async {
+    final isFirst = ref
+        .read(sharedPreferencesRepositoryProvider)
+        .fetch<bool>(SharedPreferencesKey.isFirst);
+    return isFirst ?? true;
+  }
+
+  void firstLogin() async {
+    await ref
         .read(sharedPreferencesRepositoryProvider)
         .save<bool>(SharedPreferencesKey.isFirst, false);
   }

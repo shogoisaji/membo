@@ -254,22 +254,37 @@ class BoardSettingsPage extends HookConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                                showEditRequestList();
-                              },
-                              child: SvgPicture.asset(
-                                'assets/images/svg/editor.svg',
-                                colorFilter: const ColorFilter.mode(
-                                    MyColor.greenText, BlendMode.srcIn),
-                                width: 35,
-                                height: 35,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  HapticFeedback.lightImpact();
+                                  handleTapPublic();
+                                },
+                                child: Text(
+                                    boardSettingsState.currentBoard!.isPublic
+                                        ? '非公開にする'
+                                        : '公開する',
+                                    style: lightTextTheme.bodyLarge),
                               ),
-                            ),
+                              const SizedBox(width: 10.0),
+                              ElevatedButton(
+                                onPressed: () {
+                                  HapticFeedback.lightImpact();
+                                  showEditRequestList();
+                                },
+                                child: SvgPicture.asset(
+                                  'assets/images/svg/editor.svg',
+                                  colorFilter: const ColorFilter.mode(
+                                      MyColor.greenText, BlendMode.srcIn),
+                                  width: 35,
+                                  height: 35,
+                                ),
+                              ),
+                            ],
                           ),
+                          const SizedBox(height: 8.0),
                           CustomListContent(
                             titleIcon: const Icon(Icons.local_mall),
                             title: 'ボード名',
@@ -622,27 +637,27 @@ class BoardSettingsPage extends HookConsumerWidget {
                                 )
                               : const SizedBox.shrink(),
                           const SizedBox(height: 32.0),
-                          boardSettingsState.isOwner
-                              ? CustomButton(
-                                  width: double.infinity,
-                                  height: 50,
-                                  color: MyColor.blueDark,
-                                  onTap: () {
-                                    handleTapPublic();
-                                  },
-                                  child: Center(
-                                      child: Text(
-                                          boardSettingsState
-                                                  .currentBoard!.isPublic
-                                              ? '非公開'
-                                              : '公開',
-                                          style: lightTextTheme.bodyLarge!
-                                              .copyWith(
-                                                  color: MyColor
-                                                      .greenSuperLight))),
-                                )
-                              : const SizedBox.shrink(),
-                          const SizedBox(height: 32.0),
+                          // boardSettingsState.isOwner
+                          //     ? CustomButton(
+                          //         width: double.infinity,
+                          //         height: 50,
+                          //         color: MyColor.blueDark,
+                          //         onTap: () {
+                          //           handleTapPublic();
+                          //         },
+                          //         child: Center(
+                          //             child: Text(
+                          //                 boardSettingsState
+                          //                         .currentBoard!.isPublic
+                          //                     ? '非公開'
+                          //                     : '公開',
+                          //                 style: lightTextTheme.bodyLarge!
+                          //                     .copyWith(
+                          //                         color: MyColor
+                          //                             .greenSuperLight))),
+                          //       )
+                          //     : const SizedBox.shrink(),
+                          // const SizedBox(height: 32.0),
                           boardSettingsState.isOwner
                               ? CustomButton(
                                   width: double.infinity,
