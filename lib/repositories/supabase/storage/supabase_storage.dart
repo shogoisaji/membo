@@ -74,6 +74,7 @@ class SupabaseStorage {
         throw Exception('image delete failed: $path');
       }
     } on PostgrestException catch (_) {
+      
       throw Exception('Error deleting image : PostgrestException');
     } catch (e) {
       throw Exception('Error deleting image');
