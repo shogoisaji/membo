@@ -153,11 +153,16 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                                   width: double.infinity,
                                   height: double.infinity,
                                 ))
-                        : Image.asset(
-                            'assets/images/logo.png',
-                            fit: BoxFit.contain,
-                            width: double.infinity,
-                            height: double.infinity,
+                        : Align(
+                            alignment: const Alignment(0.0, -0.3),
+                            child: SvgPicture.asset(
+                              'assets/images/svg/title.svg',
+                              fit: BoxFit.contain,
+                              width: 70,
+                              height: 70,
+                              colorFilter: const ColorFilter.mode(
+                                  MyColor.greenText, BlendMode.srcIn),
+                            ),
                           ),
                   ),
 
@@ -171,42 +176,54 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                             color: permission == BoardPermission.owner
                                 ? MyColor.lightRed
                                 : permission == BoardPermission.editor
-                                    ? const Color.fromARGB(255, 72, 90, 255)
+                                    ? const Color.fromARGB(255, 74, 100, 246)
                                     // ? MyColor.lightBlue
                                     : null),
                       )),
 
                   /// permission icon
                   Positioned(
-                      top: 5,
-                      left: 5,
-                      child: Icon(
-                        permission == BoardPermission.owner
-                            ? Icons.star
-                            : permission == BoardPermission.editor
-                                ? Icons.edit
-                                : null,
-                        color: MyColor.greenSuperLight,
-                        size: 24,
-                      )),
+                    top: 5,
+                    left: 5,
+                    child: permission == BoardPermission.owner
+                        ? const Icon(Icons.star,
+                            size: 24, color: MyColor.greenSuperLight)
+                        : permission == BoardPermission.editor
+                            ? const Icon(Icons.edit,
+                                size: 24, color: MyColor.greenSuperLight)
+                            : Icon(Icons.bookmark_rounded,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black.withOpacity(0.7),
+                                    blurRadius: 2,
+                                    offset: const Offset(1, 1),
+                                  )
+                                ],
+                                color: MyColor.greenSuperLight,
+                                size: 30),
+                  ),
 
-                  /// bookmark label
-                  permission == BoardPermission.owner
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          top: 5,
-                          right: 5,
-                          child: Icon(Icons.bookmark_rounded,
-                              shadows: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.3),
-                                  blurRadius: 2,
-                                  spreadRadius: 1,
-                                  offset: const Offset(1, 1),
-                                ),
-                              ],
-                              color: MyColor.greenDark,
-                              size: 30)),
+                  /// Date label
+                  Positioned(
+                    top: 8,
+                    right: 5,
+                    child: Text(
+                      '${board.thatDay.year}.${board.thatDay.month}.${board.thatDay.day}',
+                      style: TextStyle(
+                        height: 0.75,
+                        color: MyColor.greenSuperLight,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.7),
+                            blurRadius: 2,
+                            offset: const Offset(1, 1),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
 
                   /// delete label
                   Positioned(
