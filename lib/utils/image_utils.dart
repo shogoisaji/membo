@@ -9,8 +9,6 @@ class ImageUtils {
 
     if (image != null) {
       return Size(image.width.toDouble(), image.height.toDouble());
-    } else {
-      print('Failed to decode image');
     }
     return null;
   }

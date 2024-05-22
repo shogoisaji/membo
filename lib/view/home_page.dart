@@ -114,7 +114,7 @@ class HomePage extends HookConsumerWidget {
             .read(homePageViewModelProvider.notifier)
             .deleteBoardFromCard(boardId);
         if (context.mounted) {
-          CustomSnackBar.show(context, 'ボードを削除しました', MyColor.blue);
+          CustomSnackBar.show(context, 'ボードを削除しました', MyColor.lightBlue);
         }
       } catch (e) {
         if (context.mounted) {

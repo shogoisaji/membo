@@ -79,7 +79,7 @@ class BoardViewPage extends HookConsumerWidget {
               boardId,
             );
         if (context.mounted) {
-          CustomSnackBar.show(context, 'ブックマークに追加しました', MyColor.blue);
+          CustomSnackBar.show(context, 'ブックマークに追加しました', MyColor.lightBlue);
         }
       } catch (e) {
         if (context.mounted) {
@@ -113,7 +113,7 @@ class BoardViewPage extends HookConsumerWidget {
                   .read(boardViewPageViewModelProvider.notifier)
                   .sendEditRequest(boardId);
               if (context.mounted) {
-                CustomSnackBar.show(context, 'リクエストを送りました', MyColor.blue);
+                CustomSnackBar.show(context, 'リクエストを送りました', MyColor.lightBlue);
               }
             },
             onRightButtonPressed: () {
@@ -148,7 +148,7 @@ class BoardViewPage extends HookConsumerWidget {
                   .read(boardViewPageViewModelProvider.notifier)
                   .cancelRequest(boardId);
               if (context.mounted) {
-                CustomSnackBar.show(context, 'リクエストを削除しました', MyColor.blue);
+                CustomSnackBar.show(context, 'リクエストを削除しました', MyColor.lightBlue);
               }
             },
             onRightButtonPressed: () {
