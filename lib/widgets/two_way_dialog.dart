@@ -29,13 +29,13 @@ class TwoWayDialog extends HookWidget {
     final AnimationController animationController = useAnimationController(
       duration: const Duration(milliseconds: 200),
     )..forward();
-    final scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
+    final scaleAnimation = Tween<double>(begin: 0.97, end: 1.0).animate(
       CurvedAnimation(
         parent: animationController,
         curve: Curves.easeInOut,
       ),
     );
-    final slideAnimation = Tween<double>(begin: 10, end: 0.0).animate(
+    final slideAnimation = Tween<double>(begin: 5, end: 0.0).animate(
       CurvedAnimation(
         parent: animationController,
         curve: Curves.easeInOut,
@@ -46,7 +46,7 @@ class TwoWayDialog extends HookWidget {
       animation: animationController,
       builder: (context, child) {
         return Transform.translate(
-            offset: Offset(slideAnimation.value, slideAnimation.value * 2),
+            offset: Offset(slideAnimation.value, slideAnimation.value),
             child: Transform.scale(
               scale: scaleAnimation.value,
               child: Dialog(
@@ -74,7 +74,7 @@ class TwoWayDialog extends HookWidget {
                         ),
                         const BoxShadow(
                           color: MyColor.greenText,
-                          blurRadius: 1,
+                          blurRadius: 0.5,
                           spreadRadius: 1,
                         ),
                       ],

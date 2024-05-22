@@ -207,6 +207,7 @@ class BoardSettingsPage extends HookConsumerWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: false,
+      backgroundColor: MyColor.green,
       appBar: AppBar(
         title: Text('ボード設定', style: lightTextTheme.titleLarge),
         leading: IconButton(

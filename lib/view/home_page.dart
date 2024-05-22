@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -247,75 +248,101 @@ class HomePage extends HookConsumerWidget {
                                       ],
                                     ),
                                   ),
-                                  child: Align(
-                                    alignment: const Alignment(0.0, 0.88),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SizedBox(
-                                          width: 170,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              IconButton(
-                                                icon: const Icon(
-                                                  Icons.settings,
-                                                  size: 42,
-                                                ),
-                                                onPressed: () {
-                                                  HapticFeedback.lightImpact();
-                                                  context.go('/settings');
-                                                },
-                                              ),
-                                              IconButton(
-                                                icon: SvgPicture.asset(
-                                                  'assets/images/svg/connect.svg',
-                                                  width: 40,
-                                                  height: 40,
-                                                  colorFilter:
-                                                      const ColorFilter.mode(
-                                                          MyColor.greenText,
-                                                          BlendMode.srcIn),
-                                                ),
-                                                onPressed: () {
-                                                  HapticFeedback.lightImpact();
-                                                  context.go('/connect');
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 12.0),
-                                          child: CustomButton(
-                                            width: 160,
-                                            height: 42,
-                                            color: MyColor.lightBlue,
-                                            child: Center(
-                                                child: Text(
-                                              'ボード作成',
-                                              style: lightTextTheme.bodyLarge!
-                                                  .copyWith(
-                                                color: Colors.white,
-                                              ),
-                                            )),
-                                            onTap: () {
-                                              currentPage.value = 1;
-                                              pageController.nextPage(
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                  curve: Curves.easeInOut);
-                                              textFocusNode.requestFocus();
+                                  child: Stack(
+                                    children: [
+                                      SafeArea(
+                                        child: Positioned(
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.help_outline,
+                                              size: 30,
+                                              color: MyColor.green,
+                                            ),
+                                            onPressed: () {
+                                              HapticFeedback.lightImpact();
+                                              AppHintDialog.show(context, () {
+                                                //
+                                              });
                                             },
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                      Align(
+                                        alignment: const Alignment(0.0, 0.88),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            SizedBox(
+                                              width: 170,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.settings,
+                                                      size: 42,
+                                                    ),
+                                                    onPressed: () {
+                                                      HapticFeedback
+                                                          .lightImpact();
+                                                      context.go('/settings');
+                                                    },
+                                                  ),
+                                                  IconButton(
+                                                    icon: SvgPicture.asset(
+                                                      'assets/images/svg/connect.svg',
+                                                      width: 40,
+                                                      height: 40,
+                                                      colorFilter:
+                                                          const ColorFilter
+                                                              .mode(
+                                                              MyColor.greenText,
+                                                              BlendMode.srcIn),
+                                                    ),
+                                                    onPressed: () {
+                                                      HapticFeedback
+                                                          .lightImpact();
+                                                      context.go('/connect');
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 12.0),
+                                              child: CustomButton(
+                                                width: 160,
+                                                height: 42,
+                                                color: MyColor.lightBlue,
+                                                child: Center(
+                                                    child: Text(
+                                                  'ボード作成',
+                                                  style: lightTextTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                    color: Colors.white,
+                                                  ),
+                                                )),
+                                                onTap: () {
+                                                  currentPage.value = 1;
+                                                  pageController.nextPage(
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      curve: Curves.easeInOut);
+                                                  textFocusNode.requestFocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -473,28 +500,30 @@ class BoardNameInputContent extends HookWidget {
 
     final isBoardMax = currentBoardCount == membershipType.maxBoardCount;
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Align(
-            alignment: const Alignment(-0.93, -0.79),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, size: 36),
-              onPressed: () {
-                HapticFeedback.lightImpact();
-                onTapCancel();
-              },
-            )),
-        Align(
-          alignment: const Alignment(0.0, -0.5),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: Text('ボードの新規作成', style: lightTextTheme.titleLarge),
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, size: 36),
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            onTapCancel();
+          },
+        ),
+      ),
+      body: SafeArea(
+        child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(
               maxWidth: 300,
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              // mainAxisSize: MainAxisSize.min,
               children: [
+                const SizedBox(height: 50),
                 isBoardMax
                     ? Container(
                         decoration: BoxDecoration(
@@ -706,7 +735,7 @@ class BoardNameInputContent extends HookWidget {
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }
