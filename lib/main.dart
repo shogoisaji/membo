@@ -93,8 +93,6 @@ class MyApp extends HookConsumerWidget {
                     .read(sharedPreferencesRepositoryProvider)
                     .save<String>(
                         SharedPreferencesKey.skipUpdateVersion, distVersion);
-                if (!context.mounted) return;
-                Navigator.pop(context);
               },
             );
           });

@@ -211,12 +211,17 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                       '${board.thatDay.year}.${board.thatDay.month}.${board.thatDay.day}',
                       style: TextStyle(
                         height: 0.75,
-                        color: MyColor.greenSuperLight,
+                        color: Colors.grey.shade200,
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                         shadows: [
+                          const Shadow(
+                            color: Colors.white,
+                            blurRadius: 0.5,
+                            offset: Offset(1, 1),
+                          ),
                           Shadow(
-                            color: Colors.black.withOpacity(0.7),
+                            color: Colors.black.withOpacity(0.5),
                             blurRadius: 2,
                             offset: const Offset(1, 1),
                           )

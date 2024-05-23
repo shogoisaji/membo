@@ -1040,15 +1040,14 @@ class CustomFloatingButton extends HookConsumerWidget {
           if (e.code == 'photo_access_denied') {
             showDialog(
                 context: context,
-                builder: (context) => TwoWayDialog(
+                builder: (dialogContext) => TwoWayDialog(
                       title: '画像にアクセスできません',
                       leftButtonText: '設定画面',
                       rightButtonText: '戻る',
                       onLeftButtonPressed: () {
                         AppSettings.openAppSettings();
-                        Navigator.of(context).pop();
                       },
-                      onRightButtonPressed: () => Navigator.of(context).pop(),
+                      onRightButtonPressed: () {},
                     ));
           } else {
             ErrorDialog.show(

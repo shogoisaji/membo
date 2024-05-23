@@ -81,13 +81,23 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
       throw Exception('current board is not set');
     }
 
-    /// public を反転
-    final newBoard = state.tempBoard!.copyWith(
-      isPublic: !state.currentBoard!.isPublic,
-    );
-    state = state.copyWith(tempBoard: newBoard);
     try {
-      await ref.read(supabaseRepositoryProvider).updateBoard(state.tempBoard!);
+      /// public を反転
+      final newPublic = !state.currentBoard!.isPublic;
+
+      /// DBに反映
+      await ref
+          .read(supabaseRepositoryProvider)
+          .updatePublicStatus(state.currentBoard!.boardId, newPublic);
+
+      /// current, temp 両方を更新
+      final newCurrent = state.currentBoard!.copyWith(
+        isPublic: newPublic,
+      );
+      final newTemp = state.tempBoard!.copyWith(
+        isPublic: newPublic,
+      );
+      state = state.copyWith(currentBoard: newCurrent, tempBoard: newTemp);
     } catch (e) {
       throw Exception('error update public: $e');
     }
