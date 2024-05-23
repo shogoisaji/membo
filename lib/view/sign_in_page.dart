@@ -1,13 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/gen/assets.gen.dart';
-import 'package:membo/models/notice/public_notices_model.dart';
-import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
@@ -24,7 +21,6 @@ class SignInPage extends HookConsumerWidget {
     const Color googleColor = MyColor.superLightBlue;
     const Color appleColor = MyColor.lightYellow;
     final shutterColor = useState<Color>(googleColor);
-    final user = ref.watch(userStateProvider);
 
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 1200),
@@ -42,22 +38,6 @@ class SignInPage extends HookConsumerWidget {
     final passwordController = useTextEditingController();
     final emailFocusNode = useFocusNode();
     final passwordFocusNode = useFocusNode();
-    final noticeData = useState<PublicNoticesModel?>(null);
-
-    Future<void> fetchPublicNotices() async {
-      try {
-        noticeData.value =
-            await ref.read(supabaseRepositoryProvider).fetchPublicNotices();
-      } catch (e) {
-        if (context.mounted) {
-          ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
-            Future.delayed(const Duration(seconds: 2), () {
-              fetchPublicNotices();
-            });
-          });
-        }
-      }
-    }
 
     Future<void> policyURL() async {
       final Uri url = Uri.parse('https://membo.vercel.app/privacy-policy');
@@ -130,424 +110,346 @@ class SignInPage extends HookConsumerWidget {
       }
     }
 
-    useEffect(() {
-      fetchPublicNotices();
-      return null;
-    }, [user]);
-    return noticeData.value == null
-        ? const SizedBox.shrink()
-        : GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              // appBar: AppBar(),
-              body: noticeData.value!.noticeCode != 100
-                  ? NoticeDialog(onTap: () {
-                      fetchPublicNotices();
-                    })
-                  : Stack(
-                      // fit: StackFit.expand,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        // appBar: AppBar(),
+        body: Stack(
+          // fit: StackFit.expand,
+          children: [
+            BgPaint(width: w, height: h),
+            SafeArea(
+              child: Align(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 400,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        BgPaint(width: w, height: h),
-                        SafeArea(
-                          child: Align(
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                maxWidth: 400,
+                        SvgPicture.asset(
+                          'assets/images/svg/title.svg',
+                          // width: 100,
+                          fit: BoxFit.fitHeight,
+                          height: 100 * h / 1300,
+                          colorFilter: const ColorFilter.mode(
+                              MyColor.greenText, BlendMode.srcIn),
+                        ),
+                        Form(
+                          key: formKey,
+                          child: Column(
+                            children: [
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Text('メールアドレス',
+                                    style: lightTextTheme.bodyMedium),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/images/svg/title.svg',
-                                      // width: 100,
-                                      fit: BoxFit.fitHeight,
-                                      height: 100 * h / 1300,
-                                      colorFilter: const ColorFilter.mode(
-                                          MyColor.greenText, BlendMode.srcIn),
+                              TextFormField(
+                                // autofocus: true,
+                                focusNode: emailFocusNode,
+                                controller: emailController,
+                                style: lightTextTheme.bodyMedium,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: const InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    counterText: '',
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                      borderSide:
+                                          BorderSide(color: MyColor.greenText),
                                     ),
-                                    Form(
-                                      key: formKey,
-                                      child: Column(
-                                        children: [
-                                          Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Text('メールアドレス',
-                                                style:
-                                                    lightTextTheme.bodyMedium),
-                                          ),
-                                          TextFormField(
-                                            // autofocus: true,
-                                            focusNode: emailFocusNode,
-                                            controller: emailController,
-                                            style: lightTextTheme.bodyMedium,
-                                            keyboardType:
-                                                TextInputType.emailAddress,
-                                            decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 8),
-                                                counterText: '',
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              12.0)),
-                                                  borderSide: BorderSide(
-                                                      color: MyColor.greenText),
-                                                ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              12.0)),
-                                                  borderSide: BorderSide(
-                                                      color: MyColor.greenText),
-                                                ),
-                                                focusedErrorBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              12.0)),
-                                                  borderSide: BorderSide(
-                                                      color: MyColor.red),
-                                                ),
-                                                errorBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              12.0)),
-                                                  borderSide: BorderSide(
-                                                      color: MyColor.red),
-                                                )),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return '入力欄が空欄です';
-                                              } else if (!value.contains('@') ||
-                                                  !value.contains('.')) {
-                                                return 'メールアドレスの形式が正しくありません';
-                                              }
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                      borderSide:
+                                          BorderSide(color: MyColor.greenText),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                      borderSide:
+                                          BorderSide(color: MyColor.red),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                      borderSide:
+                                          BorderSide(color: MyColor.red),
+                                    )),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '入力欄が空欄です';
+                                  } else if (!value.contains('@') ||
+                                      !value.contains('.')) {
+                                    return 'メールアドレスの形式が正しくありません';
+                                  }
 
-                                              return null;
-                                            },
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Text('パスワード',
-                                                style:
-                                                    lightTextTheme.bodyMedium),
-                                          ),
-                                          TextFormField(
-                                            focusNode: passwordFocusNode,
-                                            controller: passwordController,
-                                            style: lightTextTheme.bodyMedium,
-                                            keyboardType:
-                                                TextInputType.visiblePassword,
-                                            decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 8),
-                                                counterText: '',
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              12.0)),
-                                                  borderSide: BorderSide(
-                                                      color: MyColor.greenText),
-                                                ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              12.0)),
-                                                  borderSide: BorderSide(
-                                                      color: MyColor.greenText),
-                                                ),
-                                                focusedErrorBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              12.0)),
-                                                  borderSide: BorderSide(
-                                                      color: MyColor.red),
-                                                ),
-                                                errorBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              12.0)),
-                                                  borderSide: BorderSide(
-                                                      color: MyColor.red),
-                                                )),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return '入力欄が空欄です';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          const SizedBox(height: 14),
-                                          CustomButton(
-                                            width: 300,
-                                            height: 55,
-                                            color: const Color.fromARGB(
-                                                255, 84, 85, 103),
-                                            child: Center(
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 20,
-                                                            right: 14),
-                                                    child: SvgPicture.asset(
-                                                        'assets/images/svg/email.svg',
-                                                        width: 30,
-                                                        height: 30,
-                                                        colorFilter:
-                                                            const ColorFilter
-                                                                .mode(
-                                                                MyColor
-                                                                    .greenSuperLight,
-                                                                BlendMode
-                                                                    .srcIn)),
-                                                  ),
-                                                  Text('Sign In with Email',
-                                                      style: lightTextTheme
-                                                          .bodyLarge!
-                                                          .copyWith(
-                                                        color: MyColor
-                                                            .greenSuperLight,
-                                                      )),
-                                                ],
-                                              ),
-                                            ),
-                                            onTap: () {
-                                              handleSignInWithEmail();
-                                            },
-                                          ),
-                                          const SizedBox(height: 16),
-                                          TextButton(
-                                            onPressed: () =>
-                                                context.push('/sign-up'),
-                                            child: Center(
-                                                child: Text('新規登録',
-                                                    style: lightTextTheme
-                                                        .bodyLarge!
-                                                        .copyWith(
-                                                      color: MyColor.greenText,
-                                                    ))),
-                                          ),
-                                        ],
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 8),
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Text('パスワード',
+                                    style: lightTextTheme.bodyMedium),
+                              ),
+                              TextFormField(
+                                focusNode: passwordFocusNode,
+                                controller: passwordController,
+                                style: lightTextTheme.bodyMedium,
+                                keyboardType: TextInputType.visiblePassword,
+                                decoration: const InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    counterText: '',
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                      borderSide:
+                                          BorderSide(color: MyColor.greenText),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                      borderSide:
+                                          BorderSide(color: MyColor.greenText),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                      borderSide:
+                                          BorderSide(color: MyColor.red),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12.0)),
+                                      borderSide:
+                                          BorderSide(color: MyColor.red),
+                                    )),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '入力欄が空欄です';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 14),
+                              CustomButton(
+                                width: 300,
+                                height: 55,
+                                color: const Color.fromARGB(255, 84, 85, 103),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 20, right: 14),
+                                        child: SvgPicture.asset(
+                                            'assets/images/svg/email.svg',
+                                            width: 30,
+                                            height: 30,
+                                            colorFilter: const ColorFilter.mode(
+                                                MyColor.greenSuperLight,
+                                                BlendMode.srcIn)),
                                       ),
-                                    ),
-
-                                    /// divider
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: Container(
-                                            height: 2,
-                                            color: MyColor.greenText,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Text(
-                                          'or',
-                                          style: lightTextTheme.titleMedium,
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: Container(
-                                            height: 2,
-                                            color: MyColor.greenText,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                      ],
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        CustomButton(
-                                          width: 300,
-                                          height: 55,
-                                          color: googleColor,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 20, right: 14),
-                                                child: SvgPicture.asset(
-                                                  Assets.images.icons
-                                                      .googleOfficialSvg,
-                                                  width: 30,
-                                                  height: 30,
-                                                ),
-                                              ),
-                                              Text('Sign In with Google',
-                                                  style:
-                                                      lightTextTheme.bodyLarge),
-                                            ],
-                                          ),
-                                          onTap: () async {
-                                            handleSignInWithGoogle();
-                                          },
-                                        ),
-                                        const SizedBox(height: 30),
-                                        CustomButton(
-                                          width: 300,
-                                          height: 55,
-                                          color: appleColor,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 20, right: 14),
-                                                child: SvgPicture.asset(
-                                                  Assets.images.icons
-                                                      .appleOfficialSvg,
-                                                  width: 30,
-                                                  height: 30,
-                                                ),
-                                              ),
-                                              Text('Sign In with Apple',
-                                                  style:
-                                                      lightTextTheme.bodyLarge),
-                                            ],
-                                          ),
-                                          onTap: () {
-                                            handleSignInWithApple();
-                                          },
-                                        ),
-                                        const SizedBox(height: 50),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: RichText(
-                                                text: TextSpan(
-                                                  style:
-                                                      lightTextTheme.bodySmall,
-                                                  children: [
-                                                    TextSpan(
-                                                      text: '利用規約',
-                                                      style: lightTextTheme
-                                                          .bodySmall!
-                                                          .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 44, 87, 206),
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline,
-                                                      ),
-                                                      recognizer:
-                                                          TapGestureRecognizer()
-                                                            ..onTap = () async {
-                                                              await termsURL();
-                                                            },
-                                                    ),
-                                                    const TextSpan(text: ' と '),
-                                                    TextSpan(
-                                                      text: 'プライバシーポリシー',
-                                                      style: lightTextTheme
-                                                          .bodySmall!
-                                                          .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 44, 87, 206),
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline,
-                                                      ),
-                                                      recognizer:
-                                                          TapGestureRecognizer()
-                                                            ..onTap = () async {
-                                                              await policyURL();
-                                                            },
-                                                    ),
-                                                    const TextSpan(
-                                                        text:
-                                                            'に同意してサインインをお願いします'),
-                                                  ],
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                      Text('Sign In with Email',
+                                          style: lightTextTheme.bodyLarge!
+                                              .copyWith(
+                                            color: MyColor.greenSuperLight,
+                                          )),
+                                    ],
+                                  ),
                                 ),
+                                onTap: () {
+                                  handleSignInWithEmail();
+                                },
                               ),
-                            ),
+                              const SizedBox(height: 16),
+                              TextButton(
+                                onPressed: () => context.push('/sign-up'),
+                                child: Center(
+                                    child: Text('新規登録',
+                                        style:
+                                            lightTextTheme.bodyLarge!.copyWith(
+                                          color: MyColor.greenText,
+                                        ))),
+                              ),
+                            ],
                           ),
                         ),
-                        AnimatedBuilder(
-                          animation: animation,
-                          builder: (context, _) => IgnorePointer(
-                            child: Stack(
-                              fit: StackFit.expand,
+
+                        /// divider
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Container(
+                                height: 2,
+                                color: MyColor.greenText,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'or',
+                              style: lightTextTheme.titleMedium,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Container(
+                                height: 2,
+                                color: MyColor.greenText,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CustomButton(
+                              width: 300,
+                              height: 55,
+                              color: googleColor,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 14),
+                                    child: SvgPicture.asset(
+                                      Assets.images.icons.googleOfficialSvg,
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                  ),
+                                  Text('Sign In with Google',
+                                      style: lightTextTheme.bodyLarge),
+                                ],
+                              ),
+                              onTap: () async {
+                                handleSignInWithGoogle();
+                              },
+                            ),
+                            const SizedBox(height: 30),
+                            CustomButton(
+                              width: 300,
+                              height: 55,
+                              color: appleColor,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 14),
+                                    child: SvgPicture.asset(
+                                      Assets.images.icons.appleOfficialSvg,
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                  ),
+                                  Text('Sign In with Apple',
+                                      style: lightTextTheme.bodyLarge),
+                                ],
+                              ),
+                              onTap: () {
+                                handleSignInWithApple();
+                              },
+                            ),
+                            const SizedBox(height: 50),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Positioned(
-                                  bottom: 0,
-                                  left: w / 2 * (animation.value - 1) * 1.1,
-                                  child: CustomPaint(
-                                    size: Size(w, h),
-                                    painter: BgCustomPainter(
-                                        shutterColor.value, true),
+                                Expanded(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: lightTextTheme.bodySmall,
+                                      children: [
+                                        TextSpan(
+                                          text: '利用規約',
+                                          style: lightTextTheme.bodySmall!
+                                              .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: const Color.fromARGB(
+                                                255, 44, 87, 206),
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () async {
+                                              await termsURL();
+                                            },
+                                        ),
+                                        const TextSpan(text: ' と '),
+                                        TextSpan(
+                                          text: 'プライバシーポリシー',
+                                          style: lightTextTheme.bodySmall!
+                                              .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: const Color.fromARGB(
+                                                255, 44, 87, 206),
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () async {
+                                              await policyURL();
+                                            },
+                                        ),
+                                        const TextSpan(
+                                            text: 'に同意してサインインをお願いします'),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  left: w / 2 * (1 - animation.value) * 1.1,
-                                  child: CustomPaint(
-                                    size: Size(w, h),
-                                    painter: BgCustomPainter(
-                                        shutterColor.value, false),
-                                  ),
-                                ),
+                                )
                               ],
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
+                  ),
+                ),
+              ),
             ),
-          );
+            AnimatedBuilder(
+              animation: animation,
+              builder: (context, _) => IgnorePointer(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Positioned(
+                      bottom: 0,
+                      left: w / 2 * (animation.value - 1) * 1.1,
+                      child: CustomPaint(
+                        size: Size(w, h),
+                        painter: BgCustomPainter(shutterColor.value, true),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: w / 2 * (1 - animation.value) * 1.1,
+                      child: CustomPaint(
+                        size: Size(w, h),
+                        painter: BgCustomPainter(shutterColor.value, false),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -709,105 +611,6 @@ class EmailSignUpModal extends HookConsumerWidget {
         ),
       ),
     );
-  }
-}
-
-class NoticeDialog extends HookWidget {
-  final Function onTap;
-  const NoticeDialog({super.key, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final w = MediaQuery.sizeOf(context).width;
-    final h = MediaQuery.sizeOf(context).height;
-    final isReload = useState(false);
-    return Container(
-        width: w,
-        height: h,
-        color: Colors.transparent,
-        child: Center(
-          child: Container(
-            width: 300,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            constraints: const BoxConstraints(
-              maxWidth: 400,
-            ),
-            decoration: BoxDecoration(
-              color: MyColor.greenLight,
-              border: Border.all(
-                  width: 5,
-                  color: MyColor.greenText,
-                  strokeAlign: BorderSide.strokeAlignCenter),
-              borderRadius: const BorderRadius.all(Radius.circular(24)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  offset: const Offset(0, 5),
-                  blurRadius: 5,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Column(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/images/svg/circle-exclamation.svg',
-                      colorFilter: const ColorFilter.mode(
-                          MyColor.greenText, BlendMode.srcIn),
-                      width: 36,
-                      height: 36,
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                ),
-                Text(
-                  'メンテナンス中',
-                  style: lightTextTheme.titleLarge,
-                ),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: InkWell(
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      onTap();
-                      isReload.value = true;
-                      Future.delayed(const Duration(seconds: 2), () {
-                        isReload.value = false;
-                      });
-                    },
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: MyColor.greenText,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(24)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            offset: const Offset(0, 2),
-                            blurRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                          child: isReload.value
-                              ? const CircularProgressIndicator(
-                                  strokeWidth: 3, color: Colors.white)
-                              : Text('リロード',
-                                  style: lightTextTheme.bodyLarge!.copyWith(
-                                    color: Colors.white,
-                                  ))),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ));
   }
 }
 

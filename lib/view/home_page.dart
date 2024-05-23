@@ -13,7 +13,7 @@ import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
-import 'package:membo/widgets/app_hint_dailog.dart';
+import 'package:membo/widgets/app_hint_dialog.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_home_card_widget.dart';

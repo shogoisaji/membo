@@ -22,17 +22,16 @@ PublicNoticesModel _$PublicNoticesModelFromJson(Map<String, dynamic> json) {
 mixin _$PublicNoticesModel {
   int get id =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
-  @JsonKey(name: 'is_active')
-  bool get isActive =>
-      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'notice_code')
-  int get noticeCode => throw _privateConstructorUsedError;
+  int get noticeCode =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'app_version')
+  String get appVersion => throw _privateConstructorUsedError;
   String? get notice1 => throw _privateConstructorUsedError;
-  String? get notice2 => throw _privateConstructorUsedError;
-  String? get notice3 =>
+  String? get notice2 =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'app_url')
-  String? get appUrl =>
+  String get appUrl =>
       throw _privateConstructorUsedError; // ignore: invalid_annotation_target
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt =>
@@ -54,12 +53,11 @@ abstract class $PublicNoticesModelCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'is_active') bool isActive,
       @JsonKey(name: 'notice_code') int noticeCode,
+      @JsonKey(name: 'app_version') String appVersion,
       String? notice1,
       String? notice2,
-      String? notice3,
-      @JsonKey(name: 'app_url') String? appUrl,
+      @JsonKey(name: 'app_url') String appUrl,
       @JsonKey(name: 'updated_at') DateTime? updatedAt,
       @JsonKey(name: 'created_at') DateTime createdAt});
 }
@@ -78,12 +76,11 @@ class _$PublicNoticesModelCopyWithImpl<$Res, $Val extends PublicNoticesModel>
   @override
   $Res call({
     Object? id = null,
-    Object? isActive = null,
     Object? noticeCode = null,
+    Object? appVersion = null,
     Object? notice1 = freezed,
     Object? notice2 = freezed,
-    Object? notice3 = freezed,
-    Object? appUrl = freezed,
+    Object? appUrl = null,
     Object? updatedAt = freezed,
     Object? createdAt = null,
   }) {
@@ -92,14 +89,14 @@ class _$PublicNoticesModelCopyWithImpl<$Res, $Val extends PublicNoticesModel>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
       noticeCode: null == noticeCode
           ? _value.noticeCode
           : noticeCode // ignore: cast_nullable_to_non_nullable
               as int,
+      appVersion: null == appVersion
+          ? _value.appVersion
+          : appVersion // ignore: cast_nullable_to_non_nullable
+              as String,
       notice1: freezed == notice1
           ? _value.notice1
           : notice1 // ignore: cast_nullable_to_non_nullable
@@ -108,14 +105,10 @@ class _$PublicNoticesModelCopyWithImpl<$Res, $Val extends PublicNoticesModel>
           ? _value.notice2
           : notice2 // ignore: cast_nullable_to_non_nullable
               as String?,
-      notice3: freezed == notice3
-          ? _value.notice3
-          : notice3 // ignore: cast_nullable_to_non_nullable
-              as String?,
-      appUrl: freezed == appUrl
+      appUrl: null == appUrl
           ? _value.appUrl
           : appUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -138,12 +131,11 @@ abstract class _$$PublicNoticesModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'is_active') bool isActive,
       @JsonKey(name: 'notice_code') int noticeCode,
+      @JsonKey(name: 'app_version') String appVersion,
       String? notice1,
       String? notice2,
-      String? notice3,
-      @JsonKey(name: 'app_url') String? appUrl,
+      @JsonKey(name: 'app_url') String appUrl,
       @JsonKey(name: 'updated_at') DateTime? updatedAt,
       @JsonKey(name: 'created_at') DateTime createdAt});
 }
@@ -160,12 +152,11 @@ class __$$PublicNoticesModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? isActive = null,
     Object? noticeCode = null,
+    Object? appVersion = null,
     Object? notice1 = freezed,
     Object? notice2 = freezed,
-    Object? notice3 = freezed,
-    Object? appUrl = freezed,
+    Object? appUrl = null,
     Object? updatedAt = freezed,
     Object? createdAt = null,
   }) {
@@ -174,14 +165,14 @@ class __$$PublicNoticesModelImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
       noticeCode: null == noticeCode
           ? _value.noticeCode
           : noticeCode // ignore: cast_nullable_to_non_nullable
               as int,
+      appVersion: null == appVersion
+          ? _value.appVersion
+          : appVersion // ignore: cast_nullable_to_non_nullable
+              as String,
       notice1: freezed == notice1
           ? _value.notice1
           : notice1 // ignore: cast_nullable_to_non_nullable
@@ -190,14 +181,10 @@ class __$$PublicNoticesModelImplCopyWithImpl<$Res>
           ? _value.notice2
           : notice2 // ignore: cast_nullable_to_non_nullable
               as String?,
-      notice3: freezed == notice3
-          ? _value.notice3
-          : notice3 // ignore: cast_nullable_to_non_nullable
-              as String?,
-      appUrl: freezed == appUrl
+      appUrl: null == appUrl
           ? _value.appUrl
           : appUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -215,12 +202,11 @@ class __$$PublicNoticesModelImplCopyWithImpl<$Res>
 class _$PublicNoticesModelImpl implements _PublicNoticesModel {
   const _$PublicNoticesModelImpl(
       {required this.id,
-      @JsonKey(name: 'is_active') required this.isActive,
       @JsonKey(name: 'notice_code') required this.noticeCode,
+      @JsonKey(name: 'app_version') required this.appVersion,
       this.notice1,
       this.notice2,
-      this.notice3,
-      @JsonKey(name: 'app_url') this.appUrl,
+      @JsonKey(name: 'app_url') required this.appUrl,
       @JsonKey(name: 'updated_at') this.updatedAt,
       @JsonKey(name: 'created_at') required this.createdAt});
 
@@ -231,22 +217,20 @@ class _$PublicNoticesModelImpl implements _PublicNoticesModel {
   final int id;
 // ignore: invalid_annotation_target
   @override
-  @JsonKey(name: 'is_active')
-  final bool isActive;
-// ignore: invalid_annotation_target
-  @override
   @JsonKey(name: 'notice_code')
   final int noticeCode;
+// ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'app_version')
+  final String appVersion;
   @override
   final String? notice1;
   @override
   final String? notice2;
-  @override
-  final String? notice3;
 // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'app_url')
-  final String? appUrl;
+  final String appUrl;
 // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'updated_at')
@@ -258,7 +242,7 @@ class _$PublicNoticesModelImpl implements _PublicNoticesModel {
 
   @override
   String toString() {
-    return 'PublicNoticesModel(id: $id, isActive: $isActive, noticeCode: $noticeCode, notice1: $notice1, notice2: $notice2, notice3: $notice3, appUrl: $appUrl, updatedAt: $updatedAt, createdAt: $createdAt)';
+    return 'PublicNoticesModel(id: $id, noticeCode: $noticeCode, appVersion: $appVersion, notice1: $notice1, notice2: $notice2, appUrl: $appUrl, updatedAt: $updatedAt, createdAt: $createdAt)';
   }
 
   @override
@@ -267,13 +251,12 @@ class _$PublicNoticesModelImpl implements _PublicNoticesModel {
         (other.runtimeType == runtimeType &&
             other is _$PublicNoticesModelImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.isActive, isActive) ||
-                other.isActive == isActive) &&
             (identical(other.noticeCode, noticeCode) ||
                 other.noticeCode == noticeCode) &&
+            (identical(other.appVersion, appVersion) ||
+                other.appVersion == appVersion) &&
             (identical(other.notice1, notice1) || other.notice1 == notice1) &&
             (identical(other.notice2, notice2) || other.notice2 == notice2) &&
-            (identical(other.notice3, notice3) || other.notice3 == notice3) &&
             (identical(other.appUrl, appUrl) || other.appUrl == appUrl) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
@@ -283,8 +266,8 @@ class _$PublicNoticesModelImpl implements _PublicNoticesModel {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, isActive, noticeCode,
-      notice1, notice2, notice3, appUrl, updatedAt, createdAt);
+  int get hashCode => Object.hash(runtimeType, id, noticeCode, appVersion,
+      notice1, notice2, appUrl, updatedAt, createdAt);
 
   @JsonKey(ignore: true)
   @override
@@ -304,12 +287,11 @@ class _$PublicNoticesModelImpl implements _PublicNoticesModel {
 abstract class _PublicNoticesModel implements PublicNoticesModel {
   const factory _PublicNoticesModel(
           {required final int id,
-          @JsonKey(name: 'is_active') required final bool isActive,
           @JsonKey(name: 'notice_code') required final int noticeCode,
+          @JsonKey(name: 'app_version') required final String appVersion,
           final String? notice1,
           final String? notice2,
-          final String? notice3,
-          @JsonKey(name: 'app_url') final String? appUrl,
+          @JsonKey(name: 'app_url') required final String appUrl,
           @JsonKey(name: 'updated_at') final DateTime? updatedAt,
           @JsonKey(name: 'created_at') required final DateTime createdAt}) =
       _$PublicNoticesModelImpl;
@@ -320,20 +302,18 @@ abstract class _PublicNoticesModel implements PublicNoticesModel {
   @override
   int get id;
   @override // ignore: invalid_annotation_target
-  @JsonKey(name: 'is_active')
-  bool get isActive;
-  @override // ignore: invalid_annotation_target
   @JsonKey(name: 'notice_code')
   int get noticeCode;
+  @override // ignore: invalid_annotation_target
+  @JsonKey(name: 'app_version')
+  String get appVersion;
   @override
   String? get notice1;
   @override
   String? get notice2;
-  @override
-  String? get notice3;
   @override // ignore: invalid_annotation_target
   @JsonKey(name: 'app_url')
-  String? get appUrl;
+  String get appUrl;
   @override // ignore: invalid_annotation_target
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;

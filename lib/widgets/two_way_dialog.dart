@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:membo/gen/fonts.gen.dart';
 import 'package:membo/settings/color.dart';
-import 'package:membo/settings/text_theme.dart';
 
+/// Theme外から呼ぶことがあるのでText Styleは直接定義
 class TwoWayDialog extends HookWidget {
   final String title;
   final Widget? icon;
@@ -93,16 +94,23 @@ class TwoWayDialog extends HookWidget {
                             : const SizedBox.shrink(),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: Text(
-                            title,
-                            style: lightTextTheme.titleLarge,
-                          ),
+                          child: Text(title,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                color: MyColor.greenText,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: FontFamily.mPlusRounded1c,
+                              )
+                              // style: lightTextTheme.titleLarge,
+                              ),
                         ),
                         content != null
-                            ? Text(
-                                content!,
-                                style: lightTextTheme.bodyLarge,
-                              )
+                            ? Text(content!,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: FontFamily.mPlusRounded1c,
+                                ))
                             : const SizedBox.shrink(),
                         const SizedBox(height: 10),
                         Row(
@@ -133,9 +141,11 @@ class TwoWayDialog extends HookWidget {
                                 ),
                                 child: Center(
                                     child: Text(leftButtonText,
-                                        style:
-                                            lightTextTheme.bodyMedium!.copyWith(
+                                        style: const TextStyle(
                                           color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: FontFamily.mPlusRounded1c,
                                         ))),
                               ),
                             )),
@@ -165,10 +175,14 @@ class TwoWayDialog extends HookWidget {
                                       ],
                                     ),
                                     child: Center(
-                                        child: Text(
-                                      rightButtonText,
-                                      style: lightTextTheme.bodyMedium,
-                                    ))),
+                                        child: Text(rightButtonText,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              color: MyColor.greenText,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily:
+                                                  FontFamily.mPlusRounded1c,
+                                            )))),
                               ),
                             ),
                           ],

@@ -255,36 +255,39 @@ class BoardSettingsPage extends HookConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  HapticFeedback.lightImpact();
-                                  handleTapPublic();
-                                },
-                                child: Text(
-                                    boardSettingsState.currentBoard!.isPublic
-                                        ? '非公開にする'
-                                        : '公開する',
-                                    style: lightTextTheme.bodyLarge),
-                              ),
-                              const SizedBox(width: 10.0),
-                              ElevatedButton(
-                                onPressed: () {
-                                  HapticFeedback.lightImpact();
-                                  showEditRequestList();
-                                },
-                                child: SvgPicture.asset(
-                                  'assets/images/svg/editor.svg',
-                                  colorFilter: const ColorFilter.mode(
-                                      MyColor.greenText, BlendMode.srcIn),
-                                  width: 35,
-                                  height: 35,
-                                ),
-                              ),
-                            ],
-                          ),
+                          boardSettingsState.isOwner
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        HapticFeedback.lightImpact();
+                                        handleTapPublic();
+                                      },
+                                      child: Text(
+                                          boardSettingsState
+                                                  .currentBoard!.isPublic
+                                              ? '非公開にする'
+                                              : '公開する',
+                                          style: lightTextTheme.bodyLarge),
+                                    ),
+                                    const SizedBox(width: 10.0),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        HapticFeedback.lightImpact();
+                                        showEditRequestList();
+                                      },
+                                      child: SvgPicture.asset(
+                                        'assets/images/svg/editor.svg',
+                                        colorFilter: const ColorFilter.mode(
+                                            MyColor.greenText, BlendMode.srcIn),
+                                        width: 35,
+                                        height: 35,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                           const SizedBox(height: 8.0),
                           CustomListContent(
                             titleIcon: const Icon(Icons.local_mall),
@@ -422,7 +425,9 @@ class BoardSettingsPage extends HookConsumerWidget {
                                             )
                                           : Text(
                                               boardSettingsState
-                                                  .tempBoard!.boardName,
+                                                  .tempBoard!.thatDay
+                                                  .toIso8601String()
+                                                  .toYMDString(),
                                               textAlign: TextAlign.end,
                                               style: lightTextTheme.bodyLarge!
                                                   .copyWith(
@@ -586,34 +591,40 @@ class BoardSettingsPage extends HookConsumerWidget {
                             ],
                           ),
                           const SizedBox(height: 20.0),
-                          CustomListContent(
-                            titleIcon: const Icon(Icons.language),
-                            title: '公開ステータス',
-                            titleStyle: lightTextTheme.bodyLarge!,
-                            backgroundColor: MyColor.greenLight,
-                            contentWidgets: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('Status',
-                                      style: lightTextTheme.bodyLarge),
-                                  Row(
-                                    children: [
-                                      boardSettingsState.currentBoard!.isPublic
-                                          ? Text(
-                                              '公開',
-                                              style: lightTextTheme.bodyLarge!
-                                                  .copyWith(color: MyColor.red),
-                                            )
-                                          : Text('非公開',
-                                              style: lightTextTheme.bodyLarge),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                          boardSettingsState.isOwner
+                              ? CustomListContent(
+                                  titleIcon: const Icon(Icons.language),
+                                  title: '公開ステータス',
+                                  titleStyle: lightTextTheme.bodyLarge!,
+                                  backgroundColor: MyColor.greenLight,
+                                  contentWidgets: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Status',
+                                            style: lightTextTheme.bodyLarge),
+                                        Row(
+                                          children: [
+                                            boardSettingsState
+                                                    .currentBoard!.isPublic
+                                                ? Text(
+                                                    '公開',
+                                                    style: lightTextTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                            color: MyColor.red),
+                                                  )
+                                                : Text('非公開',
+                                                    style: lightTextTheme
+                                                        .bodyLarge),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                           const SizedBox(height: 32.0),
                           boardSettingsState.isOwner
                               ? CustomButton(
