@@ -164,21 +164,19 @@ class EditPage extends HookConsumerWidget {
                     ),
                   )
                 : const SizedBox.shrink(),
-            editPageState.isOwner
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        ref
-                            .read(editPageViewModelProvider.notifier)
-                            .clearSelectedObject();
-                        context.go('/board-settings', extra: boardId);
-                      },
-                      child: const Icon(Icons.settings, size: 32),
-                    ),
-                  )
-                : const SizedBox.shrink(),
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  ref
+                      .read(editPageViewModelProvider.notifier)
+                      .clearSelectedObject();
+                  context.go('/board-settings', extra: boardId);
+                },
+                child: const Icon(Icons.settings, size: 32),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: ElevatedButton(
