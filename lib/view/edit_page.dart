@@ -19,6 +19,7 @@ import 'package:membo/settings/text_theme.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/state/stream_board_state.dart';
 import 'package:membo/utils/color_utils.dart';
+import 'package:membo/utils/custom_indicator.dart';
 import 'package:membo/utils/image_utils.dart';
 import 'package:membo/view_model/edit_page_view_model.dart';
 import 'package:membo/widgets/board_widget.dart';
@@ -138,7 +139,7 @@ class EditPage extends HookConsumerWidget {
             Padding(
                 padding: const EdgeInsets.only(right: 12.0),
                 child: SvgPicture.asset(
-                  'assets/images/svg/edit.svg',
+                  Assets.images.svg.edit,
                   colorFilter: const ColorFilter.mode(
                       MyColor.greenText, BlendMode.srcIn),
                   width: 30,
@@ -249,7 +250,7 @@ class EditPage extends HookConsumerWidget {
           ),
         ),
         body: isLoading.value || streamBoard == null
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: CustomIndicator())
             : Stack(
                 children: [
                   Container(
@@ -660,7 +661,7 @@ class EditToolBar extends HookConsumerWidget {
                                 children: [
                                   Align(
                                     child: SvgPicture.asset(
-                                      'assets/images/svg/vertical.svg',
+                                      Assets.images.svg.vertical,
                                       width: 40,
                                       height: 100,
                                       colorFilter: const ColorFilter.mode(
@@ -669,7 +670,7 @@ class EditToolBar extends HookConsumerWidget {
                                   ),
                                   Align(
                                     child: SvgPicture.asset(
-                                      'assets/images/svg/scale.svg',
+                                      Assets.images.svg.scale,
                                       width: 40,
                                       height: 40,
                                       colorFilter: const ColorFilter.mode(
@@ -704,7 +705,7 @@ class EditToolBar extends HookConsumerWidget {
                                 children: [
                                   Align(
                                     child: SvgPicture.asset(
-                                      'assets/images/svg/vertical.svg',
+                                      Assets.images.svg.vertical,
                                       width: 40,
                                       height: 100,
                                       colorFilter: const ColorFilter.mode(
@@ -713,7 +714,7 @@ class EditToolBar extends HookConsumerWidget {
                                   ),
                                   Align(
                                     child: SvgPicture.asset(
-                                      'assets/images/svg/rotate.svg',
+                                      Assets.images.svg.rotate,
                                       width: 40,
                                       height: 40,
                                       colorFilter: const ColorFilter.mode(

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/models/board/board_permission.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
@@ -147,21 +148,22 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                             height: height,
                             placeholder: (context, url) =>
                                 ColoredBox(color: Colors.grey.shade200),
-                            errorWidget: (context, url, error) => Image.asset(
-                                  'assets/images/logo.png',
-                                  fit: BoxFit.contain,
-                                  width: double.infinity,
-                                  height: double.infinity,
+                            errorWidget: (context, url, error) => Align(
+                                  alignment: const Alignment(0.0, -0.3),
+                                  child: Image.asset(
+                                    Assets.images.title.path,
+                                    fit: BoxFit.contain,
+                                    width: 100,
+                                    height: 100,
+                                  ),
                                 ))
                         : Align(
                             alignment: const Alignment(0.0, -0.3),
-                            child: SvgPicture.asset(
-                              'assets/images/svg/title.svg',
+                            child: Image.asset(
+                              Assets.images.title.path,
                               fit: BoxFit.contain,
-                              width: 70,
-                              height: 70,
-                              colorFilter: const ColorFilter.mode(
-                                  MyColor.greenText, BlendMode.srcIn),
+                              width: 100,
+                              height: 100,
                             ),
                           ),
                   ),
@@ -209,22 +211,17 @@ class CustomHomeCardWidget extends HookConsumerWidget {
                     right: 5,
                     child: Text(
                       '${board.thatDay.year}.${board.thatDay.month}.${board.thatDay.day}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         height: 0.75,
-                        color: Colors.grey.shade200,
+                        color: MyColor.greenText,
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                         shadows: [
-                          const Shadow(
-                            color: Colors.white,
+                          Shadow(
+                            color: MyColor.greenLight,
                             blurRadius: 0.5,
                             offset: Offset(1, 1),
                           ),
-                          Shadow(
-                            color: Colors.black.withOpacity(0.5),
-                            blurRadius: 2,
-                            offset: const Offset(1, 1),
-                          )
                         ],
                       ),
                     ),
@@ -490,13 +487,12 @@ class ViewButton extends StatelessWidget {
           ],
         ),
         padding: const EdgeInsets.all(6),
-        child: SvgPicture.asset(
-          'assets/images/svg/view.svg',
-          colorFilter:
-              const ColorFilter.mode(MyColor.greenSuperLight, BlendMode.srcIn),
-          width: 30,
-          height: 30,
-        ),
+        child: SvgPicture.asset(Assets.images.svg.view,
+            colorFilter: const ColorFilter.mode(
+                MyColor.greenSuperLight, BlendMode.srcIn),
+            width: 50,
+            height: 50,
+            fit: BoxFit.contain),
       ),
     );
   }
@@ -536,7 +532,7 @@ class QrButton extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(6),
         child: SvgPicture.asset(
-          'assets/images/svg/qr.svg',
+          Assets.images.svg.qr,
           width: 30,
           height: 30,
           colorFilter:
@@ -581,7 +577,7 @@ class EditButton extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(6),
           child: SvgPicture.asset(
-            'assets/images/svg/edit.svg',
+            Assets.images.svg.edit,
             colorFilter: const ColorFilter.mode(
                 MyColor.greenSuperLight, BlendMode.srcIn),
             width: 30,
@@ -652,14 +648,14 @@ class DeleteButton extends StatelessWidget {
           child: Align(
             child: permission == BoardPermission.owner
                 ? SvgPicture.asset(
-                    'assets/images/svg/dustbox.svg',
+                    Assets.images.svg.dustbox,
                     colorFilter: const ColorFilter.mode(
                         MyColor.greenSuperLight, BlendMode.srcIn),
                     width: 30,
                     height: 30,
                   )
                 : SvgPicture.asset(
-                    'assets/images/svg/unlink.svg',
+                    Assets.images.svg.unlink,
                     colorFilter: const ColorFilter.mode(
                         MyColor.greenSuperLight, BlendMode.srcIn),
                     width: 30,

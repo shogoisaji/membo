@@ -23,8 +23,8 @@ class BgPaint extends StatelessWidget {
 class BgPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    const double upperHeight = 330;
-    const double lowerHeight = 480;
+    const double upperHeight = 300;
+    const double lowerHeight = 450;
 
     final bgPaint = Paint()
       ..color = MyColor.green

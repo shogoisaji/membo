@@ -8,10 +8,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/exceptions/app_exception.dart';
+import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/models/user/membership_type.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
+import 'package:membo/utils/custom_indicator.dart';
 import 'package:membo/view_model/home_page_view_model.dart';
 import 'package:membo/widgets/app_hint_dialog.dart';
 import 'package:membo/widgets/bg_paint.dart';
@@ -200,13 +202,11 @@ class HomePage extends HookConsumerWidget {
               ),
               placeholder: (context, url) =>
                   const ColoredBox(color: MyColor.pink),
-              errorWidget: (context, url, error) => SvgPicture.asset(
-                'assets/images/svg/title.svg',
+              errorWidget: (context, url, error) => Image.asset(
+                Assets.images.title.path,
                 fit: BoxFit.contain,
                 width: 100,
                 height: 100,
-                colorFilter:
-                    const ColorFilter.mode(MyColor.greenText, BlendMode.srcIn),
               ),
             ))
         .toList();
@@ -218,7 +218,7 @@ class HomePage extends HookConsumerWidget {
         children: [
           BgPaint(width: w, height: h),
           isLoading.value
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(child: CustomIndicator())
               : RefreshIndicator(
                   color: MyColor.greenText,
                   backgroundColor: MyColor.pink,
@@ -239,7 +239,7 @@ class HomePage extends HookConsumerWidget {
                                 CarouselSlider(
                                   items: [
                                     SvgPicture.asset(
-                                      'assets/images/svg/title.svg',
+                                      Assets.images.svg.title,
                                       fit: BoxFit.contain,
                                       width: 100,
                                       height: 100,
@@ -301,7 +301,7 @@ class HomePage extends HookConsumerWidget {
                                               ),
                                               IconButton(
                                                 icon: SvgPicture.asset(
-                                                  'assets/images/svg/connect.svg',
+                                                  Assets.images.svg.connect,
                                                   width: 40,
                                                   height: 40,
                                                   colorFilter:

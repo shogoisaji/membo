@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/models/board/board_model.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
@@ -117,7 +118,7 @@ class ViewButton extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(6),
         child: SvgPicture.asset(
-          'assets/images/svg/view.svg',
+          Assets.images.svg.view,
           colorFilter:
               const ColorFilter.mode(MyColor.greenSuperLight, BlendMode.srcIn),
           width: 30,

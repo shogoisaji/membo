@@ -358,15 +358,18 @@ class ObjectWidget extends StatelessWidget {
       fontWeight: FontWeight.w700,
       foreground: Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 11.0
-        ..color = Colors.grey.shade200,
-      shadows: const [
-        Shadow(
-          blurRadius: 8.0,
-          color: Colors.black,
-          offset: Offset(4.0, 5.0),
-        ),
-      ],
+        ..strokeWidth = 20.0
+        ..color = Colors.grey.shade100,
+    );
+    final textShadowStyle = TextStyle(
+      fontSize: 100,
+      fontFamily: FontFamily.mPlusRounded1c,
+      fontWeight: FontWeight.w700,
+      foreground: Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 22.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3)
+        ..color = Colors.black.withOpacity(0.1),
     );
 
     Size textSize({
@@ -395,7 +398,10 @@ class ObjectWidget extends StatelessWidget {
       scale: object.scale,
       child: CustomPaint(
         painter: TextObjectPainter(
-            text: text, textStyle: textStyle, textBgStyle: textBgStyle),
+            text: text,
+            textStyle: textStyle,
+            textBgStyle: textBgStyle,
+            textShadowStyle: textShadowStyle),
         size: Size(size.width, size.height),
       ),
     );
@@ -406,9 +412,13 @@ class TextObjectPainter extends CustomPainter {
   final String text;
   final TextStyle textStyle;
   final TextStyle textBgStyle;
+  final TextStyle textShadowStyle;
 
   TextObjectPainter(
-      {required this.text, required this.textStyle, required this.textBgStyle});
+      {required this.text,
+      required this.textStyle,
+      required this.textBgStyle,
+      required this.textShadowStyle});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -426,6 +436,13 @@ class TextObjectPainter extends CustomPainter {
       ),
       textDirection: TextDirection.ltr,
     );
+    final textShadowPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: textShadowStyle,
+      ),
+      textDirection: TextDirection.ltr,
+    );
 
     /// textPainterはlayoutを呼ぶ必要がある
     textPainter.layout(
@@ -436,10 +453,15 @@ class TextObjectPainter extends CustomPainter {
       minWidth: 0,
       maxWidth: size.width,
     );
+    textShadowPainter.layout(
+      minWidth: 0,
+      maxWidth: size.width,
+    );
 
     final xCenter = -textPainter.width / 2;
     final yCenter = -textPainter.height / 2;
     final offset = Offset(xCenter, yCenter);
+    textShadowPainter.paint(canvas, Offset(offset.dx + 5, offset.dy + 5));
     textBgPainter.paint(canvas, offset);
     textPainter.paint(canvas, offset);
   }

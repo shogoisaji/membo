@@ -5,10 +5,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/string.dart';
 import 'package:membo/utils/color_utils.dart';
+import 'package:membo/utils/custom_indicator.dart';
 import 'package:membo/view_model/board_settings_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
@@ -92,7 +94,7 @@ class BoardSettingsPage extends HookConsumerWidget {
         context: context,
         builder: (BuildContext dialogContext) {
           return TwoWayDialog(
-            icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+            icon: SvgPicture.asset(Assets.images.svg.circleQuestion,
                 width: 36,
                 height: 36,
                 colorFilter:
@@ -241,7 +243,7 @@ class BoardSettingsPage extends HookConsumerWidget {
         ),
       ),
       body: (boardSettingsState.tempBoard == null)
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CustomIndicator())
           : Stack(
               children: [
                 BgPaint(width: w, height: h),
