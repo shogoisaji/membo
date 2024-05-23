@@ -4,9 +4,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/utils/custom_indicator.dart';
 import 'package:membo/view_model/account_page_view_model.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
@@ -62,12 +64,12 @@ class AccountPage extends HookConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
-                  style: lightTextTheme.bodyLarge,
+                  style: lightTextTheme.bodyMedium,
                   autofocus: true,
                   controller: nameTextController,
                   decoration: const InputDecoration(
                     hintText: '8文字以下',
-                    hintStyle: TextStyle(color: Colors.white),
+                    hintStyle: TextStyle(color: Colors.grey),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -120,7 +122,7 @@ class AccountPage extends HookConsumerWidget {
       showDialog(
           context: context,
           builder: (dialogContext) => TwoWayDialog(
-                icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+                icon: SvgPicture.asset(Assets.images.svg.circleQuestion,
                     width: 36,
                     height: 36,
                     colorFilter: const ColorFilter.mode(
@@ -129,12 +131,9 @@ class AccountPage extends HookConsumerWidget {
                 leftButtonText: 'ログアウト',
                 rightButtonText: 'キャンセル',
                 onLeftButtonPressed: () async {
-                  Navigator.of(dialogContext).pop();
                   ref.read(supabaseAuthRepositoryProvider).signOut();
                 },
-                onRightButtonPressed: () {
-                  Navigator.of(dialogContext).pop();
-                },
+                onRightButtonPressed: () {},
               ));
     }
 
@@ -142,7 +141,7 @@ class AccountPage extends HookConsumerWidget {
       showDialog(
         context: context,
         builder: (dialogContext) => TwoWayDialog(
-          icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+          icon: SvgPicture.asset(Assets.images.svg.circleQuestion,
               width: 36,
               height: 36,
               colorFilter:
@@ -152,7 +151,6 @@ class AccountPage extends HookConsumerWidget {
           leftButtonText: '削除',
           rightButtonText: 'キャンセル',
           onLeftButtonPressed: () async {
-            Navigator.of(dialogContext).pop();
             if (accountPageState.user == null) return;
             try {
               await ref
@@ -169,9 +167,7 @@ class AccountPage extends HookConsumerWidget {
               }
             }
           },
-          onRightButtonPressed: () {
-            Navigator.of(dialogContext).pop();
-          },
+          onRightButtonPressed: () {},
         ),
       );
     }
@@ -236,7 +232,7 @@ class AccountPage extends HookConsumerWidget {
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Center(child: CircularProgressIndicator()),
+                                    Center(child: CustomIndicator()),
                                     SizedBox(height: 200.0),
                                   ],
                                 )

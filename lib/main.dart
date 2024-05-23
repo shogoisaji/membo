@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/gen/fonts.gen.dart';
 import 'package:membo/models/notice/public_notices_model.dart';
 import 'package:membo/repositories/shared_preferences/shared_preferences_key.dart';
@@ -191,9 +192,9 @@ class MaintenancePage extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Image.asset(
-            'assets/images/splash.png',
-            width: 200,
-            height: 200,
+            Assets.images.splash.path,
+            width: 220,
+            height: 220,
           ),
         ),
       ),

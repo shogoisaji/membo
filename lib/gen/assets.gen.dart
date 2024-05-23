@@ -12,21 +12,42 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/hint1.png
+  AssetGenImage get hint1 => const AssetGenImage('assets/images/hint1.png');
+
+  /// File path: assets/images/hint2.png
+  AssetGenImage get hint2 => const AssetGenImage('assets/images/hint2.png');
+
+  /// File path: assets/images/hint3.png
+  AssetGenImage get hint3 => const AssetGenImage('assets/images/hint3.png');
+
+  /// File path: assets/images/hint4.png
+  AssetGenImage get hint4 => const AssetGenImage('assets/images/hint4.png');
+
+  /// File path: assets/images/hint5.png
+  AssetGenImage get hint5 => const AssetGenImage('assets/images/hint5.png');
+
+  /// File path: assets/images/hint6.png
+  AssetGenImage get hint6 => const AssetGenImage('assets/images/hint6.png');
+
   /// File path: assets/images/icon.png
   AssetGenImage get icon => const AssetGenImage('assets/images/icon.png');
 
+  /// Directory path: assets/images/icons
   $AssetsImagesIconsGen get icons => const $AssetsImagesIconsGen();
 
-  /// File path: assets/images/sky.jpg
-  AssetGenImage get sky => const AssetGenImage('assets/images/sky.jpg');
+  /// File path: assets/images/splash.png
+  AssetGenImage get splash => const AssetGenImage('assets/images/splash.png');
 
+  /// Directory path: assets/images/svg
   $AssetsImagesSvgGen get svg => const $AssetsImagesSvgGen();
 
   /// File path: assets/images/title.png
   AssetGenImage get title => const AssetGenImage('assets/images/title.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [icon, sky, title];
+  List<AssetGenImage> get values =>
+      [hint1, hint2, hint3, hint4, hint5, hint6, icon, splash, title];
 }
 
 class $AssetsLottiesGen {
@@ -68,17 +89,89 @@ class $AssetsImagesIconsGen {
 class $AssetsImagesSvgGen {
   const $AssetsImagesSvgGen();
 
+  /// File path: assets/images/svg/circle-exclamation.svg
+  String get circleExclamation => 'assets/images/svg/circle-exclamation.svg';
+
+  /// File path: assets/images/svg/circle-question.svg
+  String get circleQuestion => 'assets/images/svg/circle-question.svg';
+
+  /// File path: assets/images/svg/connect.svg
+  String get connect => 'assets/images/svg/connect.svg';
+
+  /// File path: assets/images/svg/cutting.svg
+  String get cutting => 'assets/images/svg/cutting.svg';
+
+  /// File path: assets/images/svg/dustbox.svg
+  String get dustbox => 'assets/images/svg/dustbox.svg';
+
+  /// File path: assets/images/svg/edit.svg
+  String get edit => 'assets/images/svg/edit.svg';
+
+  /// File path: assets/images/svg/editor.svg
+  String get editor => 'assets/images/svg/editor.svg';
+
   /// File path: assets/images/svg/elephant.svg
   String get elephant => 'assets/images/svg/elephant.svg';
+
+  /// File path: assets/images/svg/email.svg
+  String get email => 'assets/images/svg/email.svg';
+
+  /// File path: assets/images/svg/qr.svg
+  String get qr => 'assets/images/svg/qr.svg';
 
   /// File path: assets/images/svg/rabbit.svg
   String get rabbit => 'assets/images/svg/rabbit.svg';
 
+  /// File path: assets/images/svg/request.svg
+  String get request => 'assets/images/svg/request.svg';
+
+  /// File path: assets/images/svg/rotate.svg
+  String get rotate => 'assets/images/svg/rotate.svg';
+
+  /// File path: assets/images/svg/scale.svg
+  String get scale => 'assets/images/svg/scale.svg';
+
+  /// File path: assets/images/svg/title.svg
+  String get title => 'assets/images/svg/title.svg';
+
   /// File path: assets/images/svg/turtle.svg
   String get turtle => 'assets/images/svg/turtle.svg';
 
+  /// File path: assets/images/svg/unlink.svg
+  String get unlink => 'assets/images/svg/unlink.svg';
+
+  /// File path: assets/images/svg/vertical.svg
+  String get vertical => 'assets/images/svg/vertical.svg';
+
+  /// File path: assets/images/svg/view.svg
+  String get view => 'assets/images/svg/view.svg';
+
+  /// File path: assets/images/svg/view1.svg
+  String get view1 => 'assets/images/svg/view1.svg';
+
   /// List of all assets
-  List<String> get values => [elephant, rabbit, turtle];
+  List<String> get values => [
+        circleExclamation,
+        circleQuestion,
+        connect,
+        cutting,
+        dustbox,
+        edit,
+        editor,
+        elephant,
+        email,
+        qr,
+        rabbit,
+        request,
+        rotate,
+        scale,
+        title,
+        turtle,
+        unlink,
+        vertical,
+        view,
+        view1
+      ];
 }
 
 class Assets {
@@ -89,9 +182,11 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName);
+  const AssetGenImage(this._assetName, {this.size = null});
 
   final String _assetName;
+
+  final Size? size;
 
   Image image({
     Key? key,

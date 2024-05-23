@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
+import 'package:membo/utils/custom_indicator.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/custom_snackbar.dart';
@@ -65,7 +66,7 @@ class SignUpPage extends HookConsumerWidget {
               ),
             ),
             body: isLoading.value
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CustomIndicator())
                 : SingleChildScrollView(
                     child: SafeArea(
                       child: Align(

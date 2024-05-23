@@ -19,6 +19,5 @@ Map<String, dynamic> _$MembershipTypeToJson(MembershipType instance) =>
 const _$MembershipTypesEnumMap = {
   MembershipTypes.admin: 'admin',
   MembershipTypes.free: 'free',
-  MembershipTypes.silver: 'silver',
-  MembershipTypes.gold: 'gold',
+  MembershipTypes.premium: 'premium',
 };

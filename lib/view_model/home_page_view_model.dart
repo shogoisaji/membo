@@ -61,8 +61,7 @@ class HomePageViewModel extends _$HomePageViewModel {
             board: boardForCard, permission: BoardPermission.owner));
 
         /// カルーセルの画像URLを追加
-        if (board.thumbnailUrl != null &&
-            tempCarouselImageUrls.length < carouselLimit) {
+        if (board.thumbnailUrl != null) {
           tempCarouselImageUrls.add(board.thumbnailUrl!);
         }
       } on AppException catch (e) {
@@ -75,14 +74,13 @@ class HomePageViewModel extends _$HomePageViewModel {
     }
 
     /// linked board
-    // final result = await ref.read(sqfliteRepositoryProvider).loadLinkedBoards();
     final result = userData.linkedBoards;
 
     for (LinkedBoardModel linkedBoard in result) {
       BoardModel? boardForCard;
       try {
         try {
-          /// ボードデータを取得できるか試す
+          /// ネットワークDBからボードデータを取得できるか試す
           final board = await ref
               .read(supabaseRepositoryProvider)
               .getBoardById(linkedBoard.boardId);
@@ -128,8 +126,7 @@ class HomePageViewModel extends _$HomePageViewModel {
         ];
 
         /// カルーセルの画像URLを追加
-        if (linkedBoard.thumbnailUrl != null &&
-            tempCarouselImageUrls.length < carouselLimit) {
+        if (linkedBoard.thumbnailUrl != null) {
           tempCarouselImageUrls.add(linkedBoard.thumbnailUrl!);
         }
       } on AppException catch (e) {
@@ -141,6 +138,9 @@ class HomePageViewModel extends _$HomePageViewModel {
       }
     }
 
+    final List<String> fiveCarouselImageUrls =
+        (tempCarouselImageUrls..shuffle()).take(carouselLimit).toList();
+
     state = state.copyWith(
       userModel: userData,
       allCardBoardList: [
@@ -149,26 +149,7 @@ class HomePageViewModel extends _$HomePageViewModel {
       ],
       ownedCardBoardList: tempOwnedCardBoardList.reversed.toList(),
       linkedCardBoardList: tempLinkedCardBoardList.reversed.toList(),
-      carouselImageUrls: tempCarouselImageUrls,
-    );
-  }
-
-  Future<void> addSampleBoard() async {
-    const sampleBoardId = 'sample_board_id';
-    final boardForCard = BoardModel(
-      boardId: sampleBoardId,
-      boardName: 'サンプルボード',
-      ownerId: '',
-      thatDay: DateTime.now(),
-      createdAt: DateTime.now(),
-      thumbnailUrl: null,
-    );
-
-    state = state.copyWith(
-      linkedCardBoardList: [
-        CardBoardModel(board: boardForCard, permission: BoardPermission.viewer),
-        ...state.linkedCardBoardList,
-      ],
+      carouselImageUrls: fiveCarouselImageUrls,
     );
   }
 
@@ -176,7 +157,47 @@ class HomePageViewModel extends _$HomePageViewModel {
     final isFirst = ref
         .read(sharedPreferencesRepositoryProvider)
         .fetch<bool>(SharedPreferencesKey.isFirst);
+    if (isFirst == null || isFirst == true) {
+      /// linked board にサンプルボードを追加する
+      await addSampleBoard();
+    }
     return isFirst ?? true;
+  }
+
+  Future<void> addSampleBoard() async {
+    final user = ref.read(userStateProvider);
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+    final userData = await ref
+        .read(supabaseRepositoryProvider)
+        .fetchUserData(user.id)
+        .catchError((e) {
+      throw AppException.error('${e.title}');
+    });
+
+    if (userData == null) {
+      throw AppException.notFound();
+    }
+
+    /// ここでサンプルボードのUUIDを指定
+    const sampleBoardId = '80c81fac-b1d1-4780-86dd-05ac643278cf';
+
+    final insertLinkedBoard = LinkedBoardModel(
+      boardId: sampleBoardId,
+      boardName: 'サンプルボード',
+      thumbnailUrl: null,
+      createdAt: DateTime.now(),
+    );
+    final newLikedBoards = [...userData.linkedBoards, insertLinkedBoard];
+
+    /// user data に追加
+    await ref
+        .read(supabaseRepositoryProvider)
+        .updateLinkedBoards(user.id, newLikedBoards)
+        .catchError((e) {
+      throw Exception('update linked boards failed');
+    });
   }
 
   void firstLogin() async {

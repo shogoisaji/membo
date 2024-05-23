@@ -45,7 +45,7 @@ class SignInPage extends HookConsumerWidget {
         await launchUrl(url);
       } else {
         if (context.mounted) {
-          ErrorDialog.show(context, 'Could not launch $url');
+          ErrorDialog.show(context, 'アクセスできませんでした');
         }
       }
     }
@@ -56,7 +56,7 @@ class SignInPage extends HookConsumerWidget {
         await launchUrl(url);
       } else {
         if (context.mounted) {
-          ErrorDialog.show(context, 'Could not launch $url');
+          ErrorDialog.show(context, 'アクセスできませんでした');
         }
       }
     }
@@ -133,7 +133,7 @@ class SignInPage extends HookConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SvgPicture.asset(
-                          'assets/images/svg/title.svg',
+                          Assets.images.svg.title,
                           // width: 100,
                           fit: BoxFit.fitHeight,
                           height: 100 * h / 1300,
@@ -253,7 +253,7 @@ class SignInPage extends HookConsumerWidget {
                                         padding: const EdgeInsets.only(
                                             left: 20, right: 14),
                                         child: SvgPicture.asset(
-                                            'assets/images/svg/email.svg',
+                                            Assets.images.svg.email,
                                             width: 30,
                                             height: 30,
                                             colorFilter: const ColorFilter.mode(

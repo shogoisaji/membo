@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'membership_type.g.dart';
 
-enum MembershipTypes { admin, free, silver, gold }
+enum MembershipTypes { admin, free, premium }
 
 @JsonSerializable()
 class MembershipType {
@@ -21,10 +21,8 @@ class MembershipType {
     switch (type) {
       case MembershipTypes.admin:
         return 100;
-      case MembershipTypes.gold:
+      case MembershipTypes.premium:
         return 10;
-      case MembershipTypes.silver:
-        return 5;
       case MembershipTypes.free:
       default:
         return 3;
@@ -35,10 +33,8 @@ class MembershipType {
     switch (type) {
       case MembershipTypes.admin:
         return 100;
-      case MembershipTypes.gold:
+      case MembershipTypes.premium:
         return 30;
-      case MembershipTypes.silver:
-        return 10;
       case MembershipTypes.free:
       default:
         return 3;

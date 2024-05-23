@@ -11,11 +11,14 @@ import 'package:membo/models/view_model_state/board_view_page_state.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/state/stream_board_state.dart';
+import 'package:membo/utils/custom_indicator.dart';
 import 'package:membo/view_model/board_view_page_view_model.dart';
 import 'package:membo/widgets/board_widget.dart';
 import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/two_way_dialog.dart';
+
+import '../gen/assets.gen.dart';
 
 class BoardViewPage extends HookConsumerWidget {
   final String boardId;
@@ -95,11 +98,21 @@ class BoardViewPage extends HookConsumerWidget {
     void handleEditRequest() async {
       /// linked user 以外はリクエストできない
       if (boardViewPageState.userType != ViewPageUserTypes.linkedUser) return;
+
+      /// サンプルボードはリクエストできない
+      if (boardId == '80c81fac-b1d1-4780-86dd-05ac643278cf') {
+        ErrorDialog.show(
+          context,
+          'サンプルボードは\nリクエストできません',
+        );
+        return;
+      }
+
       showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
           return TwoWayDialog(
-            icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+            icon: SvgPicture.asset(Assets.images.svg.circleQuestion,
                 width: 36,
                 height: 36,
                 colorFilter:
@@ -130,7 +143,7 @@ class BoardViewPage extends HookConsumerWidget {
         context: context,
         builder: (BuildContext dialogContext) {
           return TwoWayDialog(
-            icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
+            icon: SvgPicture.asset(Assets.images.svg.circleQuestion,
                 width: 36,
                 height: 36,
                 colorFilter:
@@ -210,7 +223,7 @@ class BoardViewPage extends HookConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: SvgPicture.asset(
-                'assets/images/svg/view.svg',
+                Assets.images.svg.view,
                 colorFilter:
                     const ColorFilter.mode(MyColor.greenDark, BlendMode.srcIn),
                 width: 30,
@@ -225,10 +238,11 @@ class BoardViewPage extends HookConsumerWidget {
                         backgroundColor: MyColor.greenSuperLight,
                       ),
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         handleAfterRequest(context);
                       },
                       child: SvgPicture.asset(
-                        'assets/images/svg/request.svg',
+                        Assets.images.svg.request,
                         colorFilter: const ColorFilter.mode(
                             MyColor.green, BlendMode.srcIn),
                         width: 35,
@@ -245,10 +259,11 @@ class BoardViewPage extends HookConsumerWidget {
                         backgroundColor: MyColor.green,
                       ),
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         handleEditRequest();
                       },
                       child: SvgPicture.asset(
-                        'assets/images/svg/request.svg',
+                        Assets.images.svg.request,
                         colorFilter: const ColorFilter.mode(
                             MyColor.greenText, BlendMode.srcIn),
                         width: 35,
@@ -277,7 +292,7 @@ class BoardViewPage extends HookConsumerWidget {
           ],
         ),
         body: isLoading.value
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: CustomIndicator())
             : Container(
                 color: bgColor,
                 width: double.infinity,

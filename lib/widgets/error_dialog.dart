@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 
@@ -48,7 +49,7 @@ class ErrorDialog {
                   Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/images/svg/circle-exclamation.svg',
+                        Assets.images.svg.circleExclamation,
                         colorFilter: const ColorFilter.mode(
                             MyColor.greenText, BlendMode.srcIn),
                         width: 36,
