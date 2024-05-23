@@ -152,6 +152,25 @@ class HomePageViewModel extends _$HomePageViewModel {
     );
   }
 
+  Future<void> addSampleBoard() async {
+    const sampleBoardId = 'sample_board_id';
+    final boardForCard = BoardModel(
+      boardId: sampleBoardId,
+      boardName: 'サンプルボード',
+      ownerId: '',
+      thatDay: DateTime.now(),
+      createdAt: DateTime.now(),
+      thumbnailUrl: null,
+    );
+
+    state = state.copyWith(
+      linkedCardBoardList: [
+        CardBoardModel(board: boardForCard, permission: BoardPermission.viewer),
+        ...state.linkedCardBoardList,
+      ],
+    );
+  }
+
   Future<bool> checkFirstLogin() async {
     final isFirst = ref
         .read(sharedPreferencesRepositoryProvider)

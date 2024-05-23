@@ -8,4 +8,10 @@ abstract class Env {
   static String googleWebClientId = _Env.googleWebClientId;
   @EnviedField(varName: 'IOS_CLIENT_ID', obfuscate: true)
   static String googleIosClientId = _Env.googleIosClientId;
+
+  @EnviedField(varName: 'SUPA_URL', obfuscate: true)
+  static String supabaseUrl = _Env.supabaseUrl;
+
+  @EnviedField(varName: 'SUPA_ANONKEY', obfuscate: true)
+  static String supabaseAnonKey = _Env.supabaseAnonKey;
 }
