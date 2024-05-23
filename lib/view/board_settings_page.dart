@@ -90,7 +90,7 @@ class BoardSettingsPage extends HookConsumerWidget {
     void handleTapPublic() {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext dialogContext) {
           return TwoWayDialog(
             icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
                 width: 36,
@@ -107,13 +107,16 @@ class BoardSettingsPage extends HookConsumerWidget {
                   .read(boardSettingsViewModelProvider.notifier)
                   .switchPublic();
               if (context.mounted) {
-                context.go('/edit', extra: boardId);
-                Navigator.of(context).pop();
+                CustomSnackBar.show(
+                    context,
+                    boardSettingsState.currentBoard!.isPublic
+                        ? 'ボードを非公開にしました'
+                        : 'ボードを公開しました',
+                    MyColor.lightBlue);
+                // context.go('/edit', extra: boardId);
               }
             },
-            onRightButtonPressed: () {
-              Navigator.of(context).pop();
-            },
+            onRightButtonPressed: () {},
           );
         },
       );
@@ -144,7 +147,7 @@ class BoardSettingsPage extends HookConsumerWidget {
     void handleTapDelete() {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext dialogContext) {
           return TwoWayDialog(
             icon: SvgPicture.asset('assets/images/svg/circle-question.svg',
                 width: 36,
@@ -161,7 +164,6 @@ class BoardSettingsPage extends HookConsumerWidget {
                     .deleteBoard();
 
                 if (context.mounted) {
-                  Navigator.of(context).pop();
                   CustomSnackBar.show(context, 'ボードを削除しました', MyColor.lightBlue);
                   context.go('/');
                 }
@@ -171,9 +173,7 @@ class BoardSettingsPage extends HookConsumerWidget {
                 }
               }
             },
-            onRightButtonPressed: () {
-              Navigator.of(context).pop();
-            },
+            onRightButtonPressed: () {},
           );
         },
       );
@@ -217,7 +217,7 @@ class BoardSettingsPage extends HookConsumerWidget {
             if (isSaveable()) {
               showDialog(
                   context: context,
-                  builder: (context) => TwoWayDialog(
+                  builder: (dialogContext) => TwoWayDialog(
                         icon: SvgPicture.asset(
                             'assets/images/svg/circle-question.svg',
                             width: 36,
@@ -228,11 +228,9 @@ class BoardSettingsPage extends HookConsumerWidget {
                         leftButtonText: '保存する',
                         rightButtonText: '保存しない',
                         onLeftButtonPressed: () {
-                          Navigator.of(context).pop();
                           saveTempBoardSettings();
                         },
                         onRightButtonPressed: () {
-                          Navigator.of(context).pop();
                           context.go('/edit', extra: boardId);
                         },
                       ));

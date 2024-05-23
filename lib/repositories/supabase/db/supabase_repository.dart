@@ -101,6 +101,17 @@ class SupabaseRepository {
     }
   }
 
+  Future<void> updatePublicStatus(String boardId, bool isPublic) async {
+    try {
+      await _client
+          .from('boards')
+          .update({'is_public': isPublic}).eq('board_id', boardId);
+    } catch (e) {
+      throw AppException.error('Public status update error',
+          detail: 'updatePublicStatus() :$e');
+    }
+  }
+
   Future<void> deleteBoard(String boardId) async {
     try {
       /// db boardを削除する

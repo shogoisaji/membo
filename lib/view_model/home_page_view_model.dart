@@ -51,6 +51,7 @@ class HomePageViewModel extends _$HomePageViewModel {
           boardName: board.boardName,
           ownerId: board.ownerId,
           thatDay: board.thatDay,
+          isPublic: board.isPublic,
           editableUserIds: board.editableUserIds,
           createdAt: board.createdAt,
           thumbnailUrl: board.thumbnailUrl,
@@ -304,5 +305,16 @@ class HomePageViewModel extends _$HomePageViewModel {
 
     return board.ownerId == userData.userId ||
         board.editableUserIds.contains(userData.userId);
+  }
+
+  Future<void> changeToPublic(String boardId) async {
+    try {
+      await ref
+          .read(supabaseRepositoryProvider)
+          .updatePublicStatus(boardId, true);
+      await initialize();
+    } catch (e) {
+      throw AppException.error('公開できませんでした');
+    }
   }
 }

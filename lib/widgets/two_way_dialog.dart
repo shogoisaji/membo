@@ -100,9 +100,7 @@ class TwoWayDialog extends HookWidget {
                                 color: MyColor.greenText,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: FontFamily.mPlusRounded1c,
-                              )
-                              // style: lightTextTheme.titleLarge,
-                              ),
+                              )),
                         ),
                         content != null
                             ? Text(content!,
@@ -119,6 +117,7 @@ class TwoWayDialog extends HookWidget {
                                 child: InkWell(
                               onTap: () {
                                 HapticFeedback.lightImpact();
+                                Navigator.pop(context);
                                 onLeftButtonPressed();
                               },
                               child: Container(
@@ -154,6 +153,7 @@ class TwoWayDialog extends HookWidget {
                               child: InkWell(
                                 onTap: () {
                                   HapticFeedback.lightImpact();
+                                  Navigator.pop(context);
                                   onRightButtonPressed();
                                 },
                                 child: Container(

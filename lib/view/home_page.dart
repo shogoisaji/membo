@@ -20,6 +20,7 @@ import 'package:membo/widgets/custom_home_card_widget.dart';
 import 'package:membo/widgets/custom_snackbar.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/sharing_widget.dart';
+import 'package:membo/widgets/two_way_dialog.dart';
 
 class HomePage extends HookConsumerWidget {
   final double appBarHeight = 240;
@@ -88,7 +89,33 @@ class HomePage extends HookConsumerWidget {
     }
 
     void handleTapQr(String boardId) {
-      tappedQrBoardId.value = boardId;
+      final bool isPublic = homePageState.ownedCardBoardList.any(
+          (cardBoardModel) =>
+              cardBoardModel.board.boardId == boardId &&
+              cardBoardModel.board.isPublic);
+      if (isPublic) {
+        tappedQrBoardId.value = boardId;
+      } else {
+        showDialog(
+            context: context,
+            builder: (dialogContext) => TwoWayDialog(
+                  title: 'このボードは公開されていません。\n公開しますか？',
+                  leftButtonText: '公開する',
+                  rightButtonText: 'しない',
+                  onLeftButtonPressed: () async {
+                    await ref
+                        .read(homePageViewModelProvider.notifier)
+                        .changeToPublic(boardId);
+                    tappedQrBoardId.value = boardId;
+                    if (!context.mounted) return;
+                    CustomSnackBar.show(
+                        context, 'ボードを公開しました', MyColor.lightBlue);
+                  },
+                  onRightButtonPressed: () {
+                    tappedQrBoardId.value = boardId;
+                  },
+                ));
+      }
     }
 
     void handleTapView(String boardId) {
@@ -476,6 +503,7 @@ class BoardNameInputContent extends HookWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text('ボードの新規作成', style: lightTextTheme.titleLarge),
         backgroundColor: Colors.transparent,

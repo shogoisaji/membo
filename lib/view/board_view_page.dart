@@ -108,7 +108,6 @@ class BoardViewPage extends HookConsumerWidget {
             leftButtonText: 'リクエスト',
             rightButtonText: 'キャンセル',
             onLeftButtonPressed: () async {
-              Navigator.of(dialogContext).pop();
               await ref
                   .read(boardViewPageViewModelProvider.notifier)
                   .sendEditRequest(boardId);
@@ -116,9 +115,7 @@ class BoardViewPage extends HookConsumerWidget {
                 CustomSnackBar.show(context, 'リクエストを送りました', MyColor.lightBlue);
               }
             },
-            onRightButtonPressed: () {
-              Navigator.of(dialogContext).pop();
-            },
+            onRightButtonPressed: () {},
           );
         },
       );
@@ -143,7 +140,6 @@ class BoardViewPage extends HookConsumerWidget {
             leftButtonText: '削除',
             rightButtonText: 'キャンセル',
             onLeftButtonPressed: () async {
-              Navigator.of(dialogContext).pop();
               await ref
                   .read(boardViewPageViewModelProvider.notifier)
                   .cancelRequest(boardId);
@@ -151,9 +147,7 @@ class BoardViewPage extends HookConsumerWidget {
                 CustomSnackBar.show(context, 'リクエストを削除しました', MyColor.lightBlue);
               }
             },
-            onRightButtonPressed: () {
-              Navigator.of(dialogContext).pop();
-            },
+            onRightButtonPressed: () {},
           );
         },
       );
