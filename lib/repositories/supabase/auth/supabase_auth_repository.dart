@@ -113,11 +113,12 @@ class SupabaseAuthRepository {
     );
   }
 
-// Sign out
+  /// Sign out
   void signOut() async {
     await _client.auth.signOut();
   }
 
+  /// Delete account
   Future<void> deleteAccount(String userId) async {
     /// Edge Function "delete-user"を呼び出す
     await _client.functions.invoke("delete-user");
@@ -129,6 +130,15 @@ class SupabaseAuthRepository {
     await _client.auth.signInWithPassword(
       email: email,
       password: password,
+    );
+  }
+
+  /// sign up with email magic link
+  Future<void> signUpWithEmailMagicLink(String email) async {
+    await _client.auth.signInWithOtp(
+      email: email,
+      emailRedirectTo: 'io.supabase.flutterquickstart://login-callback/',
+      data: {'name': 'test', 'password': 'password'},
     );
   }
 

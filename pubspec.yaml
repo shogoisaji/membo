@@ -42,6 +42,7 @@ dependencies:
   package_info_plus:
   smooth_page_indicator:
   flutter_native_splash:
+  app_links:
 
   cupertino_icons: ^1.0.6
   sqflite: ^2.3.3+1
