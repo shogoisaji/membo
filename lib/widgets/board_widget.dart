@@ -349,11 +349,13 @@ class ObjectWidget extends StatelessWidget {
     final textStyle = TextStyle(
       color: Color(int.parse(object.bgColor)),
       fontSize: 100,
+      height: 1.0,
       fontFamily: FontFamily.mPlusRounded1c,
       fontWeight: FontWeight.w700,
     );
     final textBgStyle = TextStyle(
       fontSize: 100,
+      height: 1.0,
       fontFamily: FontFamily.mPlusRounded1c,
       fontWeight: FontWeight.w700,
       foreground: Paint()
@@ -363,6 +365,7 @@ class ObjectWidget extends StatelessWidget {
     );
     final textShadowStyle = TextStyle(
       fontSize: 100,
+      height: 1.0,
       fontFamily: FontFamily.mPlusRounded1c,
       fontWeight: FontWeight.w700,
       foreground: Paint()

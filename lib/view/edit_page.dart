@@ -1173,6 +1173,8 @@ class TextInputModal extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     final TextEditingController textController = useTextEditingController();
     final editPageState = ref.watch(editPageViewModelProvider);
     final selectedTextColor = useState<Color>(Colors.black);
@@ -1186,6 +1188,28 @@ class TextInputModal extends HookConsumerWidget {
 
     void handleChangeTextColor(Color color) {
       selectedTextColor.value = color;
+    }
+
+    void handleTapOk() {
+      if (textController.text.isEmpty) return;
+      HapticFeedback.lightImpact();
+      ref.read(editPageViewModelProvider.notifier).selectObject(
+          ObjectModel(
+              objectId: const Uuid().v4(),
+              type: ObjectType.text,
+              positionX: 0.0,
+              positionY: 0.0,
+              angle: 0.0,
+              scale: 1.0,
+              text: textController.text,
+              creatorId: ref.read(userStateProvider)!.id,
+              createdAt: DateTime.now(),
+              bgColor:
+                  '0xff${selectedTextColor.value.value.toRadixString(16)}'),
+          null);
+      ref.read(editPageViewModelProvider.notifier).hideTextInput();
+      ref.read(editPageViewModelProvider.notifier).hideInputMenu();
+      textController.clear();
     }
 
     return editPageState.showTextInput
@@ -1215,67 +1239,68 @@ class TextInputModal extends HookConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        isPortrait
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 12.0),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MyColor.pink,
+                                      ),
+                                      onPressed: () {
+                                        handleTapOk();
+                                      },
+                                      child: Text('OK',
+                                          style: lightTextTheme.titleLarge),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 12.0),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: MyColor.pink,
-                                ),
-                                onPressed: () {
-                                  if (textController.text.isEmpty) return;
-                                  HapticFeedback.lightImpact();
-                                  ref
-                                      .read(editPageViewModelProvider.notifier)
-                                      .selectObject(
-                                          ObjectModel(
-                                              objectId: const Uuid().v4(),
-                                              type: ObjectType.text,
-                                              positionX: 0.0,
-                                              positionY: 0.0,
-                                              angle: 0.0,
-                                              scale: 1.0,
-                                              text: textController.text,
-                                              creatorId: ref
-                                                  .read(userStateProvider)!
-                                                  .id,
-                                              createdAt: DateTime.now(),
-                                              bgColor:
-                                                  '0xff${selectedTextColor.value.value.toRadixString(16)}'),
-                                          null);
-                                  ref
-                                      .read(editPageViewModelProvider.notifier)
-                                      .hideTextInput();
-                                  ref
-                                      .read(editPageViewModelProvider.notifier)
-                                      .hideInputMenu();
-                                  textController.clear();
-                                },
-                                child: Text('OK',
-                                    style: lightTextTheme.titleLarge),
-                              ),
+                            Expanded(
+                              child: TextField(
+                                  maxLines: null,
+                                  scrollPadding: const EdgeInsets.all(0),
+                                  cursorColor: MyColor.pink,
+                                  style: lightTextTheme.bodyLarge!.copyWith(
+                                      color: selectedTextColor.value,
+                                      fontSize: 32),
+                                  textAlign: TextAlign.center,
+                                  textAlignVertical: TextAlignVertical.bottom,
+                                  focusNode: focusNode,
+                                  controller: textController,
+                                  decoration: const InputDecoration(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent),
+                                      ))),
                             ),
+                            isPortrait
+                                ? const SizedBox.shrink()
+                                : Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MyColor.pink,
+                                      ),
+                                      onPressed: () {
+                                        handleTapOk();
+                                      },
+                                      child: Text('OK',
+                                          style: lightTextTheme.titleLarge),
+                                    ),
+                                  ),
                           ],
                         ),
-                        TextField(
-                            maxLines: 1,
-                            cursorColor: MyColor.pink,
-                            style: lightTextTheme.bodyLarge!.copyWith(
-                                color: selectedTextColor.value, fontSize: 32),
-                            textAlign: TextAlign.center,
-                            focusNode: focusNode,
-                            controller: textController,
-                            decoration: const InputDecoration(
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Colors.transparent),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Colors.transparent),
-                                ))),
                         colorPicker(
                             selectedTextColor.value, handleChangeTextColor),
                       ],
