@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/gen/fonts.gen.dart';
@@ -12,7 +11,6 @@ import 'package:membo/repositories/shared_preferences/shared_preferences_reposit
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/routes/router.dart';
 import 'package:membo/settings/color.dart';
-import 'package:membo/settings/text_theme.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/two_way_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -152,9 +150,7 @@ class MyApp extends HookConsumerWidget {
       routes: [
         GoRoute(
           path: '/',
-          builder: (_, __) => MaintenancePage(onTap: () {
-            fetchPublicNotices();
-          }),
+          builder: (_, __) => const MaintenancePage(),
         ),
       ],
     );
@@ -184,17 +180,11 @@ class MyApp extends HookConsumerWidget {
   }
 }
 
-class MaintenancePage extends HookWidget {
-  final Function onTap;
-  final PublicNoticesModel? noticeData;
-  const MaintenancePage({super.key, required this.onTap, this.noticeData});
+class MaintenancePage extends StatelessWidget {
+  const MaintenancePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    useEffect(() {
-      return null;
-    }, []);
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -210,104 +200,5 @@ class MaintenancePage extends HookWidget {
         ),
       ),
     );
-  }
-}
-
-class NoticeDialog extends HookWidget {
-  final Function onTap;
-  const NoticeDialog({super.key, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final w = MediaQuery.sizeOf(context).width;
-    final h = MediaQuery.sizeOf(context).height;
-    final isReload = useState(false);
-    return Container(
-        width: w,
-        height: h,
-        color: Colors.transparent,
-        child: Center(
-          child: Container(
-            width: 300,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            constraints: const BoxConstraints(
-              maxWidth: 400,
-            ),
-            decoration: BoxDecoration(
-              color: MyColor.greenLight,
-              border: Border.all(
-                  width: 5,
-                  color: MyColor.greenText,
-                  strokeAlign: BorderSide.strokeAlignCenter),
-              borderRadius: const BorderRadius.all(Radius.circular(24)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  offset: const Offset(0, 5),
-                  blurRadius: 5,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Column(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/images/svg/circle-exclamation.svg',
-                      colorFilter: const ColorFilter.mode(
-                          MyColor.greenText, BlendMode.srcIn),
-                      width: 36,
-                      height: 36,
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                ),
-                Text(
-                  'メンテナンス中',
-                  style: lightTextTheme.titleLarge,
-                ),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: InkWell(
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      onTap();
-                      isReload.value = true;
-                      Future.delayed(const Duration(seconds: 2), () {
-                        isReload.value = false;
-                      });
-                    },
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: MyColor.greenText,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(24)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            offset: const Offset(0, 2),
-                            blurRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                          child: isReload.value
-                              ? const CircularProgressIndicator(
-                                  strokeWidth: 3, color: Colors.white)
-                              : Text('リロード',
-                                  style: lightTextTheme.bodyLarge!.copyWith(
-                                    color: Colors.white,
-                                  ))),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ));
   }
 }
