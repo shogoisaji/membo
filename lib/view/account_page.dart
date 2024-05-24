@@ -41,16 +41,43 @@ class AccountPage extends HookConsumerWidget {
             .timeout(
           const Duration(seconds: 5),
           onTimeout: () {
-            ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
-              context.go('/sign-in');
-            });
+            showDialog(
+              context: context,
+              builder: (dialogContext) => TwoWayDialog(
+                title: '通信状況を確認してください',
+                leftButtonText: 'サインアウト',
+                rightButtonText: 'リロード',
+                onLeftButtonPressed: () {
+                  ref.read(supabaseAuthRepositoryProvider).signOut();
+                  context.go('/sign-in');
+                },
+                onRightButtonPressed: () {
+                  initialize();
+                },
+              ),
+            );
           },
         );
-        isLoading.value = false;
       } catch (e) {
         if (context.mounted) {
-          ErrorDialog.show(context, '通信状況を確認してください');
+          showDialog(
+            context: context,
+            builder: (dialogContext) => TwoWayDialog(
+              title: 'データ取得に失敗しました',
+              leftButtonText: 'サインアウト',
+              rightButtonText: 'リロード',
+              onLeftButtonPressed: () {
+                ref.read(supabaseAuthRepositoryProvider).signOut();
+                context.go('/sign-in');
+              },
+              onRightButtonPressed: () {
+                initialize();
+              },
+            ),
+          );
         }
+      } finally {
+        isLoading.value = false;
       }
     }
 
@@ -168,6 +195,7 @@ class AccountPage extends HookConsumerWidget {
 
     void handleTapSignOut(BuildContext context) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (dialogContext) => TwoWayDialog(
                 icon: SvgPicture.asset(Assets.images.svg.circleQuestion,
@@ -179,7 +207,20 @@ class AccountPage extends HookConsumerWidget {
                 leftButtonText: 'ログアウト',
                 rightButtonText: 'キャンセル',
                 onLeftButtonPressed: () async {
-                  ref.read(supabaseAuthRepositoryProvider).signOut();
+                  isLoading.value = true;
+                  try {
+                    await ref.read(supabaseAuthRepositoryProvider).signOut();
+                    if (context.mounted) {
+                      if (!context.mounted) return;
+                      context.go('/');
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ErrorDialog.show(context, 'ログアウトに失敗しました');
+                    }
+                  } finally {
+                    isLoading.value = false;
+                  }
                 },
                 onRightButtonPressed: () {},
               ));
@@ -200,6 +241,7 @@ class AccountPage extends HookConsumerWidget {
           rightButtonText: 'キャンセル',
           onLeftButtonPressed: () async {
             if (accountPageState.user == null) return;
+            isLoading.value = true;
             try {
               await ref
                   .read(accountPageViewModelProvider.notifier)
@@ -213,6 +255,8 @@ class AccountPage extends HookConsumerWidget {
               if (context.mounted) {
                 ErrorDialog.show(context, 'アカウントの削除に失敗しました');
               }
+            } finally {
+              isLoading.value = false;
             }
           },
           onRightButtonPressed: () {},
@@ -533,7 +577,7 @@ class TempAvatarDisplay extends HookWidget {
                 ),
                 const SizedBox(height: 20.0),
                 Text(
-                  'このアバターを保存しますか？',
+                  'この画像を保存しますか？',
                   style: lightTextTheme.bodyLarge!.copyWith(
                     color: MyColor.greenSuperLight,
                   ),

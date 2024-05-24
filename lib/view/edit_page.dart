@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/state/stream_board_state.dart';
@@ -59,17 +60,52 @@ class EditPage extends HookConsumerWidget {
     final timer = useState<Timer?>(null);
 
     void initialize() async {
-      await ref
-          .read(editPageViewModelProvider.notifier)
-          .initialize(boardId, w, h)
-          .timeout(
-        const Duration(seconds: 5),
-        onTimeout: () {
-          ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
-            context.go('/sign-in');
-          });
-        },
-      );
+      isLoading.value = true;
+      try {
+        await ref
+            .read(editPageViewModelProvider.notifier)
+            .initialize(boardId, w, h)
+            .timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (dialogContext) => TwoWayDialog(
+                title: '通信状況を確認してください',
+                leftButtonText: 'サインアウト',
+                rightButtonText: 'リロード',
+                onLeftButtonPressed: () {
+                  ref.read(supabaseAuthRepositoryProvider).signOut();
+                  context.go('/sign-in');
+                },
+                onRightButtonPressed: () {
+                  initialize();
+                },
+              ),
+            );
+          },
+        );
+      } catch (e) {
+        if (context.mounted) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (dialogContext) => TwoWayDialog(
+              title: e.toString(),
+              leftButtonText: 'サインアウト',
+              rightButtonText: 'リロード',
+              onLeftButtonPressed: () {
+                ref.read(supabaseAuthRepositoryProvider).signOut();
+                context.go('/sign-in');
+              },
+              onRightButtonPressed: () {
+                initialize();
+              },
+            ),
+          );
+        }
+      }
     }
 
     useEffect(() {

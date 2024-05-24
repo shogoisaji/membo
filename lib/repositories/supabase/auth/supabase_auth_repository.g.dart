@@ -23,35 +23,5 @@ final supabaseAuthRepositoryProvider =
 );
 
 typedef SupabaseAuthRepositoryRef = ProviderRef<SupabaseAuthRepository>;
-String _$sessionStateStreamHash() =>
-    r'd7513e96c8dbabac12782c8a9b11935291a47c7c';
-
-/// See also [sessionStateStream].
-@ProviderFor(sessionStateStream)
-final sessionStateStreamProvider = AutoDisposeStreamProvider<Session?>.internal(
-  sessionStateStream,
-  name: r'sessionStateStreamProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$sessionStateStreamHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef SessionStateStreamRef = AutoDisposeStreamProviderRef<Session?>;
-String _$sessionStateHash() => r'ab982f720e24f7d1d369e0434c4839105b000309';
-
-/// See also [sessionState].
-@ProviderFor(sessionState)
-final sessionStateProvider = AutoDisposeProvider<Session?>.internal(
-  sessionState,
-  name: r'sessionStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$sessionStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef SessionStateRef = AutoDisposeProviderRef<Session?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

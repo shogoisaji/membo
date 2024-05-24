@@ -14,6 +14,7 @@ import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/error_dialog.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignInPage extends HookConsumerWidget {
@@ -72,6 +73,8 @@ class SignInPage extends HookConsumerWidget {
 
       try {
         await ref.read(supabaseAuthRepositoryProvider).signInWithGoogle();
+        if (!context.mounted) return;
+        context.go('/');
       } catch (e) {
         if (context.mounted) {
           ErrorDialog.show(context, 'Googleサインインに\n失敗しました');
@@ -90,10 +93,10 @@ class SignInPage extends HookConsumerWidget {
 
       try {
         await ref.read(supabaseAuthRepositoryProvider).signInWithApple();
-      } on AppException catch (e) {
-        if (e.type == AppExceptionType.warning) {
-          return;
-        }
+        if (!context.mounted) return;
+        context.go('/');
+      } on SignInWithAppleAuthorizationException catch (_) {
+        return;
       } catch (e) {
         if (context.mounted) {
           ErrorDialog.show(context, 'Appleサインインに\n失敗しました', onTapFunction: () {
@@ -111,6 +114,8 @@ class SignInPage extends HookConsumerWidget {
           await ref
               .read(supabaseAuthRepositoryProvider)
               .signInWithEmail(emailController.text, passwordController.text);
+          if (!context.mounted) return;
+          context.go('/');
         } catch (e) {
           if (context.mounted) {
             ErrorDialog.show(context, 'Error signing in with Email');

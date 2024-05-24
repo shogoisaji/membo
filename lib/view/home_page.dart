@@ -2,12 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/models/user/membership_type.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
@@ -50,10 +48,22 @@ class HomePage extends HookConsumerWidget {
         await ref.read(homePageViewModelProvider.notifier).initialize().timeout(
           const Duration(seconds: 5),
           onTimeout: () {
-            ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
-              ref.read(supabaseAuthRepositoryProvider).signOut();
-              context.go('/sign-in');
-            });
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (dialogContext) => TwoWayDialog(
+                title: '通信状況を確認してください',
+                leftButtonText: 'サインアウト',
+                rightButtonText: 'リロード',
+                onLeftButtonPressed: () {
+                  ref.read(supabaseAuthRepositoryProvider).signOut();
+                  context.go('/sign-in');
+                },
+                onRightButtonPressed: () {
+                  initialize();
+                },
+              ),
+            );
           },
         );
 
@@ -70,20 +80,24 @@ class HomePage extends HookConsumerWidget {
             });
           }
         }
-      } on AppException catch (e) {
-        if (context.mounted) {
-          ErrorDialog.show(context, e.title, onTapFunction: () {
-            ref.read(supabaseAuthRepositoryProvider).signOut();
-            context.go('/sign-in');
-          });
-        }
-        rethrow;
       } catch (e) {
         if (context.mounted) {
-          ErrorDialog.show(context, e.toString(), onTapFunction: () {
-            ref.read(supabaseAuthRepositoryProvider).signOut();
-            context.go('/sign-in');
-          });
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (dialogContext) => TwoWayDialog(
+              title: e.toString(),
+              leftButtonText: 'サインアウト',
+              rightButtonText: 'リロード',
+              onLeftButtonPressed: () {
+                ref.read(supabaseAuthRepositoryProvider).signOut();
+                context.go('/sign-in');
+              },
+              onRightButtonPressed: () {
+                initialize();
+              },
+            ),
+          );
         }
       } finally {
         isLoading.value = false;

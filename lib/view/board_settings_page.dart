@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/gen/assets.gen.dart';
+import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/string.dart';
@@ -34,20 +35,38 @@ class BoardSettingsPage extends HookConsumerWidget {
     final boardSettingsState = ref.watch(boardSettingsViewModelProvider);
     final boardNameTextController = useTextEditingController();
 
+    final isLoading = useState(true);
+
     final isFirstTextInput = useState(true);
 
     Future<void> initialize() async {
-      await ref
-          .read(boardSettingsViewModelProvider.notifier)
-          .initializeLoad(boardId)
-          .timeout(
-        const Duration(seconds: 5),
-        onTimeout: () {
-          ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
-            context.go('/sign-in');
-          });
-        },
-      );
+      isLoading.value = true;
+      try {
+        await ref
+            .read(boardSettingsViewModelProvider.notifier)
+            .initializeLoad(boardId);
+      } catch (e) {
+        if (context.mounted) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (dialogContext) => TwoWayDialog(
+              title: 'データ取得に失敗しました',
+              leftButtonText: 'サインアウト',
+              rightButtonText: 'リロード',
+              onLeftButtonPressed: () {
+                ref.read(supabaseAuthRepositoryProvider).signOut();
+                context.go('/sign-in');
+              },
+              onRightButtonPressed: () {
+                initialize();
+              },
+            ),
+          );
+        }
+      } finally {
+        isLoading.value = false;
+      }
     }
 
     void handleHideModal() {
@@ -242,7 +261,7 @@ class BoardSettingsPage extends HookConsumerWidget {
           },
         ),
       ),
-      body: (boardSettingsState.tempBoard == null)
+      body: isLoading.value
           ? const Center(child: CustomIndicator())
           : Stack(
               children: [

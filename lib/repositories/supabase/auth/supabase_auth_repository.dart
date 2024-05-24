@@ -25,15 +25,6 @@ class SupabaseAuthRepository {
 
   User? get authUser => _client.auth.currentUser;
 
-  Stream<Session?> streamSession() {
-    StreamController<Session?> sessionController = StreamController<Session?>();
-    _client.auth.onAuthStateChange.listen((data) {
-      final session = data.session;
-      sessionController.add(session);
-    });
-    return sessionController.stream;
-  }
-
 // Google login
   Future<void> signInWithGoogle() async {
     try {
@@ -114,7 +105,7 @@ class SupabaseAuthRepository {
   }
 
   /// Sign out
-  void signOut() async {
+  Future<void> signOut() async {
     await _client.auth.signOut();
   }
 
@@ -158,26 +149,26 @@ class SupabaseAuthRepository {
 }
 
 // sessionを監視する
-@riverpod
-Stream<Session?> sessionStateStream(SessionStateStreamRef ref) {
-  final sessionStream =
-      ref.watch(supabaseAuthRepositoryProvider).streamSession();
-  return sessionStream;
-}
+// @riverpod
+// Stream<Session?> sessionStateStream(SessionStateStreamRef ref) {
+//   final sessionStream =
+//       ref.watch(supabaseAuthRepositoryProvider).streamSession();
+//   return sessionStream;
+// }
 
-@riverpod
-Session? sessionState(SessionStateRef ref) {
-  final sessionStreamData = ref.watch(sessionStateStreamProvider);
-  return sessionStreamData.when(
-    loading: () => null,
-    error: (e, __) {
-      return null;
-    },
-    data: (d) {
-      return d;
-    },
-  );
-}
+// @riverpod
+// Session? sessionState(SessionStateRef ref) {
+//   final sessionStreamData = ref.watch(sessionStateStreamProvider);
+//   return sessionStreamData.when(
+//     loading: () => null,
+//     error: (e, __) {
+//       return null;
+//     },
+//     data: (d) {
+//       return d;
+//     },
+//   );
+// }
 
 // @riverpod
 // User? userState(UserStateRef ref) {

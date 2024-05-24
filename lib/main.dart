@@ -4,7 +4,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/gen/fonts.gen.dart';
 import 'package:membo/models/notice/public_notices_model.dart';
 import 'package:membo/repositories/shared_preferences/shared_preferences_key.dart';
@@ -12,6 +11,7 @@ import 'package:membo/repositories/shared_preferences/shared_preferences_reposit
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
 import 'package:membo/routes/router.dart';
 import 'package:membo/settings/color.dart';
+import 'package:membo/view/error_page.dart';
 import 'package:membo/widgets/error_dialog.dart';
 import 'package:membo/widgets/two_way_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -149,7 +149,15 @@ class MyApp extends HookConsumerWidget {
       routes: [
         GoRoute(
           path: '/',
-          builder: (_, __) => const MaintenancePage(),
+          builder: (_, __) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                scaffoldBackgroundColor: MyColor.green,
+              ),
+              home: const ErrorPage(),
+            );
+          },
         ),
       ],
     );
@@ -157,6 +165,7 @@ class MyApp extends HookConsumerWidget {
     useEffect(() {
       FlutterNativeSplash.remove();
       fetchPublicNotices();
+      print('first useEffect');
       // initDeepLinks();
       return null;
     }, []);
@@ -176,28 +185,5 @@ class MyApp extends HookConsumerWidget {
             noticeData.value == null || noticeData.value!.noticeCode != 100
                 ? maintenanceRouter
                 : router);
-  }
-}
-
-class MaintenancePage extends StatelessWidget {
-  const MaintenancePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: MyColor.green,
-      ),
-      home: Scaffold(
-        body: Center(
-          child: Image.asset(
-            Assets.images.splash.path,
-            width: 220,
-            height: 220,
-          ),
-        ),
-      ),
-    );
   }
 }
