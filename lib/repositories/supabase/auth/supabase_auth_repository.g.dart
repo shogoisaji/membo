@@ -53,19 +53,5 @@ final sessionStateProvider = AutoDisposeProvider<Session?>.internal(
 );
 
 typedef SessionStateRef = AutoDisposeProviderRef<Session?>;
-String _$userStateHash() => r'af4cc4e4d9a50be490c8cde413efb263b0bcf9c8';
-
-/// See also [userState].
-@ProviderFor(userState)
-final userStateProvider = AutoDisposeProvider<User?>.internal(
-  userState,
-  name: r'userStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$userStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef UserStateRef = AutoDisposeProviderRef<User?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

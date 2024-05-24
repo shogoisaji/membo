@@ -17,7 +17,7 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
     final board =
         await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
     try {
-      final currentUser = ref.read(userStateProvider);
+      final currentUser = ref.read(supabaseAuthRepositoryProvider).authUser;
       if (currentUser == null) {
         throw Exception('User is not loaded');
       }
@@ -119,7 +119,7 @@ class BoardSettingsViewModel extends _$BoardSettingsViewModel {
   }
 
   Future<void> deleteBoard() async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }

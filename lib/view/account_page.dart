@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
@@ -27,6 +31,28 @@ class AccountPage extends HookConsumerWidget {
     final w = MediaQuery.sizeOf(context).width;
     final h = MediaQuery.sizeOf(context).height;
     final accountPageState = ref.watch(accountPageViewModelProvider);
+    final isLoading = useState(true);
+
+    Future<void> initialize() async {
+      try {
+        await ref
+            .read(accountPageViewModelProvider.notifier)
+            .initializeLoad()
+            .timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
+              context.go('/sign-in');
+            });
+          },
+        );
+        isLoading.value = false;
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, '通信状況を確認してください');
+        }
+      }
+    }
 
     Future<void> handleSubmitName(
         String name, BuildContext dialogContext) async {
@@ -105,16 +131,38 @@ class AccountPage extends HookConsumerWidget {
       );
     }
 
-    Future<void> handleTapEditAvatar() async {
+    Future<void> handleTapSelectAvatar() async {
       try {
-        await ref.read(accountPageViewModelProvider.notifier).updateAvatar();
-        if (context.mounted) {
-          CustomSnackBar.show(context, 'アバターが更新されました', MyColor.lightBlue);
+        await ref.read(accountPageViewModelProvider.notifier).selectAvatar();
+      } on AppException catch (e) {
+        /// イメージを選択しなかった場合
+        if (e.type == AppExceptionType.notFound) {
+          return;
         }
       } catch (e) {
         if (context.mounted) {
           ErrorDialog.show(context, 'アバターの更新に失敗しました');
         }
+      }
+    }
+
+    void handleAvatarCancel() {
+      ref.read(accountPageViewModelProvider.notifier).clearTempAvatar();
+    }
+
+    void handleAvatarSave() async {
+      isLoading.value = true;
+      try {
+        await ref.read(accountPageViewModelProvider.notifier).saveAvatar();
+        if (context.mounted) {
+          CustomSnackBar.show(context, 'アバターを更新しました', MyColor.lightBlue);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ErrorDialog.show(context, 'アバターの更新に失敗しました');
+        }
+      } finally {
+        isLoading.value = false;
       }
     }
 
@@ -172,26 +220,6 @@ class AccountPage extends HookConsumerWidget {
       );
     }
 
-    Future<void> initialize() async {
-      try {
-        await ref
-            .read(accountPageViewModelProvider.notifier)
-            .initializeLoad()
-            .timeout(
-          const Duration(seconds: 5),
-          onTimeout: () {
-            ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
-              context.go('/sign-in');
-            });
-          },
-        );
-      } catch (e) {
-        if (context.mounted) {
-          ErrorDialog.show(context, '通信状況を確認してください');
-        }
-      }
-    }
-
     useEffect(() {
       initialize();
       return null;
@@ -217,31 +245,28 @@ class AccountPage extends HookConsumerWidget {
         body: Stack(
           children: [
             BgPaint(width: w, height: h),
-            SafeArea(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 500),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 16.0),
-                      child: Column(
-                        children: [
-                          accountPageState.isLoading
-                              ? const Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Center(child: CustomIndicator()),
-                                    SizedBox(height: 200.0),
-                                  ],
-                                )
-                              : Column(
+            isLoading.value
+                ? SizedBox(
+                    width: w,
+                    height: h,
+                    child: const Center(child: CustomIndicator()),
+                  )
+                : SafeArea(
+                    child: SingleChildScrollView(
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 500),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0, vertical: 16.0),
+                            child: Column(
+                              children: [
+                                Column(
                                   children: [
                                     const SizedBox(height: 10.0),
                                     _avatarImage(
                                         accountPageState.user!.avatarUrl,
-                                        handleTapEditAvatar),
+                                        handleTapSelectAvatar),
                                     const SizedBox(height: 30.0),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
@@ -346,40 +371,53 @@ class AccountPage extends HookConsumerWidget {
                                     const SizedBox(height: 36.0),
                                   ],
                                 ),
-                          CustomButton(
-                            width: double.infinity,
-                            height: 50,
-                            color: MyColor.pink,
-                            child: Center(
-                                child: Text('ログアウト',
-                                    style: lightTextTheme.titleLarge)),
-                            onTap: () {
-                              handleTapSignOut(context);
-                            },
-                          ),
-                          const SizedBox(height: 32.0),
-                          accountPageState.user == null
-                              ? const SizedBox.shrink()
-                              : CustomButton(
+                                CustomButton(
                                   width: double.infinity,
                                   height: 50,
-                                  color: MyColor.red,
+                                  color: MyColor.pink,
                                   child: Center(
-                                      child: Text('アカウント削除',
-                                          style: lightTextTheme.titleLarge!
-                                              .copyWith(color: Colors.white))),
-                                  onTap: () async {
-                                    handleDeleteAccount();
+                                      child: Text('ログアウト',
+                                          style: lightTextTheme.titleLarge)),
+                                  onTap: () {
+                                    handleTapSignOut(context);
                                   },
                                 ),
-                          const SizedBox(height: 100.0),
-                        ],
+                                const SizedBox(height: 32.0),
+                                accountPageState.user == null
+                                    ? const SizedBox.shrink()
+                                    : CustomButton(
+                                        width: double.infinity,
+                                        height: 50,
+                                        color: MyColor.red,
+                                        child: Center(
+                                            child: Text('アカウント削除',
+                                                style: lightTextTheme
+                                                    .titleLarge!
+                                                    .copyWith(
+                                                        color: Colors.white))),
+                                        onTap: () async {
+                                          handleDeleteAccount();
+                                        },
+                                      ),
+                                const SizedBox(height: 100.0),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
+            accountPageState.tempAvatar != null
+                ? TempAvatarDisplay(
+                    tempAvatar: accountPageState.tempAvatar!,
+                    onTapCancel: () {
+                      handleAvatarCancel();
+                    },
+                    onTapSave: () {
+                      handleAvatarSave();
+                    },
+                  )
+                : const SizedBox.shrink(),
           ],
         ));
   }
@@ -430,5 +468,100 @@ class AccountPage extends HookConsumerWidget {
       radius: avatarSize / 2,
       child: const Icon(Icons.person, size: 70),
     );
+  }
+}
+
+class TempAvatarDisplay extends HookWidget {
+  final XFile tempAvatar;
+  final Function onTapCancel;
+  final Function onTapSave;
+  final double avatarSize = 120;
+  const TempAvatarDisplay(
+      {super.key,
+      required this.tempAvatar,
+      required this.onTapCancel,
+      required this.onTapSave});
+
+  @override
+  Widget build(BuildContext context) {
+    final w = MediaQuery.sizeOf(context).width;
+    final h = MediaQuery.sizeOf(context).height;
+
+    final animationController = useAnimationController(
+      duration: const Duration(milliseconds: 400),
+    )..forward();
+
+    final animation = CurvedAnimation(
+      parent: animationController,
+      curve: Curves.easeInOut,
+    );
+
+    return AnimatedBuilder(
+        animation: animation,
+        builder: (context, child) {
+          return Container(
+            width: w,
+            height: h,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: const [
+                    0.0,
+                    1
+                    // animation.value,
+                  ],
+                  colors: [
+                    Colors.black.withOpacity(0.6),
+                    Colors.black.withOpacity(0.6 * animation.value),
+                  ]),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Transform.scale(
+                  scale: 1.4 + 0.3 * (animation.value),
+                  alignment: Alignment.bottomCenter,
+                  child: CircleAvatar(
+                    radius: avatarSize / 2,
+                    foregroundImage: FileImage(
+                      File(tempAvatar.path),
+                    ),
+                    child: const Icon(Icons.person, size: 70),
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+                Text(
+                  'このアバターを保存しますか？',
+                  style: lightTextTheme.bodyLarge!.copyWith(
+                    color: MyColor.greenSuperLight,
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(150, 50),
+                        backgroundColor: MyColor.greenLight),
+                    onPressed: () {
+                      onTapSave();
+                    },
+                    child: Text('保存', style: lightTextTheme.bodyLarge)),
+                const SizedBox(height: 20.0),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(150, 50),
+                        backgroundColor: MyColor.lightRed),
+                    onPressed: () {
+                      onTapCancel();
+                    },
+                    child: Text('キャンセル',
+                        style: lightTextTheme.bodyLarge!.copyWith(
+                          color: Colors.white,
+                        ))),
+              ],
+            ),
+          );
+        });
   }
 }

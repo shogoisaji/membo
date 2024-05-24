@@ -115,7 +115,6 @@ class BoardSettingsPage extends HookConsumerWidget {
                         ? 'ボードを非公開にしました'
                         : 'ボードを公開しました',
                     MyColor.lightBlue);
-                // context.go('/edit', extra: boardId);
               }
             },
             onRightButtonPressed: () {},
@@ -124,11 +123,12 @@ class BoardSettingsPage extends HookConsumerWidget {
       );
     }
 
-    void saveTempBoardSettings() {
+    Future<void> saveTempBoardSettings() async {
       try {
-        ref
+        await ref
             .read(boardSettingsViewModelProvider.notifier)
             .saveTempBoardSettings();
+        if (!context.mounted) return;
         context.go('/edit', extra: boardId);
       } catch (e) {
         throw Exception(e.toString());
@@ -229,8 +229,8 @@ class BoardSettingsPage extends HookConsumerWidget {
                         title: '設定変更データを\n保存しますか？',
                         leftButtonText: '保存する',
                         rightButtonText: '保存しない',
-                        onLeftButtonPressed: () {
-                          saveTempBoardSettings();
+                        onLeftButtonPressed: () async {
+                          await saveTempBoardSettings();
                         },
                         onRightButtonPressed: () {
                           context.go('/edit', extra: boardId);

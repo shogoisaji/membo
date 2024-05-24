@@ -175,7 +175,9 @@ GoRouter router(RouterRef ref) {
 
   String? redirect(BuildContext context, GoRouterState state) {
     final page = state.uri.toString();
-    final signedIn = ref.watch(userStateProvider) != null ? true : false;
+    final signedIn = ref.watch(supabaseAuthRepositoryProvider).authUser != null
+        ? true
+        : false;
 
     if (signedIn && page == PagePath.signIn) {
       return PagePath.home;
@@ -189,7 +191,7 @@ GoRouter router(RouterRef ref) {
   }
 
   final listenable = ValueNotifier<Object?>(null);
-  ref.listen<Object?>(userStateProvider, (_, newState) {
+  ref.listen<Object?>(supabaseAuthRepositoryProvider, (_, newState) {
     listenable.value = newState;
   });
   ref.onDispose(listenable.dispose);

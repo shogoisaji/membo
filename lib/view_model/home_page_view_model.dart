@@ -20,7 +20,8 @@ class HomePageViewModel extends _$HomePageViewModel {
 
   /// TODO:user dataのselectを指定してソートして取得した方が良いかも
   Future<void> initialize() async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
+    // final user = ref.read(userStateProvider);
 
     final userData = await ref
         .read(supabaseRepositoryProvider)
@@ -165,7 +166,7 @@ class HomePageViewModel extends _$HomePageViewModel {
   }
 
   Future<void> addSampleBoard() async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }
@@ -207,7 +208,7 @@ class HomePageViewModel extends _$HomePageViewModel {
   }
 
   Future<void> deleteBoardFromCard(String boardId) async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }
@@ -275,7 +276,7 @@ class HomePageViewModel extends _$HomePageViewModel {
 
   Future<String> createNewBoard(String boardName) async {
     /// Get the current user
-    final User? user = ref.read(userStateProvider);
+    final User? user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not signed in');
     }
@@ -311,7 +312,7 @@ class HomePageViewModel extends _$HomePageViewModel {
 
   /// have the authority -> true, no authority -> false
   Future<bool> checkPermission(String boardId) async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }
