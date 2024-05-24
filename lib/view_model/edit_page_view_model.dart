@@ -61,7 +61,7 @@ class EditPageViewModel extends _$EditPageViewModel {
   }
 
   Future<void> initialize(String boardId, double w, double h) async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }
@@ -81,6 +81,7 @@ class EditPageViewModel extends _$EditPageViewModel {
     final matrix = calcInitialTransform(board, w, h);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       state = state.copyWith(
+        userId: user.id,
         boardModel: board,
         currentImageCount: imageCount,
         transformationMatrix: matrix,
@@ -174,13 +175,10 @@ class EditPageViewModel extends _$EditPageViewModel {
     /// typeに合わせてrepositoryのメソッドを呼び出し、insert
     try {
       /// 権限をチェック
-      final user = ref.read(userStateProvider);
-      if (user == null) {
-        throw Exception('User is not signed in');
-      }
-
+      ///
       /// 所有者、または編集権限を持っているユーザーのみ書き込み可能
-      if (!board.editableUserIds.contains(user.id) && state.isOwner == false) {
+      if (!board.editableUserIds.contains(state.userId) &&
+          state.isOwner == false) {
         throw AppException.error('書き込み権限がありません');
       }
 

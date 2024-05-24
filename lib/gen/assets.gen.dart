@@ -30,6 +30,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/hint6.png
   AssetGenImage get hint6 => const AssetGenImage('assets/images/hint6.png');
 
+  /// File path: assets/images/hint7.png
+  AssetGenImage get hint7 => const AssetGenImage('assets/images/hint7.png');
+
   /// File path: assets/images/icon.png
   AssetGenImage get icon => const AssetGenImage('assets/images/icon.png');
 
@@ -47,7 +50,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<AssetGenImage> get values =>
-      [hint1, hint2, hint3, hint4, hint5, hint6, icon, splash, title];
+      [hint1, hint2, hint3, hint4, hint5, hint6, hint7, icon, splash, title];
 }
 
 class $AssetsLottiesGen {

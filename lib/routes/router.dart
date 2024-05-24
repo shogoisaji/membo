@@ -7,6 +7,7 @@ import 'package:membo/view/custom_license_page.dart';
 import 'package:membo/view/edit_page.dart';
 import 'package:membo/view/board_view_page.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
+import 'package:membo/view/error_page.dart';
 import 'package:membo/view/policy_page.dart';
 import 'package:membo/view/scan_page.dart';
 import 'package:membo/view/sign_up_page.dart';
@@ -33,6 +34,7 @@ class PagePath {
   static const qrScan = '/qr-scan';
   static const license = '/license';
   static const termsOfService = '/terms-of-service';
+  static const error = '/error';
 }
 
 CustomTransitionPage buildPageWithDefaultTransition<T>({
@@ -65,6 +67,10 @@ GoRouter router(RouterRef ref) {
     GoRoute(
       path: PagePath.signUp,
       builder: (_, __) => const SignUpPage(),
+    ),
+    GoRoute(
+      path: PagePath.error,
+      builder: (_, __) => const ErrorPage(),
     ),
     ShellRoute(
       builder: (_, __, child) => Scaffold(
@@ -175,7 +181,9 @@ GoRouter router(RouterRef ref) {
 
   String? redirect(BuildContext context, GoRouterState state) {
     final page = state.uri.toString();
-    final signedIn = ref.watch(userStateProvider) != null ? true : false;
+    final signedIn = ref.watch(supabaseAuthRepositoryProvider).authUser != null
+        ? true
+        : false;
 
     if (signedIn && page == PagePath.signIn) {
       return PagePath.home;
@@ -188,16 +196,16 @@ GoRouter router(RouterRef ref) {
     }
   }
 
-  final listenable = ValueNotifier<Object?>(null);
-  ref.listen<Object?>(userStateProvider, (_, newState) {
-    listenable.value = newState;
-  });
-  ref.onDispose(listenable.dispose);
+  // final listenable = ValueNotifier<Object?>(null);
+  // ref.listen<User?>(sessionStateProvider, (_, newState) {
+  //   listenable.value = newState;
+  // });
+  // ref.onDispose(listenable.dispose);
 
   return GoRouter(
     initialLocation: PagePath.signIn,
     routes: routes,
     redirect: redirect,
-    refreshListenable: listenable,
+    // refreshListenable: listenable,
   );
 }

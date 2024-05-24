@@ -10,6 +10,7 @@ part 'edit_page_state.freezed.dart';
 @freezed
 class EditPageState with _$EditPageState {
   factory EditPageState({
+    String? userId,
     ObjectModel? selectedObject,
     BoardModel? boardModel,
     @Default(0) int currentImageCount,

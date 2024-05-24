@@ -6,8 +6,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/view_model_state/board_view_page_state.dart';
+import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/state/stream_board_state.dart';
@@ -47,6 +47,7 @@ class BoardViewPage extends HookConsumerWidget {
         useTransformationController();
 
     void initialize() async {
+      isLoading.value = true;
       try {
         await ref
             .read(boardViewPageViewModelProvider.notifier)
@@ -54,22 +55,42 @@ class BoardViewPage extends HookConsumerWidget {
             .timeout(
           const Duration(seconds: 5),
           onTimeout: () {
-            ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
-              context.go('/sign-in');
-            });
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (dialogContext) => TwoWayDialog(
+                title: '通信状況を確認してください',
+                leftButtonText: 'サインアウト',
+                rightButtonText: 'リロード',
+                onLeftButtonPressed: () {
+                  ref.read(supabaseAuthRepositoryProvider).signOut();
+                  context.go('/sign-in');
+                },
+                onRightButtonPressed: () {
+                  initialize();
+                },
+              ),
+            );
           },
         );
-      } on AppException catch (e) {
-        if (context.mounted) {
-          ErrorDialog.show(
-            context,
-            e.title,
-            onTapFunction: () => context.go('/'),
-          );
-        }
       } catch (e) {
         if (context.mounted) {
-          ErrorDialog.show(context, e.toString());
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (dialogContext) => TwoWayDialog(
+              title: 'データ取得に失敗しました',
+              leftButtonText: 'サインアウト',
+              rightButtonText: 'リロード',
+              onLeftButtonPressed: () {
+                ref.read(supabaseAuthRepositoryProvider).signOut();
+                context.go('/sign-in');
+              },
+              onRightButtonPressed: () {
+                initialize();
+              },
+            ),
+          );
         }
       }
     }

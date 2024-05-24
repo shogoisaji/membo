@@ -16,6 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$EditPageState {
+  String? get userId => throw _privateConstructorUsedError;
   ObjectModel? get selectedObject => throw _privateConstructorUsedError;
   BoardModel? get boardModel => throw _privateConstructorUsedError;
   int get currentImageCount => throw _privateConstructorUsedError;
@@ -37,7 +38,8 @@ abstract class $EditPageStateCopyWith<$Res> {
       _$EditPageStateCopyWithImpl<$Res, EditPageState>;
   @useResult
   $Res call(
-      {ObjectModel? selectedObject,
+      {String? userId,
+      ObjectModel? selectedObject,
       BoardModel? boardModel,
       int currentImageCount,
       XFile? selectedImageFile,
@@ -63,6 +65,7 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? userId = freezed,
     Object? selectedObject = freezed,
     Object? boardModel = freezed,
     Object? currentImageCount = null,
@@ -73,6 +76,10 @@ class _$EditPageStateCopyWithImpl<$Res, $Val extends EditPageState>
     Object? transformationMatrix = freezed,
   }) {
     return _then(_value.copyWith(
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
       selectedObject: freezed == selectedObject
           ? _value.selectedObject
           : selectedObject // ignore: cast_nullable_to_non_nullable
@@ -142,7 +149,8 @@ abstract class _$$EditPageStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {ObjectModel? selectedObject,
+      {String? userId,
+      ObjectModel? selectedObject,
       BoardModel? boardModel,
       int currentImageCount,
       XFile? selectedImageFile,
@@ -168,6 +176,7 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? userId = freezed,
     Object? selectedObject = freezed,
     Object? boardModel = freezed,
     Object? currentImageCount = null,
@@ -178,6 +187,10 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
     Object? transformationMatrix = freezed,
   }) {
     return _then(_$EditPageStateImpl(
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
       selectedObject: freezed == selectedObject
           ? _value.selectedObject
           : selectedObject // ignore: cast_nullable_to_non_nullable
@@ -218,7 +231,8 @@ class __$$EditPageStateImplCopyWithImpl<$Res>
 
 class _$EditPageStateImpl implements _EditPageState {
   _$EditPageStateImpl(
-      {this.selectedObject,
+      {this.userId,
+      this.selectedObject,
       this.boardModel,
       this.currentImageCount = 0,
       this.selectedImageFile,
@@ -227,6 +241,8 @@ class _$EditPageStateImpl implements _EditPageState {
       this.isOwner = false,
       this.transformationMatrix});
 
+  @override
+  final String? userId;
   @override
   final ObjectModel? selectedObject;
   @override
@@ -250,7 +266,7 @@ class _$EditPageStateImpl implements _EditPageState {
 
   @override
   String toString() {
-    return 'EditPageState(selectedObject: $selectedObject, boardModel: $boardModel, currentImageCount: $currentImageCount, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu, isOwner: $isOwner, transformationMatrix: $transformationMatrix)';
+    return 'EditPageState(userId: $userId, selectedObject: $selectedObject, boardModel: $boardModel, currentImageCount: $currentImageCount, selectedImageFile: $selectedImageFile, showTextInput: $showTextInput, showInputMenu: $showInputMenu, isOwner: $isOwner, transformationMatrix: $transformationMatrix)';
   }
 
   @override
@@ -258,6 +274,7 @@ class _$EditPageStateImpl implements _EditPageState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EditPageStateImpl &&
+            (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.selectedObject, selectedObject) ||
                 other.selectedObject == selectedObject) &&
             (identical(other.boardModel, boardModel) ||
@@ -278,6 +295,7 @@ class _$EditPageStateImpl implements _EditPageState {
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      userId,
       selectedObject,
       boardModel,
       currentImageCount,
@@ -296,7 +314,8 @@ class _$EditPageStateImpl implements _EditPageState {
 
 abstract class _EditPageState implements EditPageState {
   factory _EditPageState(
-      {final ObjectModel? selectedObject,
+      {final String? userId,
+      final ObjectModel? selectedObject,
       final BoardModel? boardModel,
       final int currentImageCount,
       final XFile? selectedImageFile,
@@ -305,6 +324,8 @@ abstract class _EditPageState implements EditPageState {
       final bool isOwner,
       final Matrix4? transformationMatrix}) = _$EditPageStateImpl;
 
+  @override
+  String? get userId;
   @override
   ObjectModel? get selectedObject;
   @override

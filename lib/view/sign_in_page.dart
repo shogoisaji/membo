@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
@@ -11,6 +14,7 @@ import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/widgets/bg_paint.dart';
 import 'package:membo/widgets/custom_button.dart';
 import 'package:membo/widgets/error_dialog.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignInPage extends HookConsumerWidget {
@@ -69,15 +73,19 @@ class SignInPage extends HookConsumerWidget {
 
       try {
         await ref.read(supabaseAuthRepositoryProvider).signInWithGoogle();
+        if (!context.mounted) return;
+        context.go('/');
       } catch (e) {
         if (context.mounted) {
-          ErrorDialog.show(context, 'Error signing in with Google');
+          ErrorDialog.show(context, 'Googleサインインに\n失敗しました');
         }
       }
       animationController.reverse();
     }
 
     void handleSignInWithApple() async {
+      if (!Platform.isIOS) return;
+
       animationController.reset();
 
       shutterColor.value = appleColor;
@@ -85,15 +93,19 @@ class SignInPage extends HookConsumerWidget {
 
       try {
         await ref.read(supabaseAuthRepositoryProvider).signInWithApple();
+        if (!context.mounted) return;
+        context.go('/');
+      } on SignInWithAppleAuthorizationException catch (_) {
+        return;
       } catch (e) {
         if (context.mounted) {
-          ErrorDialog.show(context, 'Error signing in with Apple',
-              onTapFunction: () {
+          ErrorDialog.show(context, 'Appleサインインに\n失敗しました', onTapFunction: () {
             context.go('/sign-in');
           });
         }
+      } finally {
+        animationController.reverse();
       }
-      animationController.reverse();
     }
 
     void handleSignInWithEmail() async {
@@ -102,6 +114,8 @@ class SignInPage extends HookConsumerWidget {
           await ref
               .read(supabaseAuthRepositoryProvider)
               .signInWithEmail(emailController.text, passwordController.text);
+          if (!context.mounted) return;
+          context.go('/');
         } catch (e) {
           if (context.mounted) {
             ErrorDialog.show(context, 'Error signing in with Email');

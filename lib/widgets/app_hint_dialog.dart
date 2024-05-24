@@ -19,7 +19,7 @@ class AppHintDialogWidget extends HookWidget {
   AppHintDialogWidget({super.key, required this.onTap});
 
   final List<Widget> pages = List.generate(
-    6,
+    7,
     (index) =>
         Image.asset('assets/images/hint${index + 1}.png', fit: BoxFit.fill),
   );

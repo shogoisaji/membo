@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AccountPageState {
   bool get isLoading => throw _privateConstructorUsedError;
   UserModel? get user => throw _privateConstructorUsedError;
+  XFile? get tempAvatar => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $AccountPageStateCopyWith<AccountPageState> get copyWith =>
@@ -30,7 +31,7 @@ abstract class $AccountPageStateCopyWith<$Res> {
           AccountPageState value, $Res Function(AccountPageState) then) =
       _$AccountPageStateCopyWithImpl<$Res, AccountPageState>;
   @useResult
-  $Res call({bool isLoading, UserModel? user});
+  $Res call({bool isLoading, UserModel? user, XFile? tempAvatar});
 
   $UserModelCopyWith<$Res>? get user;
 }
@@ -50,6 +51,7 @@ class _$AccountPageStateCopyWithImpl<$Res, $Val extends AccountPageState>
   $Res call({
     Object? isLoading = null,
     Object? user = freezed,
+    Object? tempAvatar = freezed,
   }) {
     return _then(_value.copyWith(
       isLoading: null == isLoading
@@ -60,6 +62,10 @@ class _$AccountPageStateCopyWithImpl<$Res, $Val extends AccountPageState>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as UserModel?,
+      tempAvatar: freezed == tempAvatar
+          ? _value.tempAvatar
+          : tempAvatar // ignore: cast_nullable_to_non_nullable
+              as XFile?,
     ) as $Val);
   }
 
@@ -84,7 +90,7 @@ abstract class _$$AccountPageStateImplCopyWith<$Res>
       __$$AccountPageStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isLoading, UserModel? user});
+  $Res call({bool isLoading, UserModel? user, XFile? tempAvatar});
 
   @override
   $UserModelCopyWith<$Res>? get user;
@@ -103,6 +109,7 @@ class __$$AccountPageStateImplCopyWithImpl<$Res>
   $Res call({
     Object? isLoading = null,
     Object? user = freezed,
+    Object? tempAvatar = freezed,
   }) {
     return _then(_$AccountPageStateImpl(
       isLoading: null == isLoading
@@ -113,6 +120,10 @@ class __$$AccountPageStateImplCopyWithImpl<$Res>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as UserModel?,
+      tempAvatar: freezed == tempAvatar
+          ? _value.tempAvatar
+          : tempAvatar // ignore: cast_nullable_to_non_nullable
+              as XFile?,
     ));
   }
 }
@@ -120,17 +131,20 @@ class __$$AccountPageStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$AccountPageStateImpl implements _AccountPageState {
-  const _$AccountPageStateImpl({this.isLoading = true, this.user});
+  const _$AccountPageStateImpl(
+      {this.isLoading = true, this.user, this.tempAvatar});
 
   @override
   @JsonKey()
   final bool isLoading;
   @override
   final UserModel? user;
+  @override
+  final XFile? tempAvatar;
 
   @override
   String toString() {
-    return 'AccountPageState(isLoading: $isLoading, user: $user)';
+    return 'AccountPageState(isLoading: $isLoading, user: $user, tempAvatar: $tempAvatar)';
   }
 
   @override
@@ -140,11 +154,13 @@ class _$AccountPageStateImpl implements _AccountPageState {
             other is _$AccountPageStateImpl &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
-            (identical(other.user, user) || other.user == user));
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.tempAvatar, tempAvatar) ||
+                other.tempAvatar == tempAvatar));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, isLoading, user);
+  int get hashCode => Object.hash(runtimeType, isLoading, user, tempAvatar);
 
   @JsonKey(ignore: true)
   @override
@@ -156,12 +172,16 @@ class _$AccountPageStateImpl implements _AccountPageState {
 
 abstract class _AccountPageState implements AccountPageState {
   const factory _AccountPageState(
-      {final bool isLoading, final UserModel? user}) = _$AccountPageStateImpl;
+      {final bool isLoading,
+      final UserModel? user,
+      final XFile? tempAvatar}) = _$AccountPageStateImpl;
 
   @override
   bool get isLoading;
   @override
   UserModel? get user;
+  @override
+  XFile? get tempAvatar;
   @override
   @JsonKey(ignore: true)
   _$$AccountPageStateImplCopyWith<_$AccountPageStateImpl> get copyWith =>

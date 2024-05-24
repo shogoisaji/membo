@@ -46,7 +46,7 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
   }
 
   Future<ViewPageUserTypes> checkUserType(String boardId) async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }
@@ -109,7 +109,7 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
   }
 
   Future<void> addLinkedBoardId(String newBoardId) async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }
@@ -146,7 +146,7 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
   }
 
   Future<void> sendEditRequest(String boardId) async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }
@@ -180,7 +180,7 @@ class BoardViewPageViewModel extends _$BoardViewPageViewModel {
   }
 
   Future<void> cancelRequest(String boardId) async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }

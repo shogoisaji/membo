@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:membo/env/env.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -23,15 +24,6 @@ class SupabaseAuthRepository {
   final SupabaseClient _client;
 
   User? get authUser => _client.auth.currentUser;
-
-  Stream<Session?> streamSession() {
-    StreamController<Session?> sessionController = StreamController<Session?>();
-    _client.auth.onAuthStateChange.listen((data) {
-      final session = data.session;
-      sessionController.add(session);
-    });
-    return sessionController.stream;
-  }
 
 // Google login
   Future<void> signInWithGoogle() async {
@@ -102,8 +94,7 @@ class SupabaseAuthRepository {
 
     final idToken = credential.identityToken;
     if (idToken == null) {
-      throw const AuthException(
-          'Could not find ID Token from generated credential.');
+      throw AppException.warning('id token is null');
     }
 
     return _client.auth.signInWithIdToken(
@@ -114,7 +105,7 @@ class SupabaseAuthRepository {
   }
 
   /// Sign out
-  void signOut() async {
+  Future<void> signOut() async {
     await _client.auth.signOut();
   }
 
@@ -158,29 +149,32 @@ class SupabaseAuthRepository {
 }
 
 // sessionを監視する
-@riverpod
-Stream<Session?> sessionStateStream(SessionStateStreamRef ref) {
-  final sessionStream =
-      ref.watch(supabaseAuthRepositoryProvider).streamSession();
-  return sessionStream;
-}
+// @riverpod
+// Stream<Session?> sessionStateStream(SessionStateStreamRef ref) {
+//   final sessionStream =
+//       ref.watch(supabaseAuthRepositoryProvider).streamSession();
+//   return sessionStream;
+// }
 
-@riverpod
-Session? sessionState(SessionStateRef ref) {
-  final sessionStreamData = ref.watch(sessionStateStreamProvider);
-  return sessionStreamData.when(
-    loading: () => null,
-    error: (e, __) {
-      return null;
-    },
-    data: (d) {
-      return d;
-    },
-  );
-}
+// @riverpod
+// Session? sessionState(SessionStateRef ref) {
+//   final sessionStreamData = ref.watch(sessionStateStreamProvider);
+//   return sessionStreamData.when(
+//     loading: () => null,
+//     error: (e, __) {
+//       return null;
+//     },
+//     data: (d) {
+//       return d;
+//     },
+//   );
+// }
 
-@riverpod
-User? userState(UserStateRef ref) {
-  final session = ref.watch(sessionStateProvider);
-  return session?.user;
-}
+// @riverpod
+// User? userState(UserStateRef ref) {
+//   final session = ref.watch(sessionStateProvider);
+//   if (session == null) {
+//     print('session is null');
+//   }
+//   return session?.user;
+// }

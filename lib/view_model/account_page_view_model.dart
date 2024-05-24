@@ -1,4 +1,5 @@
 import 'package:image_picker/image_picker.dart';
+import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/models/user/user_model.dart';
 import 'package:membo/models/view_model_state/account_page_state.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
@@ -14,7 +15,7 @@ class AccountPageViewModel extends _$AccountPageViewModel {
   AccountPageState build() => const AccountPageState();
 
   Future<void> initializeLoad() async {
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }
@@ -47,12 +48,12 @@ class AccountPageViewModel extends _$AccountPageViewModel {
     state = state.copyWith(user: newUserData);
   }
 
-  Future<void> updateAvatar() async {
+  Future<void> selectAvatar() async {
     const imageMaxSize = 500.0;
     const pickImageMaxDataSize = 1.0; //  MB
     final picker = ImagePicker();
 
-    final user = ref.read(userStateProvider);
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {
       throw Exception('User is not loaded');
     }
@@ -69,9 +70,8 @@ class AccountPageViewModel extends _$AccountPageViewModel {
         maxHeight: imageMaxSize,
         imageQuality: 100,
       );
-
       if (image == null) {
-        return;
+        throw AppException.notFound();
       }
 
       /// 画像のデータサイズチェック
@@ -84,6 +84,35 @@ class AccountPageViewModel extends _$AccountPageViewModel {
         throw Exception('Image size is too large');
       }
 
+      state = state.copyWith(tempAvatar: image);
+    } on AppException catch (_) {
+      rethrow;
+    } catch (e) {
+      throw Exception('Error updateAvatar(): $e');
+    }
+  }
+
+  Future<void> saveAvatar() async {
+    final newImage = state.tempAvatar;
+
+    if (newImage == null) {
+      return;
+    }
+
+    /// 先にモーダルを消すためにtempAvatarをnullにする
+    state = state.copyWith(tempAvatar: null);
+
+    try {
+      final user = ref.read(supabaseAuthRepositoryProvider).authUser;
+      if (user == null) {
+        throw Exception('User is not loaded');
+      }
+      final userData =
+          await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+      if (userData == null) {
+        throw Exception('User is not loaded');
+      }
+
       /// すでにアバター画像がある場合は削除
       if (userData.avatarUrl != null) {
         await ref
@@ -93,7 +122,7 @@ class AccountPageViewModel extends _$AccountPageViewModel {
 
       final storagePath = await ref
           .read(supabaseRepositoryProvider)
-          .updateAvatarImage(userData, image);
+          .updateAvatarImage(userData, newImage);
 
       if (storagePath == null) {
         throw Exception('Error updateAvatar(): storagePath is null');
@@ -103,6 +132,10 @@ class AccountPageViewModel extends _$AccountPageViewModel {
     } catch (e) {
       throw Exception('Error updateAvatar(): $e');
     }
+  }
+
+  void clearTempAvatar() {
+    state = state.copyWith(tempAvatar: null);
   }
 
   Future<void> deleteAccount() async {

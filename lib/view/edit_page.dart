@@ -14,9 +14,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:membo/exceptions/app_exception.dart';
 import 'package:membo/gen/assets.gen.dart';
 import 'package:membo/models/board/object/object_model.dart';
+import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
-import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/state/stream_board_state.dart';
 import 'package:membo/utils/color_utils.dart';
 import 'package:membo/utils/custom_indicator.dart';
@@ -60,17 +60,52 @@ class EditPage extends HookConsumerWidget {
     final timer = useState<Timer?>(null);
 
     void initialize() async {
-      await ref
-          .read(editPageViewModelProvider.notifier)
-          .initialize(boardId, w, h)
-          .timeout(
-        const Duration(seconds: 5),
-        onTimeout: () {
-          ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
-            context.go('/sign-in');
-          });
-        },
-      );
+      isLoading.value = true;
+      try {
+        await ref
+            .read(editPageViewModelProvider.notifier)
+            .initialize(boardId, w, h)
+            .timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (dialogContext) => TwoWayDialog(
+                title: '通信状況を確認してください',
+                leftButtonText: 'サインアウト',
+                rightButtonText: 'リロード',
+                onLeftButtonPressed: () {
+                  ref.read(supabaseAuthRepositoryProvider).signOut();
+                  context.go('/sign-in');
+                },
+                onRightButtonPressed: () {
+                  initialize();
+                },
+              ),
+            );
+          },
+        );
+      } catch (e) {
+        if (context.mounted) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (dialogContext) => TwoWayDialog(
+              title: e.toString(),
+              leftButtonText: 'サインアウト',
+              rightButtonText: 'リロード',
+              onLeftButtonPressed: () {
+                ref.read(supabaseAuthRepositoryProvider).signOut();
+                context.go('/sign-in');
+              },
+              onRightButtonPressed: () {
+                initialize();
+              },
+            ),
+          );
+        }
+      }
     }
 
     useEffect(() {
@@ -238,7 +273,8 @@ class EditPage extends HookConsumerWidget {
                     ...objectList.map((object) {
                       return DrawerCard(
                         object: object,
-                        currentUserId: ref.read(userStateProvider)!.id,
+                        currentUserId: editPageState.userId ?? '',
+                        // currentUserId: ref.read(userStateProvider)!.id,
                         isOwner: editPageState.isOwner,
                       );
                     }),
@@ -275,9 +311,9 @@ class EditPage extends HookConsumerWidget {
                                 selectedObject: editPageState.selectedObject),
                           ))),
                   editPageState.selectedObject == null
-                      ? const CustomFloatingButton()
+                      ? CustomFloatingButton(userId: editPageState.userId ?? '')
                       : const SizedBox.shrink(),
-                  const TextInputModal(),
+                  TextInputModal(userId: editPageState.userId ?? ''),
                   Align(
                     alignment: const Alignment(0, 0.9),
                     child: EditToolBar(width: w, isLoading: isLoading),
@@ -951,7 +987,8 @@ class EditToolBar extends HookConsumerWidget {
 }
 
 class CustomFloatingButton extends HookConsumerWidget {
-  const CustomFloatingButton({super.key});
+  final String userId;
+  const CustomFloatingButton({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1030,7 +1067,7 @@ class CustomFloatingButton extends HookConsumerWidget {
             imageUrl: image.path,
             imageWidth: imageSize.width * resizeRate,
             imageHeight: imageSize.height * resizeRate,
-            creatorId: ref.read(userStateProvider)!.id,
+            creatorId: userId,
             createdAt: DateTime.now(),
             bgColor: '0xFF000000');
         ref
@@ -1167,7 +1204,8 @@ class CustomFloatingButton extends HookConsumerWidget {
 }
 
 class TextInputModal extends HookConsumerWidget {
-  const TextInputModal({super.key});
+  final String userId;
+  const TextInputModal({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1202,7 +1240,7 @@ class TextInputModal extends HookConsumerWidget {
               angle: 0.0,
               scale: 1.0,
               text: textController.text,
-              creatorId: ref.read(userStateProvider)!.id,
+              creatorId: userId,
               createdAt: DateTime.now(),
               bgColor:
                   '0xff${selectedTextColor.value.value.toRadixString(16)}'),

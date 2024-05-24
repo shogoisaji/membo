@@ -7,7 +7,7 @@ part of 'board_settings_view_model.dart';
 // **************************************************************************
 
 String _$boardSettingsViewModelHash() =>
-    r'a248b56c1ef53a2e550c96bb4394a10a55777eaa';
+    r'86673f8efabf305cf63eef2788b2eead772ab24a';
 
 /// See also [BoardSettingsViewModel].
 @ProviderFor(BoardSettingsViewModel)
