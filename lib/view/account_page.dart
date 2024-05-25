@@ -60,21 +60,9 @@ class AccountPage extends HookConsumerWidget {
         );
       } catch (e) {
         if (context.mounted) {
-          showDialog(
-            context: context,
-            builder: (dialogContext) => TwoWayDialog(
-              title: 'データ取得に失敗しました',
-              leftButtonText: 'サインアウト',
-              rightButtonText: 'リロード',
-              onLeftButtonPressed: () {
-                ref.read(supabaseAuthRepositoryProvider).signOut();
-                context.go('/sign-in');
-              },
-              onRightButtonPressed: () {
-                initialize();
-              },
-            ),
-          );
+          ErrorDialog.show(context, 'データ取得に失敗しました', onTapFunction: () {
+            context.go('/');
+          });
         }
       } finally {
         isLoading.value = false;

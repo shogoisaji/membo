@@ -207,6 +207,20 @@ class HomePageViewModel extends _$HomePageViewModel {
         .save<bool>(SharedPreferencesKey.isFirst, false);
   }
 
+  Future<bool> checkOwnedBoard(String boardId) async {
+    final user = ref.read(supabaseAuthRepositoryProvider).authUser;
+    if (user == null) {
+      throw Exception('User is not loaded');
+    }
+    final userData =
+        await ref.read(supabaseRepositoryProvider).fetchUserData(user.id);
+    if (userData == null) {
+      throw Exception('User data is not loaded');
+    }
+
+    return userData.ownedBoardIds.contains(boardId);
+  }
+
   Future<void> deleteBoardFromCard(String boardId) async {
     final user = ref.read(supabaseAuthRepositoryProvider).authUser;
     if (user == null) {

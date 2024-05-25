@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:membo/gen/assets.gen.dart';
-import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/settings/color.dart';
 import 'package:membo/settings/text_theme.dart';
 import 'package:membo/string.dart';
@@ -47,22 +46,9 @@ class BoardSettingsPage extends HookConsumerWidget {
             .initializeLoad(boardId);
       } catch (e) {
         if (context.mounted) {
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (dialogContext) => TwoWayDialog(
-              title: 'データ取得に失敗しました',
-              leftButtonText: 'サインアウト',
-              rightButtonText: 'リロード',
-              onLeftButtonPressed: () {
-                ref.read(supabaseAuthRepositoryProvider).signOut();
-                context.go('/sign-in');
-              },
-              onRightButtonPressed: () {
-                initialize();
-              },
-            ),
-          );
+          ErrorDialog.show(context, 'データ取得に失敗しました', onTapFunction: () {
+            context.go('/');
+          });
         }
       } finally {
         isLoading.value = false;

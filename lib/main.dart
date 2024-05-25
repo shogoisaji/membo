@@ -165,7 +165,6 @@ class MyApp extends HookConsumerWidget {
     useEffect(() {
       FlutterNativeSplash.remove();
       fetchPublicNotices();
-      print('first useEffect');
       // initDeepLinks();
       return null;
     }, []);
