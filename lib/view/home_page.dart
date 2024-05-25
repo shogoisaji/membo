@@ -86,7 +86,7 @@ class HomePage extends HookConsumerWidget {
             barrierDismissible: false,
             context: context,
             builder: (dialogContext) => TwoWayDialog(
-              title: e.toString(),
+              title: "データ取得に失敗しました",
               leftButtonText: 'サインアウト',
               rightButtonText: 'リロード',
               onLeftButtonPressed: () {
@@ -151,19 +151,45 @@ class HomePage extends HookConsumerWidget {
       context.go('/edit', extra: boardId);
     }
 
-    void handleTapDelete(String boardId) async {
+    void deleteBoard(String boardId, bool isOwner) async {
+      isLoading.value = true;
       try {
         await ref
             .read(homePageViewModelProvider.notifier)
             .deleteBoardFromCard(boardId);
         if (context.mounted) {
-          CustomSnackBar.show(context, 'ボードを削除しました', MyColor.lightBlue);
+          CustomSnackBar.show(context, isOwner ? 'ボードを削除しました' : 'ブックマークを解除しました',
+              MyColor.lightBlue);
         }
       } catch (e) {
         if (context.mounted) {
           ErrorDialog.show(context, e.toString());
         }
+      } finally {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          isLoading.value = false;
+        });
       }
+    }
+
+    void handleTapDelete(String boardId) async {
+      final isOwner = await ref
+          .read(homePageViewModelProvider.notifier)
+          .checkOwnedBoard(boardId);
+      if (!context.mounted) return;
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (dialogContext) => TwoWayDialog(
+          title: isOwner ? "ボードを削除しますか？" : "ブックマークを解除しますか？",
+          leftButtonText: isOwner ? '削除' : '解除',
+          rightButtonText: 'キャンセル',
+          onLeftButtonPressed: () {
+            deleteBoard(boardId, isOwner);
+          },
+          onRightButtonPressed: () {},
+        ),
+      );
     }
 
     void handleTapCreate(String boardName) async {

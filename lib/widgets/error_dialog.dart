@@ -68,8 +68,8 @@ class ErrorDialog {
                     child: InkWell(
                       onTap: () {
                         HapticFeedback.lightImpact();
-                        Navigator.pop(dialogContext);
                         onTapFunction != null ? onTapFunction() : null;
+                        Navigator.pop(dialogContext);
                       },
                       child: Container(
                         height: 50,

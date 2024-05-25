@@ -75,22 +75,25 @@ class BoardViewPage extends HookConsumerWidget {
         );
       } catch (e) {
         if (context.mounted) {
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (dialogContext) => TwoWayDialog(
-              title: 'データ取得に失敗しました',
-              leftButtonText: 'サインアウト',
-              rightButtonText: 'リロード',
-              onLeftButtonPressed: () {
-                ref.read(supabaseAuthRepositoryProvider).signOut();
-                context.go('/sign-in');
-              },
-              onRightButtonPressed: () {
-                initialize();
-              },
-            ),
-          );
+          ErrorDialog.show(context, 'データ取得に失敗しました', onTapFunction: () {
+            context.go('/');
+          });
+          // showDialog(
+          //   barrierDismissible: false,
+          //   context: context,
+          //   builder: (dialogContext) => TwoWayDialog(
+          //     title: 'データ取得に失敗しました',
+          //     leftButtonText: 'サインアウト',
+          //     rightButtonText: 'リロード',
+          //     onLeftButtonPressed: () {
+          //       ref.read(supabaseAuthRepositoryProvider).signOut();
+          //       context.go('/sign-in');
+          //     },
+          //     onRightButtonPressed: () {
+          //       initialize();
+          //     },
+          //   ),
+          // );
         }
       }
     }
