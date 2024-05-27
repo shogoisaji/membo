@@ -7,6 +7,7 @@ import 'package:membo/repositories/shared_preferences/shared_preferences_key.dar
 import 'package:membo/repositories/shared_preferences/shared_preferences_repository.dart';
 import 'package:membo/repositories/supabase/auth/supabase_auth_repository.dart';
 import 'package:membo/repositories/supabase/db/supabase_repository.dart';
+import 'package:membo/repositories/supabase/storage/supabase_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -235,6 +236,12 @@ class HomePageViewModel extends _$HomePageViewModel {
     /// owned boardの場合
     if (userData.ownedBoardIds.contains(boardId)) {
       try {
+        final board =
+            await ref.read(supabaseRepositoryProvider).getBoardById(boardId);
+
+        /// 画像の削除
+        await ref.read(supabaseStorageProvider).deleteImageFolder(board);
+
         /// boardの削除
         await ref.read(supabaseRepositoryProvider).deleteBoard(boardId);
         final newOwnedBoardIds = userData.ownedBoardIds
