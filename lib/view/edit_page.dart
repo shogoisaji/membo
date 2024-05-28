@@ -4,6 +4,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
@@ -148,71 +149,75 @@ class EditPage extends HookConsumerWidget {
         backgroundColor: bgColor,
         extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 36),
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              context.go('/');
-            },
-          ),
-          actions: [
-            Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: SvgPicture.asset(
-                  Assets.images.svg.edit,
-                  colorFilter: const ColorFilter.mode(
-                      MyColor.greenText, BlendMode.srcIn),
-                  width: 30,
-                  height: 30,
-                )),
-            editPageState.isOwner
-                ? Padding(
+        appBar: editPageState.showTextInput &&
+                MediaQuery.of(context).orientation == Orientation.landscape
+            ? null
+            : AppBar(
+                backgroundColor: Colors.transparent,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, size: 36),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    context.go('/');
+                  },
+                ),
+                actions: [
+                  Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: SvgPicture.asset(
+                        Assets.images.svg.edit,
+                        colorFilter: const ColorFilter.mode(
+                            MyColor.greenText, BlendMode.srcIn),
+                        width: 30,
+                        height: 30,
+                      )),
+                  editPageState.isOwner
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: bgColor,
+                              borderRadius: BorderRadius.circular(99),
+                              border: Border.all(
+                                  width: 3, color: MyColor.greenText),
+                            ),
+                            child: Text(
+                              editPageState.boardModel?.isPublic == true
+                                  ? '公開'
+                                  : '非公開',
+                              style: lightTextTheme.bodyLarge,
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                  Padding(
                     padding: const EdgeInsets.only(right: 12.0),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: bgColor,
-                        borderRadius: BorderRadius.circular(99),
-                        border: Border.all(width: 3, color: MyColor.greenText),
-                      ),
-                      child: Text(
-                        editPageState.boardModel?.isPublic == true
-                            ? '公開'
-                            : '非公開',
-                        style: lightTextTheme.bodyLarge,
-                      ),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        ref
+                            .read(editPageViewModelProvider.notifier)
+                            .clearSelectedObject();
+                        context.go('/board-settings', extra: boardId);
+                      },
+                      child: const Icon(Icons.settings, size: 32),
                     ),
-                  )
-                : const SizedBox.shrink(),
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  ref
-                      .read(editPageViewModelProvider.notifier)
-                      .clearSelectedObject();
-                  context.go('/board-settings', extra: boardId);
-                },
-                child: const Icon(Icons.settings, size: 32),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        scaffoldKey.currentState?.openEndDrawer();
+                        // Scaffold.of(context).openDrawer();
+                      },
+                      child: const Icon(Icons.format_list_bulleted, size: 32),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  scaffoldKey.currentState?.openEndDrawer();
-                  // Scaffold.of(context).openDrawer();
-                },
-                child: const Icon(Icons.format_list_bulleted, size: 32),
-              ),
-            ),
-          ],
-        ),
         endDrawer: Drawer(
           width: (w * 0.85).clamp(200, 500),
           backgroundColor: MyColor.green,
@@ -305,31 +310,38 @@ class EditPage extends HookConsumerWidget {
                     alignment: const Alignment(0, 0.9),
                     child: EditToolBar(width: w, isLoading: isLoading),
                   ),
-                  SafeArea(
-                    child: Align(
-                      alignment: const Alignment(-0.95, -0.99),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 2, horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: MyColor.greenLight,
-                          borderRadius: BorderRadius.circular(99),
+
+                  /// 横でテキストインプット時は消す
+                  editPageState.showTextInput &&
+                          MediaQuery.of(context).orientation ==
+                              Orientation.landscape
+                      ? const SizedBox.shrink()
+                      : SafeArea(
+                          child: Align(
+                            alignment: const Alignment(-0.95, -0.99),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: MyColor.greenLight,
+                                borderRadius: BorderRadius.circular(99),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.image,
+                                      size: 32, color: MyColor.greenDark),
+                                  Text(
+                                      ' ${editPageState.currentImageCount}/${editPageState.boardModel!.maxImageCount}',
+                                      style:
+                                          lightTextTheme.bodyMedium!.copyWith(
+                                        color: MyColor.greenDark,
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.image,
-                                size: 32, color: MyColor.greenDark),
-                            Text(
-                                ' ${editPageState.currentImageCount}/${editPageState.boardModel!.maxImageCount}',
-                                style: lightTextTheme.bodyMedium!.copyWith(
-                                  color: MyColor.greenDark,
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ));
   }
@@ -1118,7 +1130,10 @@ class CustomFloatingButton extends HookConsumerWidget {
               ),
               Positioned(
                 bottom: 40,
-                right: 30,
+                right:
+                    MediaQuery.of(context).orientation == Orientation.portrait
+                        ? 30
+                        : 60,
                 child: !editPageState.showTextInput
                     ? CustomButton(
                         width: 60,
@@ -1171,7 +1186,9 @@ class CustomFloatingButton extends HookConsumerWidget {
           )
         : Positioned(
             bottom: 40,
-            right: 30,
+            right: MediaQuery.of(context).orientation == Orientation.portrait
+                ? 30
+                : 60,
             child: CustomButton(
               width: 60,
               height: 60,
@@ -1218,23 +1235,25 @@ class TextInputModal extends HookConsumerWidget {
     void handleTapOk() {
       if (textController.text.isEmpty) return;
       HapticFeedback.lightImpact();
-      ref.read(editPageViewModelProvider.notifier).selectObject(
-          ObjectModel(
-              objectId: const Uuid().v4(),
-              type: ObjectType.text,
-              positionX: 0.0,
-              positionY: 0.0,
-              angle: 0.0,
-              scale: 1.0,
-              text: textController.text,
-              creatorId: userId,
-              createdAt: DateTime.now(),
-              bgColor:
-                  '0xff${selectedTextColor.value.value.toRadixString(16)}'),
-          null);
       ref.read(editPageViewModelProvider.notifier).hideTextInput();
-      ref.read(editPageViewModelProvider.notifier).hideInputMenu();
-      textController.clear();
+
+      Future.delayed(const Duration(milliseconds: 300)).then((_) {
+        ref.read(editPageViewModelProvider.notifier).selectObject(
+            ObjectModel(
+                objectId: const Uuid().v4(),
+                type: ObjectType.text,
+                positionX: 0.0,
+                positionY: 0.0,
+                angle: 0.0,
+                scale: 1.0,
+                text: textController.text,
+                creatorId: userId,
+                createdAt: DateTime.now(),
+                bgColor:
+                    '0xff${selectedTextColor.value.value.toRadixString(16)}'),
+            null);
+        textController.clear();
+      });
     }
 
     return editPageState.showTextInput
@@ -1257,19 +1276,47 @@ class TextInputModal extends HookConsumerWidget {
                 ),
                 Positioned(
                   bottom: keyboardHeight,
-                  child: SizedBox(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: MyColor.greenSuperLight,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.4),
+                          offset: const Offset(0, -3),
+                          blurRadius: 15,
+                        ),
+                      ],
+                    ),
                     width: w,
-                    height: h,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         isPortrait
                             ? Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 12.0),
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MyColor.greenLight,
+                                      ),
+                                      onPressed: () {
+                                        textController.clear();
+                                        ref
+                                            .read(editPageViewModelProvider
+                                                .notifier)
+                                            .hideTextInput();
+                                      },
+                                      child: Text('Cancel',
+                                          style: lightTextTheme.titleLarge),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 12.0, top: 6),
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: MyColor.pink,
@@ -1287,6 +1334,25 @@ class TextInputModal extends HookConsumerWidget {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
+                            isPortrait
+                                ? const SizedBox.shrink()
+                                : Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MyColor.greenLight,
+                                      ),
+                                      onPressed: () {
+                                        textController.clear();
+                                        ref
+                                            .read(editPageViewModelProvider
+                                                .notifier)
+                                            .hideTextInput();
+                                      },
+                                      child: Text('Cancel',
+                                          style: lightTextTheme.titleLarge),
+                                    ),
+                                  ),
                             Expanded(
                               child: TextField(
                                   maxLines: null,
@@ -1299,12 +1365,16 @@ class TextInputModal extends HookConsumerWidget {
                                   textAlignVertical: TextAlignVertical.bottom,
                                   focusNode: focusNode,
                                   controller: textController,
-                                  decoration: const InputDecoration(
-                                      focusedBorder: OutlineInputBorder(
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(0),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      focusedBorder: const OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.transparent),
                                       ),
-                                      enabledBorder: OutlineInputBorder(
+                                      enabledBorder: const OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.transparent),
                                       ))),
