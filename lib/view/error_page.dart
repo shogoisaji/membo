@@ -14,8 +14,8 @@ class ErrorPage extends StatelessWidget {
           Center(
             child: Image.asset(
               Assets.images.splash.path,
-              width: 220,
-              height: 220,
+              width: 250,
+              height: 250,
             ),
           ),
           child ?? const SizedBox.shrink(),
