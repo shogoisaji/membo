@@ -1,6 +1,6 @@
 enum SharedPreferencesKey {
   isFirst('isFirst'),
-  skipUpdateVersion('skipUpdateVersion'),
+  noticedVersion('noticedVersion'),
   isDarkMode('isDarkMode'),
   isHaptic('isHaptic'),
   language('language'),

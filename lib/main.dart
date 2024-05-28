@@ -67,8 +67,8 @@ class MyApp extends HookConsumerWidget {
     //     print(error.message);
     //   });
     // }
-    Future<void> appStore() async {
-      final Uri url = Uri.parse('https://membo.vercel.app/privacy-policy');
+    Future<void> appStore(String appUrl) async {
+      final Uri url = Uri.parse(appUrl);
       if (await canLaunchUrl(url)) {
         await launchUrl(url);
       } else {
@@ -78,7 +78,7 @@ class MyApp extends HookConsumerWidget {
       }
     }
 
-    void showUpdateDialog(String distVersion) {
+    void showUpdateDialog(String distVersion, String appUrl) {
       showDialog(
           context: context,
           builder: (context) {
@@ -86,14 +86,18 @@ class MyApp extends HookConsumerWidget {
               title: 'アップデートがあります',
               leftButtonText: 'Storeへ',
               rightButtonText: 'スキップ',
-              onLeftButtonPressed: () {
-                appStore();
+              onLeftButtonPressed: () async {
+                await ref
+                    .read(sharedPreferencesRepositoryProvider)
+                    .save<String>(
+                        SharedPreferencesKey.noticedVersion, distVersion);
+                appStore(appUrl);
               },
               onRightButtonPressed: () async {
                 await ref
                     .read(sharedPreferencesRepositoryProvider)
                     .save<String>(
-                        SharedPreferencesKey.skipUpdateVersion, distVersion);
+                        SharedPreferencesKey.noticedVersion, distVersion);
               },
             );
           });
@@ -122,17 +126,19 @@ class MyApp extends HookConsumerWidget {
         final currentAppVersion = packageInfo.version;
         final distributeAppVersion = noticeData.value!.appVersion;
 
-        /// 現在のバージョンと配信されているバージョンをチェック
+        /// 現在のバージョンと配信されているバージョン同じならリターン
         if (currentAppVersion == distributeAppVersion) return;
-        final skipUpdateVersion = ref
+
+        /// 通知済みのバージョンを取得
+        final noticedVersion = ref
             .read(sharedPreferencesRepositoryProvider)
-            .fetch<String>(SharedPreferencesKey.skipUpdateVersion);
+            .fetch<String>(SharedPreferencesKey.noticedVersion);
 
-        /// すでにアップデートをスキップしている場合はスキップ
-        if (skipUpdateVersion == distributeAppVersion) return;
+        /// すでに通知している場合はスキップ
+        if (noticedVersion == distributeAppVersion) return;
 
-        /// スキップしていなければダイアログで通知
-        showUpdateDialog(distributeAppVersion);
+        /// 通知していなければダイアログで通知
+        showUpdateDialog(distributeAppVersion, noticeData.value!.appUrl);
       } catch (e) {
         if (context.mounted) {
           ErrorDialog.show(context, '通信状況を確認してください', onTapFunction: () {
